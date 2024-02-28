@@ -1,6 +1,8 @@
 import nodemailer, { Transporter } from "nodemailer";
-import speakseasy from 'speakeasy'
+import speakseasy, { GeneratedSecret } from 'speakeasy'
 import configKeys from "../../config";
+import AppError from "../../utils/appErrors";
+import { HttpStatus } from "../../types/httpTypes";
 
 // export const otpAuth = () => {
 //   const transporter: Transporter = nodemailer.createTransport({
@@ -85,6 +87,7 @@ export const otpAuth = ()=>{
   const sendOtp = async(email:string) =>{
     try
     {
+      console.log('secret generated =', secret)
        const transporter = nodemailer.createTransport({
         service:'gmail',
         auth:{
@@ -102,7 +105,7 @@ export const otpAuth = ()=>{
        const sendOTP = await transporter.sendMail(mailOptions)
        console.log("OTP sent successfully: ", sendOTP);
        console.log("Generated OTP : ", totp)
-       return {status:'success', message:'OTP send success', genOTp: totp}
+       return {status:'success', message:'OTP send success', otp : totp}
        
     }
     catch(error:any)
@@ -111,9 +114,32 @@ export const otpAuth = ()=>{
       return {status : "failed", message:'OTP cannot send'}
     }
   }
-  const verifyOtp = (otp:string, votp: string)=>{
+  const verifyOtp = (otp:string, secret: GeneratedSecret)=>{
+    try
+    {
+        const OTPCheck = speakseasy.totp.verify({
+          secret:secret.base32,
+          encoding:'base32',
+          step:60,
+          token:otp
+        })
+        console.log(OTPCheck)
+        if(!OTPCheck)
+        {
+          console.log("OTP is not valid")
+          throw new AppError("Entered OTP is wrong", HttpStatus.UNAUTHORIZED)
+        }
+        else
+        {
+          return {status: 'success', message:'OTP verified'}
+        }
+      }
+    catch(error:any)
+    {
+      console.log("error in verifyOTP")
+      throw new AppError('Internal server error', HttpStatus.BAD_REQUEST)
+    }
 
   }
   return {sendOtp, verifyOtp}
-
 }

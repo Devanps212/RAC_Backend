@@ -1,9 +1,11 @@
 import { userDbInterface } from "../../repositories/userDbrepository";
-import { createUserInterface } from "../../../types/userInterface";
+import { createUserInterface, userInterface } from "../../../types/userInterface";
 import { InterfaceAuthService } from "../../services/authServiceInterface";
 import { HttpStatus } from "../../../types/httpTypes";
 import AppError from "../../../utils/appErrors";
 import { otpAuth } from "../../../frameworks/services/otpServices";
+import { GeneratedSecret } from "speakeasy";
+import { authGoogleInterface } from "../../services/googleAuthServicesInterface";
 
 
 export const signUp = async(user:createUserInterface, userRepository : ReturnType<userDbInterface>, authService: ReturnType<InterfaceAuthService>)=>
@@ -13,6 +15,7 @@ export const signUp = async(user:createUserInterface, userRepository : ReturnTyp
     const existingUser = await userRepository.getUserByEmail(user.email)
     if(existingUser)
     {
+        console.log("email already exist")
         throw new AppError("Email already exists", HttpStatus.CONFLICT)
     }
     user.password = await authService.encryptPassword(user.password ?? "")
@@ -38,22 +41,37 @@ export const loginUser = async(email:string, password:string, userRepository: Re
         console.log("password error")
         throw new AppError("Password is wrong", HttpStatus.UNAUTHORIZED)
     }
+    console.log(user)
     return user
     
 }
 
-export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbInterface>)=>{
+export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbInterface>, purpose : 'signup' | 'signin')=>{
     try{
 
         console.log("reached usecase")
         const { sendOtp } = otpAuth();
-        const checksUser = await userRepInterface.getUserByEmail(email)
-        if(!checksUser)
+        if(purpose == 'signin')
         {
-            throw new AppError("User not found", HttpStatus.UNAUTHORIZED)
+            console.log("checking login")
+            const checksUser = await userRepInterface.getUserByEmail(email)
+            if(!checksUser)
+            {
+                throw new AppError("User not found", HttpStatus.UNAUTHORIZED)
+            }
+            const sendOTP = await sendOtp(email)
+            console.log("send : ", sendOTP)
+            return sendOTP
         }
         else
         {
+            console.log("checking signUp")
+            const checksUser = await userRepInterface.getUserByEmail(email)
+            if(checksUser)
+            {
+                console.log("is user exist ? no")
+                throw new AppError("Email already used", HttpStatus.UNAUTHORIZED)
+            }
             const sendOTP = await sendOtp(email)
             console.log("send : ", sendOTP)
             return sendOTP
@@ -62,28 +80,58 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
     }
     catch(error:any)
     {
-        console.log("error message :",error.message)
+        console.log("error message :",error)
         throw new AppError(error.message, HttpStatus.BAD_REQUEST)
         
     }
 }
 
-export const verifyOTP = async(otp:string, email:string, userRepInterface: ReturnType<userDbInterface>, verotp:string)=>{
+export const verifyOTP = async(otp:string, secret : GeneratedSecret | undefined)=>{
     try{
         console.log("userAuth verifyOTP reached")
-        const user = await userRepInterface.getUserByEmail(email)
-        console.log("user =", user)
-        if(user)
+        if(secret)
         {
             console.log("user found")
             const {verifyOtp} = otpAuth()
-            const check = verifyOtp(otp, verotp)
+            const check = verifyOtp(otp, secret)
             console.log("currentOtp :", check)
             return check
+        }
+        else
+        {
+            console.log("error no secret found")
+            throw new AppError("OTP error", HttpStatus.BAD_GATEWAY)
         }
     }
     catch(error:any)
     {
         throw new Error("Internal server error")
+    }
+}
+
+export const signIn_UpWithGoogle = async(
+    credentials : string,
+    googleAuthInterface : ReturnType<authGoogleInterface>,
+    userRepositoryInterface : ReturnType<userDbInterface>,
+    authService : ReturnType<InterfaceAuthService>
+)=>{
+    console.log("reached signin/signUp Google")
+    const user = await googleAuthInterface.verify(credentials)
+    const userExist = await userRepositoryInterface.getUserByEmail(user.email)
+    if(userExist)
+    {
+        console.log("UserSignIn starting")
+        const payload = userExist?._id?.toString()
+        const token = await authService.jwtGeneration(payload ?? '', 'user')
+        return {purpose:"sigIn", message: "user SignIn success", token}
+    }
+    else
+    {
+        console.log('user sigUp starting')
+        const User = await userRepositoryInterface.createUser(user)
+        const payload = User?._id?.toString()
+        const token = await authService.jwtGeneration(payload ?? '' , 'user')
+        return {purpose:"sigIn", message: "user SignUp success", token}
+        
     }
 }

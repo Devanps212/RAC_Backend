@@ -5,17 +5,19 @@ import { userRepository } from '../../database/mongodb/repositories/userReposito
 import { usersModel } from '../../database/mongodb/models/userModel'
 import { authService } from '../../services/authServices'
 import { interfaceAuthService } from '../../../app/services/authServiceInterface'
-import configFile from '../../../config'
+import { googleAuthInterface } from '../../../app/services/googleAuthServicesInterface'
+import { googleAuthService } from '../../services/googleAuthServices'
+
 
 const userAuthentication = ()=>{
     const route = express.Router()
 
-    const controller = authController(authService, interfaceAuthService, userdbRepository, userRepository, usersModel)
+    const controller = authController(authService, interfaceAuthService, userdbRepository, userRepository, usersModel, googleAuthService, googleAuthInterface)
 
     route.post('/signup', controller.userSignup)
     route.post('/login', controller.userLogin)
     route.post('/VOTP', controller.otpGenerate)
-    route.post('/VerifyOTP',controller.otpVerify)
+    route.post('/Google-SignIn', controller.signInUpWithGoogle)
 
     return route
 }
