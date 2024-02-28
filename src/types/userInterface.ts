@@ -1,5 +1,5 @@
 import { Types } from "mongoose"
-import session from "express-session"
+import { GeneratedSecret } from 'speakeasy';
 
 export interface userInterface {
     _id?: Types.ObjectId,
@@ -11,7 +11,7 @@ export interface userInterface {
     DOB?:Date,
     profilePic?:string,
     isActive?:boolean,
-    isGoogleUser:boolean,
+    isGoogleUser?:boolean,
     address?:Array<{
         country?: string;
         street?: string;
@@ -29,19 +29,21 @@ export interface createUserInterface {
     mobile?:number,
     password?:string,
 }
-
-
-export interface sessionInterface {
-    userData?: userInterface,
-    otp?: string,
-    secret?:{base32 :string}
+export interface SecretObjectInterface {
+    ascii: string;
+    hex: string;
+    base32: string;
+    google_auth_qr: string;
+    otpauth_url: string;
 }
 
-declare module 'express-session'
-{
-    interface sessionInterface {
-        userData?: userInterface,
-        otp?: string,
-        secret?:{base32 :string}
+interface OTP{
+    secret?: SecretObjectInterface | GeneratedSecret;
+}
+
+declare module 'express-session' {
+    interface SessionData extends OTP {
+        userData : userInterface | undefined,
     }
 }
+

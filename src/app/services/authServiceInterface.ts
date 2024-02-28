@@ -1,6 +1,6 @@
-import { authServiceReturn } from "../../frameworks/services/authServices";
+import { authServiceType } from "../../frameworks/services/authServices";
 
-export const interfaceAuthService = (service: authServiceReturn)=>{
+export const interfaceAuthService = (service: authServiceType)=>{
     const encryptPassword = (password: string)=>{
         return service.encryption(password);
     }

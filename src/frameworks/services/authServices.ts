@@ -31,4 +31,4 @@ export const authService = ()=>{
 }
 
 export type AuthService = typeof authService
-export type authServiceReturn = ReturnType<AuthService>
+export type authServiceType = ReturnType<AuthService>
