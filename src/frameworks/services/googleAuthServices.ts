@@ -1,31 +1,56 @@
-import { OAuth2Client } from "google-auth-library";
-import configFile from "../../config";
+import admin from 'firebase-admin'
+import AppError from '../../utils/appErrors'
+import { HttpStatus } from '../../types/httpTypes'
 
-const client = new OAuth2Client(configFile.GOOGLE_CLIENT_ID)
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    projectId:'racars-c3cb8'
+})
 
 export const googleAuthService = () =>{
-    const verify = async (token : string) => {
+    try
+    {
+    console.log("reached google auth service")
+    const verify = async(token : string) => {
         const user = {
             name: '',
             email: '',
             profilePic: '',
             isGoogleUser: true
         }
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: configFile.GOOGLE_CLIENT_ID
-        })
-        const payload = ticket.getPayload()
-        if(payload?.given_name && payload.email && payload.picture)
+        console.log("token")
+        console.log("ticket configuring")
+        try
         {
-            user.name = payload.given_name,
-            user.email = payload.email,
-            user.profilePic = payload.picture 
-        }
+            const result = await admin.auth().verifyIdToken(token)
+            if(result)
+            {
+                console.log(result)
 
+                if(result.name && result.email && result.picture)
+                {
+                    user.name = result.name,
+                    user.email = result.email
+                    user.profilePic = result.picture
+                    console.log("user details fetched")
+                }
+            }
+            
+        }
+        catch(error:any)
+        {
+            console.log(error)
+            throw new AppError(error.message, HttpStatus.BAD_REQUEST)       
+        }
         return user
     }
     return {verify}
+    }
+    catch(error:any)
+    {
+        console.log(error.message)
+        throw new Error(error.message)
+    }
 }
 
 export type googleAuthServices = typeof googleAuthService
