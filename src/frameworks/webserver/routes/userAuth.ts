@@ -17,7 +17,7 @@ const userAuthentication = ()=>{
     route.post('/signup', controller.userSignup)
     route.post('/login', controller.userLogin)
     route.post('/VOTP', controller.otpGenerate)
-    route.post('/Google-SignIn', controller.signInUpWithGoogle)
+    route.post('/Google-SignIn-Up', controller.signInUpWithGoogle)
 
     return route
 }

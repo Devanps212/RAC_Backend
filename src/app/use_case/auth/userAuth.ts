@@ -33,6 +33,11 @@ export const loginUser = async(email:string, password:string, userRepository: Re
         throw new AppError("User not found", HttpStatus.UNAUTHORIZED)
     }
 
+    if (user.isGoogleUser) 
+    {
+        throw new AppError("this user is unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
     const passCheck = await authService.decryptPassword(password, user.password ?? "")
     console.log("passCheck : ", passCheck)
 
@@ -117,6 +122,7 @@ export const signIn_UpWithGoogle = async(
 )=>{
     console.log("reached signin/signUp Google")
     const user = await googleAuthInterface.verify(credentials)
+    console.log("user : ", user)
     const userExist = await userRepositoryInterface.getUserByEmail(user.email)
     if(userExist)
     {
@@ -129,7 +135,9 @@ export const signIn_UpWithGoogle = async(
     {
         console.log('user sigUp starting')
         const User = await userRepositoryInterface.createUser(user)
+        console.log("new user created")
         const payload = User?._id?.toString()
+        console.log("payload : ", payload)
         const token = await authService.jwtGeneration(payload ?? '' , 'user')
         return {purpose:"sigIn", message: "user SignUp success", token}
         

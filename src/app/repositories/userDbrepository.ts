@@ -1,8 +1,5 @@
 import { createUserInterface, userInterface } from "../../types/userInterface";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
-import { UserEntity } from "../../entities/user";
-
-
 
 export const userdbRepository = (repository: ReturnType<userRepository>)=>{
     const createUser = async(user: createUserInterface)=>{
