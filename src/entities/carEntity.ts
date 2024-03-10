@@ -21,7 +21,7 @@ export class carEntity{
             if(carCreate)
             {
                 console.log("car created")
-                return carCreate
+                return carCreate.toObject()
             }
             else
             {
@@ -73,18 +73,24 @@ export class carEntity{
             let allDetails;
             if(carData === 'all')
             {
-                allDetails = await this.model.find()
-                return allDetails
+                allDetails = await this.model.find().populate('category')
+                console.log(allDetails)
+                return allDetails.map((car)=>car.toObject())
             }
             else if (Types.ObjectId.isValid(carData))
             {
                 allDetails = await this.model.findOne({_id:carData})
-                return allDetails 
+                if(allDetails)
+                {
+                return allDetails.toObject()
+                } 
             }
             else
             {
                 throw new AppError('Car not found', HttpStatus.NOT_FOUND)
             }
+
+            return null
         }
         catch(error:any)
         {
@@ -123,14 +129,37 @@ export class carEntity{
             {
                 throw new AppError('car not found', HttpStatus.NOT_FOUND)
             }
-            console.log("car details : ",details)
-            return details
+            console.log("car details : ",details.toObject())
+            return details.toObject()
             
         }
         catch(error:any)
         {
             console.log(error.message)
             throw new AppError(error.message,HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    public async checkCarByName(name:string) : Promise<carInterface | {message :string} | null>
+    {
+        try
+        {
+            const check = await this.model.findOne({name:name})
+            if(check)
+            {
+                throw new AppError('car exist', HttpStatus.NOT_IMPLEMENTED)
+            }
+            else
+            {
+                console.log("car not founnd")
+                return {message:"Car not found"}
+            }
+        }
+        catch(error:any)
+        {
+            console.log(error);
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+            
         }
     }
 

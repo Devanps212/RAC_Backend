@@ -8,10 +8,25 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
     const getUserByEmail = async(email:string)=>{
         return await repository.getUserByEmail(email)
     }
+    const getAllUsers = async()=>{
+        return await repository.getAllUser()
+    }
+
+    const blockUnblockUser = async(userId:string)=>{
+        await repository.blockUnblockUser(userId)
+    }
+    const findOneUser = async(userId: string)=>{
+        const user = await repository.findOneUser(userId)
+        return user
+    }
     return {
         createUser,
-        getUserByEmail
+        getUserByEmail,
+        getAllUsers,
+        blockUnblockUser,
+        findOneUser
     }
+    
 }
 
 export type userDbInterface = typeof userdbRepository;
