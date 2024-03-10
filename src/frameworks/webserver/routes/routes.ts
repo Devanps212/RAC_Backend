@@ -3,10 +3,12 @@ import userAuthentication from "./userAuth"
 import { adminAuthentication } from "./adminAuth"
 import categoryRoute from "./categoryRoute"
 import { carRoute } from "./carRouter"
+import adminUserRouter from "./adminUser"
 
 const routes = (app: Application)=>{
     app.use('/api/user-auth',  userAuthentication())
     app.use('/api/admin-auth', adminAuthentication())
+    app.use('/api/admin', adminUserRouter())
     app.use('/api/category', categoryRoute())
     app.use('/api/cars', carRoute())
 }

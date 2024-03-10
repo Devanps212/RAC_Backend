@@ -14,10 +14,6 @@ const carSchema = new mongoose.Schema({
         ref:'Category',
         required: true
     },
-    price:{
-        type:Number,
-        required:true
-    },
     mileage : {
         type: Number,
         default:0
@@ -35,15 +31,16 @@ const carSchema = new mongoose.Schema({
         default: '',
       },
       interior: {
-        type: String,
-        default: '',
+        type:[String],
+        default: [],
       },
       exterior: {
-        type: String,
-        default: '',
+        type: [String],
+        default: [],
       },
       status: {
         type: String,
+        enum: ['available', 'maintenance', 'booked', 'not available'],
         default: '',
       },
       rating: {

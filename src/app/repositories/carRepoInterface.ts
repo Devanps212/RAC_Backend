@@ -24,7 +24,11 @@ export const carRepoInterface = (repository:ReturnType<CarRepoType>)=>{
         return await repository.viewdetails(carId)
     }
 
-    return{createCar, deleteCar ,editCar, findCar, viewCar}
+    const checkCar = async(name:string)=>{
+        return await repository.carExist(name)
+    }
+
+    return{createCar, deleteCar ,editCar, findCar, viewCar, checkCar}
 }
 
 export type carInterfaceType = typeof carRepoInterface
