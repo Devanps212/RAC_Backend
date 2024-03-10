@@ -36,7 +36,9 @@ const authController = (
 
     const userLogin = expressAsyncHandler(
         async(req:Request, res:Response)=>{
+          console.log("reached userLogin")
             const {email, password} : {email:string, password:string} = req.body
+            console.log(email, password)
             const checkUser = await loginUser(email, password, dbrepositoryUser, authService)
             const payload = checkUser?._id ? checkUser._id.toString() :''
             console.log("payload : ",payload)

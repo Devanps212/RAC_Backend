@@ -25,6 +25,7 @@ export const signUp = async(user:createUserInterface, userRepository : ReturnTyp
 
 export const loginUser = async(email:string, password:string, userRepository: ReturnType<userDbInterface>, authService: ReturnType<InterfaceAuthService>)=>{
     const user = await userRepository.getUserByEmail(email)
+    console.log(user)
     console.log("user password : ",user?.password, password)
 
     if(!user)
@@ -35,6 +36,7 @@ export const loginUser = async(email:string, password:string, userRepository: Re
 
     if (user.isGoogleUser) 
     {
+        console.log("google user found")
         throw new AppError("this user is unauthorized", HttpStatus.UNAUTHORIZED);
     }
 
