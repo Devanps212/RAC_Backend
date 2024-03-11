@@ -4,6 +4,8 @@ import { adminAuthentication } from "./adminAuth"
 import categoryRoute from "./categoryRoute"
 import { carRoute } from "./carRouter"
 import adminUserRouter from "./adminUser"
+import partnerRoute from "./partnerRoutes/partnerRoute"
+
 
 const routes = (app: Application)=>{
     app.use('/api/user-auth',  userAuthentication())
@@ -11,5 +13,7 @@ const routes = (app: Application)=>{
     app.use('/api/admin', adminUserRouter())
     app.use('/api/category', categoryRoute())
     app.use('/api/cars', carRoute())
+
+    app.use('/api/partner', partnerRoute())
 }
 export default routes
