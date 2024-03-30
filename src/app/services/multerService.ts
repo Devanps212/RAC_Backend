@@ -4,6 +4,8 @@ import fs from 'fs'
 
 const Userstorage = multer.diskStorage({
     destination: (req, file, cb)=>{
+        console.log("reached ")
+        console.log(req)
         const userName = req.body.carData?.name
         const folderPath = path.join('uploads', userName)
 
@@ -21,7 +23,8 @@ const Userstorage = multer.diskStorage({
 const productStorage = multer.diskStorage({
     destination:(req, file, cb)=>{
         console.log("entering multer")
-        const productName = req.body.carData.name
+        console.log(req.body.name)
+        const productName = req.body.name
         console.log(productName)
         const folderPath = path.join('uploads', productName)
         
@@ -45,5 +48,3 @@ const productUpload = multer({storage:productStorage})
 const userUpload = multer({storage:Userstorage})
 
 export {productUpload, userUpload}
-
-//start from here 

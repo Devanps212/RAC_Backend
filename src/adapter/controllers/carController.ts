@@ -16,7 +16,8 @@ export const carController  = (
 
     const createCars = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            const {carData} = req?.body
+            console.log("Data inside body : ", req.body)
+            const carData = req?.body
             const {name }= carData
             console.log(name)
             await checkCar(name, carService)
