@@ -13,7 +13,6 @@ const routes = (app: Application)=>{
     app.use('/api/admin', adminUserRouter())
     app.use('/api/category', categoryRoute())
     app.use('/api/cars', carRoute())
-
     app.use('/api/partner', partnerRoute())
 }
 export default routes

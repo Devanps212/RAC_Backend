@@ -30,6 +30,7 @@ const expressConfig = (app:Application)=>{
             maxAge: 86400000
           },
     }))
+    app.use(express.static(path.join(__dirname,'..', 'uploads')))
     app.use(cors(corsOptions))
     app.use(express.json())
     const dirname =__dirname
