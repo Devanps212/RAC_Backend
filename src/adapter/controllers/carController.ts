@@ -17,9 +17,33 @@ export const carController  = (
     const createCars = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             console.log("Data inside body : ", req.body)
+            console.log("files from frontend :", req.files)
+
+            const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+            let interior :String[] = []
+            let exterior = []
+            if (files.interior) {
+                console.log("Filenames for interior:");
+                interior = files.interior.map(data=>data.filename)
+                console.log("exterior :", interior)
+            } else {
+                console.log("No 'interior' files found.");
+            }
+
+            if (files.exterior) {
+                console.log("\nFilenames for exterior:");
+                exterior = files.exterior.map(data=>data.filename)
+                console.log("exterior :", exterior)
+            } else {
+                throw new Error("No 'exterior' files found.");
+            }
+
             const carData = req?.body
             const {name }= carData
             console.log(name)
+            carData.interior = interior
+            carData.exterior = exterior
+            console.log(carData)
             await checkCar(name, carService)
             console.log("entering controller")
             const carCreate = await createCar(carData, carService)

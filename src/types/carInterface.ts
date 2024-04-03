@@ -22,3 +22,18 @@ export interface carInterface {
     insuranceDetails?: string;
     addedBy?: string;
 }
+
+interface ImageFile {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    destination: string;
+    filename: string;
+    path: string;
+    size: number;
+  }
+  
+  export interface ImageData {
+    [fieldname: string]: ImageFile[];
+  }
