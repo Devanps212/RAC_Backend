@@ -70,6 +70,7 @@ export const carController  = (
 
     const viewCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
+            console.log("entering viewCar")
             const {carId} = req?.body
             const response = await viewCarDetails(carId, carService)
             res.json({

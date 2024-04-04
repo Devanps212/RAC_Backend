@@ -25,6 +25,7 @@ export const adminAuthController = (
             const admin = await loginAdmin(email, password, adminRepoInteface, adminAuth)
             const payload = admin._id ? admin._id.toString() : '';
             const token = await adminAuth.jwtGeneration(payload, 'admin')
+            console.log("admin token :", token)
             res.json({
                 status : "success",
                 message:"Admin Login Success",

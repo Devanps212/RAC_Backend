@@ -17,16 +17,24 @@ export const authService = ()=>{
         const token = jwt.sign(payload, configFile.JWT_KEY, {
             expiresIn: "4d"
         })
+        console.log("JWT token : ", token)
         return token
     }
     const verifyToken = (token:string)=>{
         return jwt.verify(token, configFile.JWT_KEY)
     }
+
+    const decodeToken = (token:string)=>{
+        return jwt.decode(token)
+    }
+
+
     return{
         encryption,
         decryption,
         jwtGeneration,
-        verifyToken
+        verifyToken,
+        decodeToken
     }
 }
 
