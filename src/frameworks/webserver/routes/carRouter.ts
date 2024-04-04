@@ -4,17 +4,17 @@ import { carRepository } from '../../database/mongodb/repositories/carRepository
 import { carRepoInterface } from '../../../app/repositories/carRepoInterface'
 import { carModel } from '../../database/mongodb/models/carModel'
 import { productUpload } from '../../../app/services/multerService'
-
+import { authentication } from '../middlewares/authenticationMidddleware'
 
 export const carRoute = ()=>{
     const controller = carController(carRepoInterface, carRepository, carModel) 
     const router = express.Router()
 
-    router.post('/addCar',productUpload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}]), controller.createCars)
-    router.patch('/editCar', controller.editsCar)
-    router.get('/carsDetails', controller.viewCar)
-    router.delete('/deleteCar', controller.deletesCar)
-    router.get('/getCars', controller.findsCar)
+    router.post('/addCar', authentication, productUpload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}]), controller.createCars)
+    router.patch('/editCar', authentication, controller.editsCar)
+    router.get('/carsDetails', authentication, controller.viewCar)
+    router.delete('/deleteCar', authentication, controller.deletesCar)
+    router.get('/getCars',authentication, controller.findsCar)
 
     return router
 }

@@ -33,6 +33,10 @@ export const loginUser = async(email:string, password:string, userRepository: Re
         console.log("no user found")
         throw new AppError("User not found", HttpStatus.UNAUTHORIZED)
     }
+    if(!user.isActive)
+    {
+        throw new AppError(`${user.name} is blocked`, HttpStatus.UNAUTHORIZED)
+    }
 
     if (user.isGoogleUser) 
     {
@@ -122,26 +126,41 @@ export const signIn_UpWithGoogle = async(
     userRepositoryInterface : ReturnType<userDbInterface>,
     authService : ReturnType<InterfaceAuthService>
 )=>{
-    console.log("reached signin/signUp Google")
-    const user = await googleAuthInterface.verify(credentials)
-    console.log("user : ", user)
-    const userExist = await userRepositoryInterface.getUserByEmail(user.email)
-    if(userExist)
+    try
     {
-        console.log("UserSignIn starting")
-        const payload = userExist?._id?.toString()
-        const token = await authService.jwtGeneration(payload ?? '', 'user')
-        return {purpose:"sigIn", message: "user SignIn success", token}
+        console.log("reached signin/signUp Google")
+        const user = await googleAuthInterface.verify(credentials)
+        console.log("user : ", user)
+        const userExist = await userRepositoryInterface.getUserByEmail(user.email)
+        if(userExist)
+        {
+            if(userExist.isActive)
+            {
+                console.log("UserSignIn starting")
+                const payload = userExist?._id?.toString()
+                const token = await authService.jwtGeneration(payload ?? '', 'user')
+                return {purpose:"sigIn", message: "user SignIn success", token}
+            }
+            else
+            {
+                throw new AppError(`User ${userExist.name} is blocked`, HttpStatus.UNAUTHORIZED)
+            }
+            
+        }
+        else
+        {
+            console.log('user sigUp starting')
+            const User = await userRepositoryInterface.createUser(user)
+            console.log("new user created")
+            const payload = User?._id?.toString()
+            console.log("payload : ", payload)
+            const token = await authService.jwtGeneration(payload ?? '' , 'user')
+            return {purpose:"sigIn", message: "user SignUp success", token}
+            
+        }
     }
-    else
+    catch(error:any)
     {
-        console.log('user sigUp starting')
-        const User = await userRepositoryInterface.createUser(user)
-        console.log("new user created")
-        const payload = User?._id?.toString()
-        console.log("payload : ", payload)
-        const token = await authService.jwtGeneration(payload ?? '' , 'user')
-        return {purpose:"sigIn", message: "user SignUp success", token}
-        
+        throw new AppError(error.message, HttpStatus.BAD_REQUEST)
     }
 }
