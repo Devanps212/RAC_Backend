@@ -31,16 +31,18 @@ const expressConfig = (app:Application)=>{
           },
     }))
     app.use(express.static(path.join(__dirname,'..', 'uploads')))
+    console.log(__dirname)
     app.use(cors(corsOptions))
     app.use(express.json())
-    const dirname =__dirname
-    const pathBuild = path.join(dirname, '/Frontend/src/assets')
-    console.log(pathBuild)
-    app.use(express.static(pathBuild))
+    // const dirname =__dirname
+    // const pathBuild = path.join(dirname, '/Frontend/src/assets')
+    // console.log(pathBuild)
+    // app.use(express.static(pathBuild))
     app.use(express.urlencoded({limit: "10mb", extended:true}))
     app.use(bodyparser.json({limit: "10mb"}))
     app.use(bodyparser.urlencoded({extended:true}))
     app.use(helmet({xssFilter:true}))
+    app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
     app.use(morgan('dev'))
 
     

@@ -7,7 +7,8 @@ const carSchema = new mongoose.Schema({
     },
     owner:{
         type:String,
-        required : true
+        required : true,
+        enum:['Admin', 'Partner']
     },
     category:{
         type:mongoose.Schema.ObjectId,
@@ -52,7 +53,7 @@ const carSchema = new mongoose.Schema({
         default: '',
       },
       comments: {
-        type: [String], // assuming an array of comments
+        type: [String],
         default: [],
       },
       vehicleNumber: {
@@ -75,6 +76,15 @@ const carSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      addedById : {
+        type: mongoose.Schema.Types.ObjectId,
+        required : true,
+        refpath:'owner'
+      },
+      createdAt : {
+        type: Date,
+        default: Date.now()
+      }
 })
 
 export const carModel = mongoose.model('Cars', carSchema)

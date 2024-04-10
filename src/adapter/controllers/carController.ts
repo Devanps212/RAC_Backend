@@ -24,7 +24,7 @@ export const carController  = (
             let exterior = []
             if (files.interior) {
                 console.log("Filenames for interior:");
-                interior = files.interior.map(data=>data.filename)
+                interior = files.interior.map(data=>data.path)
                 console.log("exterior :", interior)
             } else {
                 console.log("No 'interior' files found.");
@@ -32,7 +32,7 @@ export const carController  = (
 
             if (files.exterior) {
                 console.log("\nFilenames for exterior:");
-                exterior = files.exterior.map(data=>data.filename)
+                exterior = files.exterior.map(data=>data.path)
                 console.log("exterior :", exterior)
             } else {
                 throw new Error("No 'exterior' files found.");
