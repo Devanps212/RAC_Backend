@@ -1,19 +1,29 @@
 import { carInterface } from "../../../types/carInterface";
 import { carInterfaceType } from "../../repositories/carRepoInterface";
+import { InterfaceAuthService } from "../../services/authServiceInterface";
 
-export const createCar = async(carData: carInterface, carRepInterface: ReturnType<carInterfaceType>)=>{
-    console.log("Data recieved")
+export const createCar = async(carData: carInterface, carRepInterface: ReturnType<carInterfaceType>, authInterface: ReturnType<InterfaceAuthService>)=>{
+    console.log("Data received");
+    if (carData.addedById) {
+        console.log("reached edit car");
+        const tokenData = await authInterface.tokenVerification(carData.addedById);
+        if (typeof tokenData === 'object' && tokenData.hasOwnProperty('payload')) {
+            const payload = tokenData.payload;
+            console.log("Token payload:", payload);
+            carData.addedById = payload;
+        }
+    }
 
     const carCreate = await carRepInterface.createCar(carData)
     return carCreate
 }
 
-export const editCar = async(carData: carInterface, carRepoInterface: ReturnType<carInterfaceType>)=>{
-    console.log("data receieved from edit :", carData)
+export const editCar = async (carData : carInterface, carRepoInterface : ReturnType<carInterfaceType>) => {
+    console.log("reached edit car")
+    const carEdit = await carRepoInterface.editCar(carData);
+    return carEdit;
+};
 
-    const carEdit = await carRepoInterface.editCar(carData)
-    return carEdit
-}
 
 export const deleteCar = async(carId : string, carRepoInterface: ReturnType<carInterfaceType>)=>{
     console.log("data receieved from edit :", carId)

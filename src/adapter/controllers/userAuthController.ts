@@ -119,6 +119,7 @@ const authController = (
         async(req:Request, res:Response)=>{
           console.log("reached google verification")
           const {credentials} : {credentials : string} = req.body
+          console.log("credentials :", credentials)
           const signUpInGoogle = await signIn_UpWithGoogle(credentials, googleAuthService, dbrepositoryUser, authService)
           if(signUpInGoogle.purpose == "sigIn")
           {

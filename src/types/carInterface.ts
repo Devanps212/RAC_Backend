@@ -21,6 +21,9 @@ export interface carInterface {
     rentPricePerDay?: number;
     insuranceDetails?: string;
     addedBy?: string;
+    addedById?:string;
+    deletedInteriorIndex: string
+    deletedExteriorIndex: string 
 }
 
 interface ImageFile {

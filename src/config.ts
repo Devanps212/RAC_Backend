@@ -9,7 +9,15 @@ const configFile = {
     USER_PASS : process.env.USER_EMAIL_PASS as string,
     SESSION_KEY : process.env.SESSION_ID as string,
     GOOGLE_CLIENT_ID :process.env.GOOGLE_CLIENT_ID as string,
-    GOOGLE_SECRET_KEY : process.env.GOOGLE_CLIENT_SECRET as string
+    GOOGLE_SECRET_KEY : process.env.GOOGLE_CLIENT_SECRET as string,
+
+    HOST_URL : process.env.HOST_URL as string,
+    MERCHANT_ID : process.env.MERCHANT_ID as string,
+    SALT_INDEX : process.env.SALT_INDEX as string,
+    SALT_KEY : process.env.SALT_KEY as string,
+    PHONEPAY_URL :process.env.PHONPAY_URL as string,
+
+    TRANSACTION_SUCCESS_URL : process.env.REDIRECT_URL as string
 }
 
 export default configFile

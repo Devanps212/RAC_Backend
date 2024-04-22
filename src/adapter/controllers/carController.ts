@@ -5,19 +5,25 @@ import { Request, Response } from "express";
 import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar } from "../../app/use_case/car/car";
 import { carInterface } from "../../types/carInterface";
 import expressAsyncHandler from "express-async-handler";
+import { AuthService } from "../../frameworks/services/authServices";
+import { InterfaceAuthService } from "../../app/services/authServiceInterface";
+
 
 export const carController  = (
     carInterface: carInterfaceType,
     carRepository: CarRepoType,
     carModel : carModelType,
+    authService : AuthService,
+    interfaceAuthService : InterfaceAuthService
 )=>{
     
     const carService = carInterface(carRepository(carModel))
+    const authservices = interfaceAuthService(authService())
 
     const createCars = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("Data inside body : ", req.body)
-            console.log("files from frontend :", req.files)
+            // console.log("Data inside body : ", req.body)
+            // console.log("files from frontend :", req.files)
 
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             let interior :String[] = []
@@ -25,9 +31,9 @@ export const carController  = (
             if (files.interior) {
                 console.log("Filenames for interior:");
                 interior = files.interior.map(data=>data.path)
-                console.log("exterior :", interior)
+                console.log("interior :", interior)
             } else {
-                console.log("No 'interior' files found.");
+                throw new Error("No 'interior' files found.");
             }
 
             if (files.exterior) {
@@ -46,7 +52,7 @@ export const carController  = (
             console.log(carData)
             await checkCar(name, carService)
             console.log("entering controller")
-            const carCreate = await createCar(carData, carService)
+            const carCreate = await createCar(carData, carService, authservices)
             res.json({
                 status:"success",
                 message:"car added successfully",
@@ -56,17 +62,34 @@ export const carController  = (
     )
 
     const editsCar = expressAsyncHandler(
-        async(req: Request, res: Response)=>{
-            const {carData} = req?.body
-            console.log(carData)
-            const response = await editCar(carData, carService)
+        async (req: Request, res: Response) => {
+            console.log("reached edits car controller")
+            const carData = req.body;
+            const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+            let interior: string[] = [];
+            let exterior: string[] = [];
+    
+            if (files.interior) {
+                interior = files.interior.map(data => data.path);
+                console.log("interior:", interior);
+                carData.interior = interior;
+            }
+    
+            if (files.exterior) {
+                exterior = files.exterior.map(data => data.path); // Corrected this line
+                console.log("exterior:", exterior);
+                carData.exterior = exterior;
+            }    
+            const response = await editCar(carData, carService);
+    
             res.json({
-                status:"success",
-                message:"Car edited successfully",
+                status: "success",
+                message: "Car edited successfully",
                 response
-            })
+            });
         }
-    )
+    );
+    
 
     const viewCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
@@ -95,6 +118,7 @@ export const carController  = (
 
     const findsCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
+            console.log("reached car controller for getting cars")
             const carData = req?.query.carData as string
             console.log(carData)
             const response = await findCar(carData, carService)

@@ -31,9 +31,9 @@ export const authentication = (req: Request, res: Response, next: NextFunction) 
     }
     const {role}:any = authService().decodeToken(token)
     console.log(role)
-    if(role !=='partner' && role !=='admin')
+    if(role !=='partner' && role !=='admin' && role !== 'user')
     {
-        console.log("not partner not admin")
+        console.log("not partner not admin nor user")
         throw new AppError('User is not authorized', HttpStatus.UNAUTHORIZED);
     }
 

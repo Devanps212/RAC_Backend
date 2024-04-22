@@ -144,6 +144,7 @@ export class categoryEntity{
     {
       try
       {
+        console.log("category found")
         const allCateg = await this.model.find({})
         return allCateg
       }

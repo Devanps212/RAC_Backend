@@ -9,7 +9,7 @@ import { googleAuthInterface } from '../../../app/services/googleAuthServicesInt
 import { googleAuthService } from '../../services/googleAuthServices'
 
 
-const userAuthentication = ()=>{
+const userAuthentication: ()=>Router = ()=>{
     const route = express.Router()
 
     const controller = authController(authService, interfaceAuthService, userdbRepository, userRepository, usersModel, googleAuthService, googleAuthInterface)

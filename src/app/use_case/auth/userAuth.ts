@@ -138,7 +138,9 @@ export const signIn_UpWithGoogle = async(
             {
                 console.log("UserSignIn starting")
                 const payload = userExist?._id?.toString()
+                console.log("payload for G signin : ", payload)
                 const token = await authService.jwtGeneration(payload ?? '', 'user')
+                console.log("new Token  :", token)
                 return {purpose:"sigIn", message: "user SignIn success", token}
             }
             else
@@ -163,4 +165,18 @@ export const signIn_UpWithGoogle = async(
     {
         throw new AppError(error.message, HttpStatus.BAD_REQUEST)
     }
+}
+
+export const checkUserExists = async(userId : string, userRepository : ReturnType<userDbInterface>)=>{
+    try
+    {
+        const response = await userRepository.findOneUser(userId)
+        return response
+    }
+    catch(error:any)
+    {
+        console.log(error.message)
+        throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
 }

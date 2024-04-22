@@ -6,7 +6,7 @@ export interface partnerLoginInterface {
 }
 
 export interface partnerDetailInterface extends partnerLoginInterface {
-    _id:Types.ObjectId;
+    _id?:Types.ObjectId;
     mobile?: number | null;
     password?: string;
     profilePic?: string;
@@ -15,6 +15,15 @@ export interface partnerDetailInterface extends partnerLoginInterface {
     address?: Address[];
     createdAt?: Date;
     isActive?: boolean;
+    amount?:number;
+    isPartner?:boolean;
+    transaction?: transaction[]
+}
+
+interface transaction {
+    transactionID: string,
+    amount:number,
+    purpose:string,
 }
 
 interface Address {
@@ -26,4 +35,10 @@ interface Address {
     phone?: string;
     alternateNumber?: string;
     landmark?: string;
+}
+
+export interface partnerData {
+    token:string,
+    amount:number,
+    role:string
 }

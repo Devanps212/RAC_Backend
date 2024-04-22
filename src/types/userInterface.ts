@@ -21,7 +21,9 @@ export interface userInterface {
         phone?: string | undefined;
         alternateNumber?: string | undefined;
         landmark?: string | undefined;
-    }>
+    }>,
+    amount?:number,
+    role?:string
 }
 export interface createUserInterface {
     name:string,
