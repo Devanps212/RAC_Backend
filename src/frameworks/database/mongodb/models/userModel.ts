@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+
+const transactionSchema = new mongoose.Schema({
+    transactionID: {type:String, required: true},
+    amount: {type:Number , required: true},
+    purpose:{type:String, required: true}
+})
+
+
 const userSchema = new mongoose.Schema({
     name: {
         type:String,
@@ -50,7 +58,15 @@ const userSchema = new mongoose.Schema({
     isGoogleUser:{
         type:Boolean,
         default:false
+    },
+    isPartner:{
+        type: Boolean,
+        default: false
+    },
+    transactions:{
+        type: [transactionSchema]
     }
+
 })
 
 export const usersModel = mongoose.model('User', userSchema)

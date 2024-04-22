@@ -25,7 +25,7 @@ export const googleAuthService = () =>{
             const result = await admin.auth().verifyIdToken(token)
             if(result)
             {
-                console.log(result)
+                console.log("result : ", result)
 
                 if(result.name && result.email && result.picture)
                 {

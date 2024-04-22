@@ -37,34 +37,75 @@ export class carEntity{
     public async editCar(carData:carInterface): Promise<{status:string} | null>
     {
         console.log("reached car Enitity")
-        try
-        {
-            const {_id, ...restData} = carData
-            console.log("id :" , _id)
-            console.log("rest data : ", restData)
-            const dataSave = await this.model.updateOne({_id:_id}, {$set:restData})
-            console.log("Data save object result : ", dataSave)
-            if(dataSave.matchedCount> 0 && dataSave.modifiedCount > 0)
-            {
-                const carDetails = await this.model.findOne({_id:_id})
-                console.log("car details :", carDetails)
-                console.log("car updated")
-                return {status:"success"}
+        console.log("reached car Enitity");
+        try {
+            const {_id, deletedExteriorIndex, deletedInteriorIndex, interior, exterior, ...restData} = carData;
+
+            const PictureUpdate = await this.model.findOne({_id})
+
+            let shouldUpdateMongo = false;
+    
+            if (deletedExteriorIndex && PictureUpdate) {
+                    console.log("exterior after update:", PictureUpdate);
+                    console.log("delted exterior :", deletedExteriorIndex)
+                    if (exterior && exterior.length === 1) {
+                        PictureUpdate.exterior[parseInt(deletedExteriorIndex)] = exterior[0];
+                        shouldUpdateMongo = true;
+                    }
+                console.log("exterior after update:", PictureUpdate);
             }
-            else if(dataSave.matchedCount > 0 && dataSave.modifiedCount == 0)
-            {
-                throw new AppError('Please edit ssomething to change', HttpStatus.NOT_MODIFIED)
+            console.log("deleted exterior :",deletedExteriorIndex)
+    
+            if (deletedInteriorIndex && PictureUpdate) {
+                    console.log("Interior before update:", PictureUpdate);
+                    console.log("delyted Interior : ", deletedInteriorIndex)
+                    if (interior && interior.length === 1) {
+                        PictureUpdate.interior[parseInt(deletedInteriorIndex)] = interior[0];
+                        shouldUpdateMongo = true;
+                    }
+                    console.log("Interior after update:", PictureUpdate)
             }
-            else
-            {
-                throw new AppError('car not found', HttpStatus.NOT_FOUND)
+            console.log("delete Interior :" ,deletedInteriorIndex)
+    
+            if (deletedInteriorIndex || deletedExteriorIndex) {
+                        if(interior && interior.length > 1 && PictureUpdate)
+                            {
+                                PictureUpdate.interior = interior
+                                shouldUpdateMongo = true
+                            }
+                        if(exterior && exterior.length > 1 && PictureUpdate)
+                            {
+                                PictureUpdate.exterior = exterior
+                                shouldUpdateMongo = true
+                            }
             }
+    
+            console.log("id :", _id);
+            console.log("rest data : ", restData);
+    
+            if (PictureUpdate) {
+                const updatedDocument = await PictureUpdate.save();
+                console.log("Updated document:", updatedDocument);
+                const dataSave = await this.model.updateOne({_id}, {$set: restData});
+                console.log("Data save object result : ", dataSave);
+                if (dataSave.matchedCount > 0 && dataSave.modifiedCount > 0) {
+                    const carDetails = await this.model.findOne({_id});
+                    console.log("car details :", carDetails);
+                    console.log("car updated");
+                    return {status: "success"};
+                } else if (dataSave.matchedCount > 0 && dataSave.modifiedCount === 0) {
+                    throw new AppError('Please edit something to change', HttpStatus.NOT_MODIFIED);
+                } else {
+                    throw new AppError('car not found', HttpStatus.NOT_FOUND);
+                }
+            } else {
+                console.log("No need to update MongoDB");
+                return {status: "success"};
+            }
+        } catch (error: any) {
+            console.log(error.message);
+            throw new AppError('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        catch(error:any)
-        {
-            console.log(error.message)
-            throw new AppError('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR)
-        }    
     }
     public async findCar(carData:string):Promise<carInterface[]|carInterface| null>{
         try
@@ -84,6 +125,15 @@ export class carEntity{
                 {
                 return allDetails.toObject()
                 } 
+            }
+            else if(carData === 'partnerCars')
+            {
+                console.log(carData)
+                allDetails = await this.model.find({owner:'Partner'}).populate('category')
+                if(allDetails)
+                    {
+                        return allDetails.map((car)=>car.toObject())
+                    }
             }
             else
             {
