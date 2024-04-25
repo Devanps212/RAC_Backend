@@ -12,8 +12,8 @@ export const carRoute = ()=>{
     const controller = carController(carRepoInterface, carRepository, carModel, authService, interfaceAuthService) 
     const router = express.Router()
 
-    router.post('/addCar', authentication, upload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}]), controller.createCars)
-    router.patch('/editCar/', authentication, upload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}]), controller.editsCar)
+    router.post('/addCar', authentication, upload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}, {name:'thumbnailImg', maxCount:1}]), controller.createCars)
+    router.patch('/editCar/', authentication, upload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}, {name:'thumbnailImg', maxCount:1}]), controller.editsCar)
     router.get('/carsDetails', authentication, controller.viewCar)
     router.delete('/deleteCar', authentication, controller.deletesCar)
     router.get('/getCars',authentication, controller.findsCar)

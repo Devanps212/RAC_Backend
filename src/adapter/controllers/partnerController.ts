@@ -82,7 +82,14 @@ const partnerController = (
                     message:"success",
                 })   
             }
-            //In here you want handle the case if partner i no equal to null which means the partner already exists
+            else
+            {
+                console.log("Partner already exist")
+                res.json({
+                    data:null,
+                    message:"Partner already exist"
+                })
+            }
         }
     )
 
@@ -94,7 +101,7 @@ const partnerController = (
             const partner = await partnerSignUp(partnerId, transactionId, partnerService)
             console.log("partner :", partner)
             
-            res.redirect(configFile.TRANSACTION_SUCCESS_URL)
+            res.redirect(`http://localhost:5173/partner/success/${transactionId}/${partnerId}`)
         }
     )
 

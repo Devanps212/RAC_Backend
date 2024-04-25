@@ -20,10 +20,14 @@ const mainFolder = (req:Request)=>{
 
 const subFolders = (req: Request, file: Express.Multer.File) => {
     console.log("reached subfolder")
+    console.log("files : ", req.files)
+    console.log("body : ", req.body)
     let folderPath = '';
     if (req.body.name && file.fieldname) {
         const { name } = req.body;
         const { fieldname } = file;
+        console.log("name :", name)
+        console.log("fieldname  :", fieldname)
         const deletedInteriorIndex = parseInt(req.body.deletedInteriorIndex);
         const deletedExteriorIndex = parseInt(req.body.deletedExteriorIndex);
 
@@ -31,7 +35,11 @@ const subFolders = (req: Request, file: Express.Multer.File) => {
             folderPath = `${name}/${fieldname}/${deletedInteriorIndex}`;
         } else if (fieldname === 'exterior' && !isNaN(deletedExteriorIndex)) {
             folderPath = `${name}/${fieldname}/${deletedExteriorIndex}`;
-        } else {
+        }
+        else if(fieldname === 'thumbnailImg') {
+            folderPath = `${name}/Thumbnail`
+        }
+        else {
             folderPath = `${name}/${fieldname}`;
         }
 
