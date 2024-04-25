@@ -39,7 +39,7 @@ export class carEntity{
         console.log("reached car Enitity")
         console.log("reached car Enitity");
         try {
-            const {_id, deletedExteriorIndex, deletedInteriorIndex, interior, exterior, ...restData} = carData;
+            const {_id, deletedExteriorIndex, deletedInteriorIndex, interior, exterior, thumbnailImg, seats, comments, ...restData} = carData;
 
             const PictureUpdate = await this.model.findOne({_id})
 
@@ -79,6 +79,16 @@ export class carEntity{
                                 shouldUpdateMongo = true
                             }
             }
+            if(thumbnailImg && PictureUpdate)
+                {
+                    PictureUpdate.thumbnailImg = thumbnailImg
+                    shouldUpdateMongo = true
+                }
+            if(seats && PictureUpdate)
+                {
+                    PictureUpdate.seats = parseInt(seats)
+                    shouldUpdateMongo = true
+                }
     
             console.log("id :", _id);
             console.log("rest data : ", restData);
@@ -114,15 +124,16 @@ export class carEntity{
             let allDetails;
             if(carData === 'all')
             {
-                allDetails = await this.model.find().populate('category')
+                allDetails = await this.model.find().populate('category').populate('addedById')
                 console.log(allDetails)
                 return allDetails.map((car)=>car.toObject())
             }
             else if (Types.ObjectId.isValid(carData))
             {
-                allDetails = await this.model.findOne({_id:carData})
+                allDetails = await this.model.findOne({_id:carData}).populate('comments.userId').populate('category')
                 if(allDetails)
                 {
+                    console.log("populated details : ", allDetails)
                 return allDetails.toObject()
                 } 
             }

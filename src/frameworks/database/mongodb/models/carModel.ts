@@ -1,5 +1,20 @@
-import mongoose, { Types } from 'mongoose'
+import mongoose, { Schema, Types } from 'mongoose'
 
+
+const comments = new mongoose.Schema({
+  userId:{
+    type: mongoose.Schema.ObjectId,
+    ref:'User',
+    required: true
+  },
+  comment:{
+    type: String,
+    required: true
+  },
+  userRating: {
+    type:Number
+  }
+})
 const carSchema = new mongoose.Schema({
     name:{
         type: String,
@@ -53,7 +68,7 @@ const carSchema = new mongoose.Schema({
         default: '',
       },
       comments: {
-        type: [String],
+        type: [comments],
         default: [],
       },
       vehicleNumber: {
@@ -72,6 +87,10 @@ const carSchema = new mongoose.Schema({
         type: String,
         default: '',
       },
+      seats:{
+        type:Number,
+        required: true
+      },
       addedBy: {
         type: String,
         required: true,
@@ -84,6 +103,10 @@ const carSchema = new mongoose.Schema({
       createdAt : {
         type: Date,
         default: Date.now()
+      },
+      thumbnailImg :{
+        type:String,
+        required: true
       }
 })
 

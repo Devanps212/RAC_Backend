@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { createAdminInterface } from "./adminInterface";
 
 export interface carInterface {
     _id?:Types.ObjectId;
@@ -15,7 +16,7 @@ export interface carInterface {
     status?: string;
     rating?: number;
     description?: string;
-    comments?: string[];
+    comments?: commentsInterface;
     vehicleNumber?: string;
     rentPricePerWeek?: number;
     rentPricePerDay?: number;
@@ -23,7 +24,15 @@ export interface carInterface {
     addedBy?: string;
     addedById?:string;
     deletedInteriorIndex: string
-    deletedExteriorIndex: string 
+    deletedExteriorIndex: string
+    thumbnailImg?: string
+    seats?:string
+}
+
+interface commentsInterface {
+  userId: createAdminInterface,
+  comment: string,
+  userRating: number
 }
 
 interface ImageFile {

@@ -28,6 +28,7 @@ export const carController  = (
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             let interior :String[] = []
             let exterior = []
+            let thumbnail : String[]=[] 
             if (files.interior) {
                 console.log("Filenames for interior:");
                 interior = files.interior.map(data=>data.path)
@@ -44,11 +45,18 @@ export const carController  = (
                 throw new Error("No 'exterior' files found.");
             }
 
+            if(files.thumbnailImg)
+            {
+                console.log("thumbnail found")
+                thumbnail = files.thumbnailImg.map(data=>data.path)
+            }
+
             const carData = req?.body
             const {name }= carData
             console.log(name)
             carData.interior = interior
             carData.exterior = exterior
+            carData.thumbnailImg = thumbnail.join(',')
             console.log(carData)
             await checkCar(name, carService)
             console.log("entering controller")
@@ -68,18 +76,35 @@ export const carController  = (
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             let interior: string[] = [];
             let exterior: string[] = [];
+            let thumbnail : String[]=[] 
     
             if (files.interior) {
                 interior = files.interior.map(data => data.path);
                 console.log("interior:", interior);
                 carData.interior = interior;
+                console.log(carData.vehicleNumber)
             }
     
             if (files.exterior) {
                 exterior = files.exterior.map(data => data.path); // Corrected this line
                 console.log("exterior:", exterior);
                 carData.exterior = exterior;
-            }    
+            }
+            console.log("files :", req.files)
+            
+            if(files.thumbnailImg)
+            {
+                console.log("thumbnail found")
+                thumbnail = files.thumbnailImg.map(data=>data.path)
+                carData.thumbnailImg = thumbnail.toString()
+                console.log("cardata in thumbnail")
+                console.log("car Data  :", carData)
+            }
+
+        
+
+
+            
             const response = await editCar(carData, carService);
     
             res.json({
