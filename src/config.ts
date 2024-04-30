@@ -16,6 +16,8 @@ const configFile = {
     SALT_INDEX : process.env.SALT_INDEX as string,
     SALT_KEY : process.env.SALT_KEY as string,
     PHONEPAY_URL :process.env.PHONPAY_URL as string,
+
+    LOCATION_ACCESS_TOKEN : process.env.LOCATION_ACCESS_TOKEN as string
 }
 
 export default configFile

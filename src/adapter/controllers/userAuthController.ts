@@ -9,6 +9,8 @@ import { AuthService } from '../../frameworks/services/authServices'
 import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle } from '../../app/use_case/auth/userAuth'
 import { googleAuthServices } from '../../frameworks/services/googleAuthServices'
 import { authGoogleInterface } from '../../app/services/googleAuthServicesInterface'
+import { locationFinder } from '../../app/use_case/user/user'
+
 
 const authController = (
     authServiceImpl: AuthService,
@@ -139,8 +141,21 @@ const authController = (
           }
         }
       )
+
+      const locationFinders = expressAsyncHandler(
+        async(req:Request, res:Response)=>{
+          console.log("data from body :" ,req.body)
+          const locations = req.body.location
+          console.log("location  :", locations)
+          const location = await locationFinder(locations)
+          res.json({
+            data:location
+          })
+          
+        }
+      )
     
-    return {userSignup, userLogin, otpGenerate, signInUpWithGoogle}
+    return {userSignup, userLogin, otpGenerate, signInUpWithGoogle, locationFinders}
 }
 
 export default authController

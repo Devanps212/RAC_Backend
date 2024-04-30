@@ -121,11 +121,19 @@ export const carController  = (
             console.log("entering viewCar")
             const {carId} = req?.body
             const response = await viewCarDetails(carId, carService)
-            res.json({
-                status:"success",
-                message:"user retreived successfully",
-                response
-            })
+            if(response && 'message' in response){
+                res.json({
+                    status:"failed",
+                    message:response.message,
+                })
+            }
+            else{
+                res.json({
+                    status:"success",
+                    message:"user retreived successfully",
+                    response
+                })
+            }
         }
     )
 
