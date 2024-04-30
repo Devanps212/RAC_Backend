@@ -18,6 +18,7 @@ const userAuthentication: ()=>Router = ()=>{
     route.post('/login', controller.userLogin)
     route.post('/VOTP', controller.otpGenerate)
     route.post('/Google-SignIn-Up', controller.signInUpWithGoogle)
+    route.post('/location', controller.locationFinders)
 
     return route
 }

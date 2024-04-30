@@ -69,7 +69,12 @@ const storage = new CloudinaryStorage({
         console.log("Folder path:", folderPath);
         return{
             folder:folderPath,
-            allowed_formats: ['jpg', 'png', 'gif', 'jpeg']
+            allowed_formats: ['jpg', 'png', 'gif', 'jpeg'],
+            max_filemax_file_size_kb: 1024,
+            max_dimensions: {
+                width: 1920,
+                height: 1080
+            }
         }
     }
 })

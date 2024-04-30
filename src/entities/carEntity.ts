@@ -98,15 +98,15 @@ export class carEntity{
                 console.log("Updated document:", updatedDocument);
                 const dataSave = await this.model.updateOne({_id}, {$set: restData});
                 console.log("Data save object result : ", dataSave);
-                if (dataSave.matchedCount > 0 && dataSave.modifiedCount > 0) {
+                if ((updatedDocument !== null || (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount > 0))) {
                     const carDetails = await this.model.findOne({_id});
                     console.log("car details :", carDetails);
                     console.log("car updated");
                     return {status: "success"};
-                } else if (dataSave.matchedCount > 0 && dataSave.modifiedCount === 0) {
+                } else if (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount === 0 && updatedDocument === null) {
                     throw new AppError('Please edit something to change', HttpStatus.NOT_MODIFIED);
                 } else {
-                    throw new AppError('car not found', HttpStatus.NOT_FOUND);
+                    throw new AppError('car not found or update failed', HttpStatus.NOT_FOUND);
                 }
             } else {
                 console.log("No need to update MongoDB");
@@ -181,14 +181,14 @@ export class carEntity{
         }
     }
 
-    public async viewCarDetails(carId:string) : Promise<carInterface | null >{
+    public async viewCarDetails(carId:string) : Promise<carInterface | {message: string} | null >{
         try
         {
             console.log("carId for view details :", carId)
             const details = await this.model.findOne({_id:carId})
             if(!details)
             {
-                throw new AppError('car not found', HttpStatus.NOT_FOUND)
+                return {message: "not found"}
             }
             console.log("car details : ",details.toObject())
             return details.toObject()
