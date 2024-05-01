@@ -87,4 +87,23 @@ export class UserEntity {
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  public async findUsers(id: string) : Promise<userInterface | {message: string} | null>{
+    try{
+      const user = this.model.findOne({_id:id})
+      if(user!==null){
+        return user as userInterface
+      }
+      else{
+        return {message: "not found"}
+      }
+    }
+    catch(error: any){
+      console.log(error.message)
+      throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+  }
 }
+
+

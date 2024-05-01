@@ -133,8 +133,7 @@ export class carEntity{
                 allDetails = await this.model.findOne({_id:carData}).populate('comments.userId').populate('category')
                 if(allDetails)
                 {
-                    console.log("populated details : ", allDetails)
-                return allDetails.toObject()
+                    return allDetails.toObject()
                 } 
             }
             else if(carData === 'partnerCars')

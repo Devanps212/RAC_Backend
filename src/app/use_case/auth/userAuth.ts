@@ -180,3 +180,18 @@ export const checkUserExists = async(userId : string, userRepository : ReturnTyp
     }
 
 }
+
+export const findUser = async(userId : string, userRepository : ReturnType<userDbInterface>)=>{
+    try
+    {
+        const response = await userRepository.findUser(userId)
+        return response
+    }
+    catch(error:any)
+    {
+        console.log(error.message)
+        throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+}
+

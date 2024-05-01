@@ -1,3 +1,4 @@
+import { Types } from "mongoose"
 import { BookingModelType } from "../frameworks/database/mongodb/models/bookingModel"
 import { Booking } from "../types/bookingInterface"
 import { HttpStatus } from "../types/httpTypes"
@@ -31,17 +32,32 @@ export class BookingEnity{
         }
     }
 
-    public async findBooking(data: string) : Promise<Booking | {message: string} | null >{
+    public async findBooking(data: string) : Promise<Booking | {message: string} | null | undefined >{
         try{
-            const bookingFinding = await this.model.findOne({_id:data})
-            if(bookingFinding)
-                {
-                    return bookingFinding.toObject()
+            if(data === 'all'){
+                const bookingFinding = await this.model.find()
+                console.log("bookings found : ", bookingFinding)
+                if(bookingFinding.length ===0){
+                    return {message:"no bookings found"}
                 }
-                else
-                {
-                    return {message: "not found"}
+                else{
+                console.log(bookingFinding)
                 }
+            }
+            else if(Types.ObjectId.isValid(data)){
+                const bookingFinding = await this.model.findOne({_id:data})
+                if(bookingFinding){
+                        return bookingFinding.toObject()
+                    }
+                    else{
+                        return {message: "not found"}
+                    }
+            }
+            else
+            {
+                throw new AppError('no data found', HttpStatus.NOT_IMPLEMENTED)
+            }
+            
         }
         catch(error: any){
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)

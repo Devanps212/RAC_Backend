@@ -45,6 +45,7 @@ const adminUserController = (
         async(req: Request, res: Response)=>{
           const userId = req.header('x-user-id') as string
           const user = await findOneUser(userId, userService)
+          console.log(user)
           res.json({
             status:"success",
             user

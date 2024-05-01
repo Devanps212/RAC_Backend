@@ -6,9 +6,15 @@ import { carModelType } from "../../frameworks/database/mongodb/models/carModel"
 import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carRepository";
 import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import expressAsyncHandler from "express-async-handler";
-import { viewCarDetails } from "../../app/use_case/car/car";
-import { createBooking } from "../../app/use_case/booking/booking";
+import { findCar, viewCarDetails } from "../../app/use_case/car/car";
+import { createBooking, findBooking } from "../../app/use_case/booking/booking";
 import { Booking } from "../../types/bookingInterface";
+import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
+import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
+import { userDbInterface } from "../../app/repositories/userDbrepository";
+import { findOneUser } from "../../app/use_case/adminUser/adminUser";
+import { carInterface } from "../../types/carInterface";
+import { findUser } from "../../app/use_case/auth/userAuth";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -16,11 +22,16 @@ export const bookingController = (
     bookingModel : BookingModelType,
     carInterface : carInterfaceType,
     carRepository: CarRepoType,
-    carModel: carModelType
+    carModel: carModelType,
+    userModel: userModelType,
+    userInterface: userDbInterface,
+    userRepository: userRepository
 )=>{
     
     const bookingService = bookingInterface(bookingDBRepository(bookingModel))
     const carService = carInterface(carRepository(carModel))
+    const userService = userInterface(userRepository(userModel))
+
 
     const creatingBooking = expressAsyncHandler(
         async(req: Request, res: Response)=>{
@@ -44,7 +55,26 @@ export const bookingController = (
         }
     )
 
+    const filteringCarsBooking = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            console.log(req.query)
+            const { pickupLocation, dropOffLocation, startDate, endDate, pickupTime, dropOffTime } = req.query;
+            const finDcars = await findCar('all', carService) as carInterface[]
+            const Bookings = await findBooking('all', bookingService) as Booking
+            if(finDcars){
+                const ownerId = finDcars.map((car : carInterface)=>car.addedById as string)
+                const findUsersPromises = ownerId.map(id=> findUser(id, userService))
+                console.log(findUsersPromises)
+                
+            }
+            
+
+            
+        }
+    )
+
     return {
-        creatingBooking
+        creatingBooking, 
+        filteringCarsBooking
     }
 }
