@@ -19,12 +19,18 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
         const user = await repository.findOneUser(userId)
         return user
     }
+
+    const findUser = async(id: string)=>{
+        const user = await repository.findUser(id)
+        return user
+    }
     return {
         createUser,
         getUserByEmail,
         getAllUsers,
         blockUnblockUser,
-        findOneUser
+        findOneUser,
+        findUser
     }
     
 }
