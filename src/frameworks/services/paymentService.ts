@@ -4,7 +4,7 @@ import { userInterface } from "../../types/userInterface"
 import crypto from 'crypto'
 import AppError from "../../utils/appErrors"
 import { HttpStatus } from "../../types/httpTypes"
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import { partnerRepoInterface } from "../../app/repositories/partnerRepoInterface"
 import { partnerDbRepo } from "../database/mongodb/repositories/partnerRepository"
 
@@ -62,20 +62,28 @@ export const paymentService = ()=>{
                     headers: {
                         accept: 'application/json',
                         'Content-Type': 'application/json',
-                        'X-VERIFY' : checksum       },
+                        'X-VERIFY' : checksum },
                     data: {
                         request: mainPayload
                     }
                 };
-                console.log("options passing : ", options)
-                const response = await axios.request(options);
-                console.log("response of data : ", response.data);
-                return response.data.data.instrumentResponse.redirectInfo.url;
                 
+                console.log("options passing : ", options)
+                const response : AxiosResponse = await axios.request(options);
+                console.log("response of data : ", response.data);
+                console.log("Execution after function call");
+
+                // axios.request(options)
+                // .then((response: AxiosResponse)=>{
+                //     console.log("response : ",response.data)
+                // })
+                // .catch((error:any)=>{
+                //     console.log("error : ",error.data)
+                // })
             }
             catch(error:any)
             {
-                console.log(error.message)
+                console.log(error)
                 throw new AppError(error.message, HttpStatus.BAD_GATEWAY)
             }
         }

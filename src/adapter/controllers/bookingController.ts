@@ -67,14 +67,27 @@ export const bookingController = (
                 console.log(findUsersPromises)
                 
             }
-            
+        }
+    )
 
-            
+    const findBookings = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            const data = req.query.bookingData
+            console.log("data  found : ",data)
+            if (typeof data === 'string') { 
+                const findingBookings = await findBooking(data, bookingService);
+                res.json({
+                    data: findingBookings
+                });
+            } else {
+                res.status(400).json({ message: 'Invalid data provided' }); 
+            }
         }
     )
 
     return {
         creatingBooking, 
-        filteringCarsBooking
+        filteringCarsBooking,
+        findBookings
     }
 }
