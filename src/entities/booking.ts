@@ -32,16 +32,16 @@ export class BookingEnity{
         }
     }
 
-    public async findBooking(data: string) : Promise<Booking | {message: string} | null | undefined >{
+    public async findBooking(data: string) : Promise<Booking[] | Booking | {message: string} | null | undefined >{
         try{
             if(data === 'all'){
-                const bookingFinding = await this.model.find()
+                const bookingFinding = await this.model.find().populate("carId")
                 console.log("bookings found : ", bookingFinding)
                 if(bookingFinding.length ===0){
                     return {message:"no bookings found"}
                 }
                 else{
-                console.log(bookingFinding)
+                    return bookingFinding.map(booking=>booking.toObject())
                 }
             }
             else if(Types.ObjectId.isValid(data)){

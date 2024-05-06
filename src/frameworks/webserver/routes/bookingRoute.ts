@@ -26,6 +26,7 @@ export const bookingRoute = ()=>{
 
     router.post('/rentBooking', controller.creatingBooking)
     router.get('/filterForBooking', controller.filteringCarsBooking)
+    router.get('/findBookings', controller.findBookings)
 
     return router
     
