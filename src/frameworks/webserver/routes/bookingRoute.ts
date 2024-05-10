@@ -9,6 +9,8 @@ import { usersModel } from "../../database/mongodb/models/userModel";
 import { userdbRepository } from "../../../app/repositories/userDbrepository";
 import { userRepository } from "../../database/mongodb/repositories/userRepositoryMongo";
 import express from 'express'
+import { paymentInterface } from "../../../app/services/paymentInterface";
+import { paymentService } from "../../services/paymentService";
 
 export const bookingRoute = ()=>{
     const controller = bookingController(bookingDBInterface, 
@@ -19,15 +21,19 @@ export const bookingRoute = ()=>{
         carModel,
         usersModel,
         userdbRepository,
-        userRepository
+        userRepository,
+        paymentInterface,
+        paymentService
         )
 
     const router = express.Router()
-
-    router.post('/rentBooking', controller.creatingBooking)
+    
     router.get('/filterForBooking', controller.filteringCarsBooking)
     router.get('/findBookings', controller.findBookings)
-
+    router.post('/payment', controller.bookingPaymentUI)
+    router.post('/BasedOnRole', controller.bookingFindingBasedOnRole)
+    router.get('/redirect-to', controller.bookingCompletion)
+    router.patch('/updater', controller.bookingUpdater)
     return router
     
 }

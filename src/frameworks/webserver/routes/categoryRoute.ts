@@ -19,6 +19,7 @@ const categoryRoute = ()=>{
     router.get('/categoryOne', authentication, AuthRoleMiddleware, controller.categoryRetrieve)
     router.get('/getCategoryAll', authentication, AuthRoleMiddleware, controller.getAllCategory)
     router.put('/editCateg', authentication, AuthRoleMiddleware, controller.editsCategory)
+    router.get('/findAllCategory', controller.getAllCategory)
     return router
 }
 export default categoryRoute

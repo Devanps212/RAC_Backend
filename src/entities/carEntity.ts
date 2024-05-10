@@ -3,6 +3,7 @@ import { carModelType } from "../frameworks/database/mongodb/models/carModel";
 import { carInterface } from "../types/carInterface";
 import { HttpStatus } from "../types/httpTypes";
 import AppError from "../utils/appErrors";
+import { HttpStatusCode } from "axios";
 
 export class carEntity{
     private model : carModelType
@@ -125,7 +126,6 @@ export class carEntity{
             if(carData === 'all')
             {
                 allDetails = await this.model.find().populate('category').populate('addedById')
-                console.log(allDetails)
                 return allDetails.map((car)=>car.toObject())
             }
             else if (Types.ObjectId.isValid(carData))
@@ -138,7 +138,6 @@ export class carEntity{
             }
             else if(carData === 'partnerCars')
             {
-                console.log(carData)
                 allDetails = await this.model.find({owner:'Partner'}).populate('category')
                 if(allDetails)
                     {
@@ -223,5 +222,30 @@ export class carEntity{
         }
     }
 
+    public async carUpdater(carId: string, dataUpdate: Partial<carInterface>): Promise<{message: string, carData:carInterface | null}>{
+        try{
+            const car = await this.model.findById(carId)
+
+            if (!car) {
+                throw new Error('Car not found');
+            }
+
+            if(dataUpdate && Object.keys(dataUpdate).length > 0){
+                Object.assign(car, dataUpdate)
+                await car.save();
+                return {message:"car Updated SuccessFully", carData: car.toObject()}
+                
+            }
+            else{
+                return {message:"updation failed", carData: null}
+            }
+            
+        }catch(error:any){
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     
 }
+
+
