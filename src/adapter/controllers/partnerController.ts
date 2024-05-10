@@ -9,7 +9,7 @@ import { InterfaceAuthService } from "../../app/services/authServiceInterface";
 import expressAsyncHandler from "express-async-handler";
 import { paymentInterfaceType } from "../../app/services/paymentInterface";
 import { paymentServiceType } from "../../frameworks/services/paymentService";
-import { partnerExist, signUpPayment } from "../../app/use_case/partner/partnerUseCase";
+import { partnerExist } from "../../app/use_case/partner/partnerUseCase";
 import { partnerData } from "../../types/partnerInterface";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
 import { userDbInterface } from "../../app/repositories/userDbrepository";
@@ -70,26 +70,26 @@ const partnerController = (
             const userExists = await checkUserExists(partnerId, userServices)
             console.log("useExists : ",userExists)
             const partnerExists = await partnerExist(partnerId, partnerService)
-            if(partnerExists === null && userExists)
-            {
-                console.log("entering payment")
-                userExists.amount = partnerData.amount
-                userExists.role = "partner"
-                const paymentStarts = await signUpPayment(userExists, paymentServices)
-                console.log("payment data recieved :", paymentStarts)
-                res.json({
-                    data: paymentStarts,
-                    message:"success",
-                })   
-            }
-            else
-            {
-                console.log("Partner already exist")
-                res.json({
-                    data:null,
-                    message:"Partner already exist"
-                })
-            }
+            // if(partnerExists === null && userExists)
+            // {
+            //     console.log("entering payment")
+            //     userExists.amount = partnerData.amount
+            //     userExists.role = "partner"
+            //     const paymentStarts = await signUpPayment(userExists, paymentServices)
+            //     console.log("payment data recieved :", paymentStarts)
+            //     res.json({
+            //         data: paymentStarts,
+            //         message:"success",
+            //     })   
+            // }
+            // else
+            // {
+            //     console.log("Partner already exist")
+            //     res.json({
+            //         data:null,
+            //         message:"Partner already exist"
+            //     })
+            // }
         }
     )
 

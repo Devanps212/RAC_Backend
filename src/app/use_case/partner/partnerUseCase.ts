@@ -8,8 +8,8 @@ export const partnerExist = async(partnerId : string, partnerInterface:ReturnTyp
     return response
 }
 
-export const signUpPayment = async(userData:userInterface,paymentInterface: ReturnType<paymentInterfaceType>)=>{
-    console.log("passing response")
-    const response = await paymentInterface.paymentPhonepayUser(userData)
-    return response
-}
+// export const signUpPayment = async(userData:userInterface,paymentInterface: ReturnType<paymentInterfaceType>)=>{
+//     console.log("passing response")
+//     const response = await paymentInterface.paymentPhonepayUser(userData)
+//     return response
+// }

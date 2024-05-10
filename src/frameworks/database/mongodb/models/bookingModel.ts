@@ -12,38 +12,40 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     owner:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required: true
+    },
+    ownerRole : {
+      type: String,
+      required: true
     },
     status:{
         type: String,
         enum:['Pending', 'Confirmed', 'Cancelled', 'Completed', 'On Hold', 'In Progress'],
         default: 'Pending'
     },
-    date:{
-        type: [{
-          start: { type: Date, required: true },
-          end: { type: Date, required: true }
-        }]
+    date: {
+      start: { type: Date, required: true },
+      end: { type: Date, required: true }
       },
-      time:{
-        type: [{
+    time: {
           start: { type: String, required: true },
           end: { type: String, required: true }
-        }]
       },
-      location:{
-        type: [{
+    location: {
           start: { type: String, required: true },
           end: { type: String, required: true }
-        }]
       },
-      transaction:{
-        type: [{
-          transaction: { type: String },
-          amount: { type: Number }
-        }]
-      }
+    transaction: {
+        type: {
+            transaction: { type: String },
+            amount: { type: Number }
+        }
+    },
+    issues:{
+        type: String,
+        default:''
+    }
 })
 
 export const bookingModel = mongoose.model('Bookings', bookingSchema)

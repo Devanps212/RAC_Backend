@@ -1,10 +1,11 @@
 import { bookingRepositoryType } from "../../frameworks/database/mongodb/repositories/bookingRepository";
-import { Booking } from "../../types/bookingInterface";
+import { Booking, SessionDataInterface, backendBooking, bookingDetail } from "../../types/bookingInterface";
+import { carInterface } from "../../types/carInterface";
 
 export const bookingDBInterface = (repository: ReturnType<bookingRepositoryType>)=>{
 
-    const createBooking = async(dataDetail: Booking)=>{
-        const bookingCreation = await repository.createBooking(dataDetail)
+    const createBooking = async(dataDetail: SessionDataInterface, carDetail: carInterface )=>{
+        const bookingCreation = await repository.createBooking(dataDetail, carDetail)
         return bookingCreation
     }
 
@@ -13,9 +14,22 @@ export const bookingDBInterface = (repository: ReturnType<bookingRepositoryType>
         return findingBooking
     }
 
+    const bookingBasedOnRole = async(bookingData : Partial<Booking>)=>{
+        const response = await repository.bookingFindinBaedOnRole(bookingData)
+        return response
+    }
+
+    const bookingUpdater = async(data: Partial<Booking>)=>{
+        console.log(data)
+        const response = await repository.bookingUpdater(data)
+        return response
+    }
     return{
         createBooking,
-        findBooking
+        findBooking,
+        bookingBasedOnRole,
+        bookingUpdater
+
     }
 }
 

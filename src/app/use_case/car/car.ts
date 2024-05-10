@@ -33,7 +33,6 @@ export const deleteCar = async(carId : string, carRepoInterface: ReturnType<carI
 }
 
 export const findCar = async(carData: string, carRepoInterface:ReturnType<carInterfaceType>)=>{
-    console.log("data receieved to find :", carData)
 
     const carFind = await carRepoInterface.findCar(carData)
     return carFind
@@ -51,4 +50,14 @@ export const checkCar = async(name: string, carRepoInterface: ReturnType<carInte
     
     const carExist = await carRepoInterface.checkCar(name)
     return carExist
+}
+
+export const statusUpdater = async(carId: string, carRepoInterface : ReturnType<carInterfaceType>)=>{
+    const response = await carRepoInterface
+    return response 
+}
+
+export const updateCar = async(carId: string, carData:Partial<carInterface>, carRepoInterface : ReturnType<carInterfaceType>)=>{
+    const response = await carRepoInterface.updateCar(carId, carData)
+    return response
 }
