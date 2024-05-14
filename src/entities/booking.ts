@@ -44,7 +44,7 @@ export class BookingEnity{
                     time: { start: pickupTime, end: dropOffTime },
                     status: 'Confirmed',
                     owner: addedById,
-                    transaction: { amount: total , transaction: data.transactionId },
+                    transaction: { amount: total , transactionId: data.transactionId },
                     ownerRole: addedRole,
                     issues:''
                 };
@@ -79,7 +79,7 @@ export class BookingEnity{
                 }
             }
             else if(Types.ObjectId.isValid(data)){
-                const bookingFinding = await this.model.findOne({_id:data})
+                const bookingFinding = await this.model.findOne({_id:data}).populate("carId")
                 if(bookingFinding){
                         return bookingFinding.toObject()
                     }

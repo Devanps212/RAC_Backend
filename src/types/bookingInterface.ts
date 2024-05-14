@@ -1,6 +1,8 @@
+import { carInterface } from "./carInterface";
+
 export interface Booking {
     _id?:string
-    carId: string;
+    carId: string | carInterface;
     userId: string;
     owner: string;
     status: 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed' | 'On Hold' | 'In Progress';
@@ -18,7 +20,7 @@ export interface Booking {
     };
     transaction: {
       _id?:string;
-      transaction: string;
+      transactionId: string;
       amount: number;
     };
     ownerRole:string,
@@ -35,6 +37,11 @@ export interface Booking {
     amount?:number
     discount?:number
     total?:number
+    transaction: {
+      _id?:string;
+      transactionId: string;
+      amount: number;
+    };
   }
 
   export interface backendBooking { 
@@ -50,4 +57,22 @@ export interface SessionDataInterface {
   bookingDetails: bookingDetail;
   carId: string;
   userId: string
+}
+
+export interface RefundDetails {
+  transactionId: string;
+  amount: number;
+  currency: string;
+  created: number;
+  status: string | null;
+  card: {
+      brand: string | null;
+      last4: string | null;
+      exp_month: number;
+      exp_year: number;
+  };
+  bookingDetail?: {
+      itemName: string;
+      thumbnail: string;
+  };
 }
