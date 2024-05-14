@@ -7,8 +7,8 @@ import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carR
 import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import expressAsyncHandler from "express-async-handler";
 import { findCar, updateCar, viewCarDetails } from "../../app/use_case/car/car";
-import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater } from "../../app/use_case/booking/booking";
-import { Booking, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
+import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund } from "../../app/use_case/booking/booking";
+import { Booking, RefundDetails, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
 import { userDbInterface } from "../../app/repositories/userDbrepository";
@@ -36,29 +36,6 @@ export const bookingController = (
     const carService = carInterface(carRepository(carModel))
     const userService = userInterface(userRepository(userModel))
     const paymentService = paymentInterface(paymentServices())
-
-
-    // const creatingBooking = expressAsyncHandler(
-    //     async(req: Request, res: Response)=>{
-    //         const data : Booking = req.body.data
-    //         console.log("data :" , data)
-    //         const carAvailable = await viewCarDetails(data.carId, carService)
-    //         if(carAvailable && 'message' in carAvailable){
-    //             res.json({
-    //                 status: "failed",
-    //                 message: carAvailable.message
-    //             })
-    //         }
-    //         else
-    //         {
-    //             const BookingCreation = await createBooking(data, bookingService)
-    //             res.json({
-    //                 status:"success",
-    //                 BookingCreation
-    //             })
-    //         }
-    //     }
-    // )
 
     const filteringCarsBooking = expressAsyncHandler(
         async(req: Request, res: Response)=>{
@@ -92,12 +69,11 @@ export const bookingController = (
 
     const bookingPaymentUI = expressAsyncHandler(
         async(req:Request, res:Response)=>{
-            console.log(req.body)
             const { dataString, carId, userId } = req.body
             const bookingDetail = JSON.parse(dataString)
             const carData = await findCar(carId, carService)
             const payment = await bookingPayment(bookingDetail, carData, userId, paymentService)
-            console.log("payment : ", payment)
+            req.session.userData = payment as string
             res.json({
                 sessionId : payment
             })
@@ -107,23 +83,30 @@ export const bookingController = (
 
     const bookingCompletion = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            const {val, bookingDetail} = req.query
-            console.log(val, bookingDetail)
-            if(typeof val === 'string' &&  typeof bookingDetail === 'string'){
+            const {val, bookingDetail, session_id} = req.query
+            
+            if(typeof val === 'string' &&  typeof bookingDetail === 'string' && typeof session_id === 'string'){ 
             const decodedVal = decodeURIComponent(val);
             const decodedBooking = decodeURIComponent(bookingDetail)
             const paymentDetail: SessionDataInterface = JSON.parse(decodedVal);
+
             paymentDetail.bookingDetails = JSON.parse(decodedBooking)
+            
             const carId = paymentDetail.carId
-            console.log("paymentDetail : ",paymentDetail)
             const carDetails = await findCar(carId, carService) as carInterface
+
+            const sesssionVerification = await stripePaymentVeification(session_id, paymentService)
+
+            if(sesssionVerification){
+                paymentDetail.transactionId = session_id
+            }
+
             const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
+
             if(bookingCreation !== null){
-                console.log(bookingCreation)
                 const data = JSON.stringify(bookingCreation)
                 const update : Partial<carInterface> = {status:'booked'}
                 const statusUpdateCar = await updateCar(carId, update, carService)
-                console.log("updated detail : ", statusUpdateCar)
                 if(statusUpdateCar){
                     res.redirect(`http://localhost:5173/users/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
                 } else {
@@ -150,34 +133,80 @@ export const bookingController = (
     )
 
     const bookingUpdater = expressAsyncHandler(
-        async(req: Request, res: Response)=>{
-            const {data} = req.body
-            const bookingDetail : Partial<Booking> = data
-            if(bookingDetail && bookingDetail._id){
-                const booking = await findBooking(bookingDetail._id, bookingService)
-                if(booking && 'message' in booking ){
-                    res.status(404).json({
-                        message: booking.message,
-                        status: 'failed'
-                    })
-                } else {
-                    const update = await BookingUpdater(bookingDetail, bookingService)
-                    if(update && 'message' in update){
-                        res.status(404).json({
-                            message: update.message,
-                            status: 'failed'
-                        })
-                    } else {
-                        res.json({
-                            data:update,
-                            status: "success"
-                        })
-                    }
-                }
-            }
+        async (req: Request, res: Response) => {
+            const { data } = req.body;
+            const bookingDetail: Partial<Booking> = data;
             
+            if (bookingDetail && bookingDetail._id) {
+                const booking = await findBooking(bookingDetail._id, bookingService);
+                
+                if (!booking || (booking && 'message' in booking)) {
+                    res.status(404).json({
+                        message: booking?.message || "Booking not found",
+                        status: 'failed'
+                    });
+                    return;
+                }
+                
+                if (Array.isArray(booking)) {
+                    res.status(400).json({
+                        message: "Expected a single booking, but received an array.",
+                        status: 'failed'
+                    });
+                    return;
+                }
+
+                if (booking.status === 'Cancelled') {
+                    console.log("booking is already cancelled")
+                    res.status(400).json({
+                        message: "Booking is already cancelled, no further action can be taken.",
+                        status: 'failed'
+                    });
+                    return;
+                }
+    
+                const update = await BookingUpdater(bookingDetail, bookingService);
+    
+                if (!update || (update && 'message' in update)) {
+                    res.status(404).json({
+                        message: update?.message || "Failed to update booking",
+                        status: 'failed'
+                    });
+                    return;
+                }
+    
+                if (update.status === 'Cancelled') {
+                    console.log("status is cancelled, processing refund");
+                    const refund: Partial<RefundDetails> = await stripeRefund(update, paymentService);
+    
+                    console.log("booking car : ", booking.carId)
+                    if (typeof booking.carId === 'object') {
+                        refund.bookingDetail = {
+                            itemName: booking.carId.name ?? '',
+                            thumbnail: booking.carId.thumbnailImg ?? ''
+                        };
+                    }
+
+                    console.log("refund success data : ",refund )
+                    res.json({
+                        message: "Refund success",
+                        data: refund
+                    });
+                } else {
+                    res.json({
+                        message:"booking failed to cancel",
+                        status: "failed"
+                    });
+                }
+            } else {
+                res.status(400).json({
+                    message: "Booking ID is required",
+                    status: 'failed'
+                });
+            }
         }
-    )
+    );
+
     return {
         bookingUpdater,
         bookingFindingBasedOnRole,

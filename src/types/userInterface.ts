@@ -55,7 +55,7 @@ interface OTP{
 
 declare module 'express-session' {
     interface SessionData extends OTP {
-        userData : userInterface | undefined,
+        userData : string | null,
     }
 }
 

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
-import { bookingDetail } from "../../types/bookingInterface";
+import { Booking, bookingDetail } from "../../types/bookingInterface";
 import { carInterface } from "../../types/carInterface";
 import configFile from "../../config";
 
@@ -65,7 +65,7 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `http://localhost:5000/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}`,
+                success_url: `http://localhost:5000/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: "http://localhost:5173/users/home"
             });
             
@@ -78,7 +78,82 @@ export const paymentService = () => {
         }
     };
 
-    return { paymentMakingService, generateTransactionId };
+    const PaymentRefund = async(booking : Partial<Booking>)=>{
+        console.log("refund starting")
+        
+        if(!booking){
+            throw new AppError('no booking found', HttpStatus.NOT_FOUND)
+        }
+        console.log(booking)
+
+        if(booking.transaction && booking.transaction.transactionId && booking.transaction.amount){
+            
+            const paymentDetail = await stripe.checkout.sessions.retrieve(booking.transaction.transactionId)
+
+            if (!paymentDetail.payment_intent) {
+                throw new AppError('No payment intent found for the session', HttpStatus.NOT_FOUND);
+            }
+            
+            const paymentIntentId = paymentDetail.payment_intent as string;
+            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+            const latestChargeId = paymentIntent.latest_charge;
+
+            if (!latestChargeId) {
+                throw new AppError('No charge associated with the payment intent', HttpStatus.NOT_FOUND);
+            }
+            const charge = await stripe.charges.retrieve(latestChargeId as string)
+            const card = charge.payment_method_details?.card
+            if (!card) {
+                console.log('No card details found');
+                throw new AppError('No card details found', HttpStatus.NOT_FOUND);
+            }
+            
+            try {
+                const refund = await stripe.refunds.create({
+                    charge: latestChargeId as string,
+                    amount: booking.transaction.amount,
+                });
+    
+                console.log('Refund successful:', refund.amount);
+                
+                console.log(`Card Brand: ${card.brand}`);
+                console.log(`Last 4 Digits: ${card.last4}`);
+                console.log(`Expiry: ${card.exp_month}/${card.exp_year}`);
+                const refundDetails = {
+                    transactionId: refund.id,
+                    amount: refund.amount,
+                    currency: refund.currency,
+                    created: refund.created,
+                    status: refund.status,
+                    card: {
+                        brand: card.brand,
+                        last4: card.last4,
+                        exp_month: card.exp_month,
+                        exp_year: card.exp_year,
+                    },
+                };
+    
+                    console.log('Refund Details:', refundDetails);
+                return refundDetails;
+            } catch (error) {
+                console.error('Error creating refund:', error);
+                throw new AppError('Failed to create refund', HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            throw new AppError('no amount and transactionId found', HttpStatus.NOT_FOUND)
+        }
+    }
+
+    const stripeSessionVerify = async(session_id: string)=>{
+        const session = await stripe.checkout.sessions.retrieve(session_id)
+        if(!session){
+            throw new AppError('Invalid stripe sessionId', HttpStatus.BAD_REQUEST)
+        }
+        return session
+    }
+
+    return { paymentMakingService, generateTransactionId, stripeSessionVerify, PaymentRefund };
 };
 
 export type paymentServiceType = typeof paymentService;
