@@ -1,5 +1,6 @@
 import { carInterface } from "./carInterface";
 
+
 export interface Booking {
     _id?:string
     carId: string | carInterface;
@@ -36,6 +37,9 @@ export interface Booking {
     dropOffTime?: string
     amount?:number
     discount?:number
+    bookingId?:string,
+    carId: carInterface,
+    purpose: 'schedule' | 'signUp',
     total?:number
     transaction: {
       _id?:string;

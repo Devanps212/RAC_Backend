@@ -2,6 +2,8 @@ import AppError from "../../../utils/appErrors"
 import { HttpStatus } from "../../../types/httpTypes"
 import configFile from "../../../config"
 import axios from "axios"
+import { userInterface } from "../../../types/userInterface"
+import { userDbInterface } from "../../repositories/userDbrepository"
 
 export const locationFinder = async(data: string)=>{
     try
@@ -15,4 +17,9 @@ export const locationFinder = async(data: string)=>{
         console.log(error)
         throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
+}
+
+export const updateUser = async(data: Partial<userInterface>, userInterface: ReturnType<userDbInterface>)=>{
+    const response = await userInterface.userUpdate(data)
+    return response
 }

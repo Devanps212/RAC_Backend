@@ -31,21 +31,17 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:''
     },
+    city:{
+        type:String
+    },
     DOB:{
         type:Date,
     },
     address:{
-        type:[{
-            country:{type:String},
-            street: { type: String },
-            city: { type: String },
-            state: { type: String },
-            pincode: { type: String },
-            phone: { type: String },
-            alternateNumber: { type: String },
-            landmark: { type: String },
-        }],
-        default:[]
+        type:String
+    },
+    gender:{
+        type: String
     },
     createdAt:{
         type:Date,

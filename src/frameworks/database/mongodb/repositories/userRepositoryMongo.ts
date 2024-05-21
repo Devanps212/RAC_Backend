@@ -32,7 +32,13 @@ export const userRepository = (model:userModelType)=>{
         const user = await userEntity.findUsers(id)
         return user
     }
-    return {createUser, getUserByEmail, getAllUser, blockUnblockUser, findOneUser, findUser}
+
+    const updateUser = async(data: Partial<userInterface>)=>{
+        const response = await userEntity.userUpdate(data)
+        return response
+    }
+
+    return {createUser, getUserByEmail, getAllUser, blockUnblockUser, findOneUser, findUser, updateUser}
 }
 
 export type userRepository = typeof userRepository

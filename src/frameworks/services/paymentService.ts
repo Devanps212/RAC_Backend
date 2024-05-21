@@ -24,7 +24,7 @@ export const paymentService = () => {
         return transactionString + transactionId;
     };
 
-    const paymentMakingService = async (bookingDetail: bookingDetail, car: carInterface | carInterface[] | null, userId: string) => {
+    const paymentMakingService = async (bookingDetail: Partial<bookingDetail>, car: carInterface | carInterface[] | null, userId: string) => {
         try {
 
             const transactionId = await generateTransactionId()

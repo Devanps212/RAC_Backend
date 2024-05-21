@@ -24,13 +24,19 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
         const user = await repository.findUser(id)
         return user
     }
+
+    const userUpdate = async(data: Partial<userInterface>)=>{
+        const response = await repository.updateUser(data)
+        return response
+    }
     return {
         createUser,
         getUserByEmail,
         getAllUsers,
         blockUnblockUser,
         findOneUser,
-        findUser
+        findUser,
+        userUpdate
     }
     
 }

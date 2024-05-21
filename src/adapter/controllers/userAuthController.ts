@@ -6,10 +6,10 @@ import { userModelType } from '../../frameworks/database/mongodb/models/userMode
 import { userDbInterface } from '../../app/repositories/userDbrepository'
 import { InterfaceAuthService } from '../../app/services/authServiceInterface'
 import { AuthService } from '../../frameworks/services/authServices'
-import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle } from '../../app/use_case/auth/userAuth'
+import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser } from '../../app/use_case/auth/userAuth'
 import { googleAuthServices } from '../../frameworks/services/googleAuthServices'
 import { authGoogleInterface } from '../../app/services/googleAuthServicesInterface'
-import { locationFinder } from '../../app/use_case/user/user'
+import { locationFinder, updateUser } from '../../app/use_case/user/user'
 
 
 const authController = (
@@ -154,8 +154,53 @@ const authController = (
           
         }
       )
+
+      const findSingleUser = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+          const { data }  = req.query as { data : string}
+          const findOneUser = await findUser(data, dbrepositoryUser)
+          res.json({
+            status: 'success',
+            data: findOneUser
+          })
+        }
+      )
+
+      const upDateDetail = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+          console.log("reached controller")
+          let data : Partial<userInterface>;
+          if(req.files){
+            console.log("file found")
+            const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+            const path = files.profilePic[0].path
+            console.log("body data :", req.body._id)
+            data = {}
+            data.profilePic = path
+            data._id = req.body._id
+          } else {
+            console.log(req.body)
+            data = req.body;
+            console.log(data)
+          }
+          
+          const updatingUser = await updateUser(data, dbrepositoryUser)
+          res.json({
+            status: 'success',
+            data: updatingUser
+          })
+        }
+      )
     
-    return {userSignup, userLogin, otpGenerate, signInUpWithGoogle, locationFinders}
+    return {userSignup, 
+      userLogin, 
+      otpGenerate,
+      upDateDetail,
+      findSingleUser,
+      locationFinders,
+      signInUpWithGoogle, 
+      }
 }
+
 
 export default authController

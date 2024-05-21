@@ -9,19 +9,11 @@ export interface userInterface {
     password?:string | null
     DL?:string,
     DOB?:Date,
+    city?:string
     profilePic?:string,
     isActive?:boolean,
     isGoogleUser?:boolean,
-    address?:Array<{
-        country?: string | undefined;
-        street?: string | undefined;
-        city?: string | undefined;
-        state?: string | undefined;
-        pincode?: string | undefined;
-        phone?: string | undefined;
-        alternateNumber?: string | undefined;
-        landmark?: string | undefined;
-    }>,
+    address?:string,
     amount?:number,
     role?:string
 }

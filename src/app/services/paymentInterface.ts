@@ -6,7 +6,7 @@ import { Booking, bookingDetail } from "../../types/bookingInterface"
 import { carInterface } from "../../types/carInterface"
 
 export const paymentInterface = (paymentService: ReturnType<paymentServiceType>)=>{
-    const paymentPhonepayUser = async(bookingDetail: bookingDetail, car: carInterface | carInterface[] | null, userId: string)=>{
+    const paymentPhonepayUser = async(bookingDetail: Partial<bookingDetail>, car: carInterface | carInterface[] | null, userId: string)=>{
         const response = await paymentService.paymentMakingService(bookingDetail, car, userId)
         return response
     }
