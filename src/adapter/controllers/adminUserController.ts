@@ -43,6 +43,7 @@ const adminUserController = (
 
       const findOneuser = expressAsyncHandler(
         async(req: Request, res: Response)=>{
+          console.log(req.headers)
           const userId = req.header('x-user-id') as string
           const user = await findOneUser(userId, userService)
           console.log(user)

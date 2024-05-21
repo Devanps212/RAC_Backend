@@ -1,3 +1,4 @@
+import { App } from "react-bootstrap-icons";
 import { userModelType } from "../frameworks/database/mongodb/models/userModel";
 import { HttpStatus } from "../types/httpTypes";
 import { createUserInterface, userInterface, userAdminInterface } from "../types/userInterface";
@@ -103,6 +104,30 @@ export class UserEntity {
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
+  }
+
+  public async userUpdate(data: Partial<userInterface>): Promise<userInterface> {
+    try {
+      console.log("reached entity : ", data)
+      const user = await this.model.findById({_id:data._id});
+      console.log(user)
+      if (!user) {
+        throw new AppError('No user found', HttpStatus.NOT_FOUND);
+      }
+
+      if (Object.keys(data).length === 0) {
+        throw new AppError('No update data provided', HttpStatus.BAD_REQUEST);
+      }
+
+      Object.assign(user, data);
+      console.log("saving")
+      await user.save();
+
+      return user.toObject();
+    } catch (error: any) {
+      console.log(error)
+      throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
 

@@ -34,6 +34,7 @@ export const bookingRoute = ()=>{
     router.post('/BasedOnRole', controller.bookingFindingBasedOnRole)
     router.get('/redirect-to', controller.bookingCompletion)
     router.patch('/updater', controller.bookingUpdater)
+    router.patch('/rescheduler', controller.bookingRescheduler)
     return router
     
 }

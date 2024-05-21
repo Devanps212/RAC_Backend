@@ -17,6 +17,7 @@ import { carInterface } from "../../types/carInterface";
 import { findUser } from "../../app/use_case/auth/userAuth";
 import { paymentInterfaceType } from "../../app/services/paymentInterface";
 import { paymentServiceType } from "../../frameworks/services/paymentService";
+import { error } from "console";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -84,11 +85,13 @@ export const bookingController = (
     const bookingCompletion = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const {val, bookingDetail, session_id} = req.query
+            console.log(session_id)
             
             if(typeof val === 'string' &&  typeof bookingDetail === 'string' && typeof session_id === 'string'){ 
             const decodedVal = decodeURIComponent(val);
             const decodedBooking = decodeURIComponent(bookingDetail)
             const paymentDetail: SessionDataInterface = JSON.parse(decodedVal);
+            console.log(session_id)
 
             paymentDetail.bookingDetails = JSON.parse(decodedBooking)
             
@@ -101,21 +104,56 @@ export const bookingController = (
                 paymentDetail.transactionId = session_id
             }
 
-            const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
-
-            if(bookingCreation !== null){
-                const data = JSON.stringify(bookingCreation)
-                const update : Partial<carInterface> = {status:'booked'}
-                const statusUpdateCar = await updateCar(carId, update, carService)
-                if(statusUpdateCar){
-                    res.redirect(`http://localhost:5173/users/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
+            const bookingId = paymentDetail.bookingDetails.bookingId || ''
+            const booking = await findBooking(bookingId, bookingService)
+            if(booking !== null){
+                console.log("BookingFound")
+                // console.log(paymentDetail.bookingDetails)
+                const bookingData = paymentDetail.bookingDetails
+                console.log(bookingData.total, bookingData.startDate, bookingData.endDate, session_id)
+                if(bookingData.total && bookingData.startDate && bookingData.endDate){
+                    const data : Partial<Booking> = {
+                        transaction : {
+                            transactionId: session_id,
+                            amount: bookingData.total || 0,
+                        }, 
+                        date:{
+                            start: new Date(bookingData.startDate),
+                            end: new Date(bookingData.endDate)
+                        },
+                        _id:bookingData.bookingId
+                    }
+                    console.log("data : ", data)
+                    const updateBooking = await BookingUpdater(data, bookingService)
+                    console.log(updateBooking)
+                    if(updateBooking !== null){
+                        const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
+                        const redirectUrl = `http://localhost:5173/users/BookedCars?message=${message}&status=success`;
+                        res.redirect(redirectUrl)
+                    }
                 } else {
                     res.json({
-                        statusUpdateCar
+                        error:"no necessary data found",
+                        status: "failed"
                     })
                 }
-            }
-            
+                
+            } else {
+                const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
+
+                    if(bookingCreation !== null){
+                        const data = JSON.stringify(bookingCreation)
+                        const update : Partial<carInterface> = {status:'booked'}
+                        const statusUpdateCar = await updateCar(carId, update, carService)
+                        if(statusUpdateCar){
+                            res.redirect(`http://localhost:5173/users/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
+                        } else {
+                            res.json({
+                                statusUpdateCar
+                            })
+                        }
+                    }
+                }
             }
         }
     )
@@ -147,6 +185,7 @@ export const bookingController = (
                     });
                     return;
                 }
+                console.log("booking found")
                 
                 if (Array.isArray(booking)) {
                     res.status(400).json({
@@ -155,6 +194,8 @@ export const bookingController = (
                     });
                     return;
                 }
+
+                console.log("single booking")
 
                 if (booking.status === 'Cancelled') {
                     console.log("booking is already cancelled")
@@ -178,7 +219,7 @@ export const bookingController = (
                 if (update.status === 'Cancelled') {
                     console.log("status is cancelled, processing refund");
                     const refund: Partial<RefundDetails> = await stripeRefund(update, paymentService);
-    
+                    console.log("refund : ", refund)
                     console.log("booking car : ", booking.carId)
                     if (typeof booking.carId === 'object') {
                         refund.bookingDetail = {
@@ -207,12 +248,89 @@ export const bookingController = (
         }
     );
 
+    const bookingRescheduler = expressAsyncHandler(
+        async (req: Request, res: Response) => {
+            const { data, userId } = req.body;
+            const datas: Partial<bookingDetail> = data;
+    
+            
+            console.log("backend datas : ",datas)
+            const bookingId = datas.bookingId || '';
+            if (!bookingId) {
+                res.status(400).json({
+                    message: "Booking ID is required",
+                    status: 'failed'
+                });
+                return;
+            }
+    
+            const booking = await findBooking(bookingId, bookingService);
+            if (!booking || (booking && 'message' in booking)) {
+                res.status(404).json({
+                    message: booking?.message || "Booking not found",
+                    status: 'failed'
+                });
+                return;
+            }
+    
+            if (Array.isArray(booking)) {
+                res.status(400).json({
+                    message: "Expected a single booking, but received an array.",
+                    status: 'failed'
+                });
+                return;
+            }
+    
+            if (booking.status === 'Cancelled') {
+                res.status(400).json({
+                    message: "Booking is already cancelled, no further action can be taken.",
+                    status: 'failed'
+                });
+                return;
+            }
+    
+            if (datas && typeof datas.carId === 'object') {
+                const carId = datas.carId._id;
+                if (carId && typeof carId === 'string') {
+                    const carData = await findCar(carId, carService);
+    
+                    if (!carData) {
+                        res.status(400).json({
+                            message: "Car not found",
+                            status: 'failed'
+                        });
+                        return;
+                    }
+    
+                    const payment = await bookingPayment(datas, carData, userId, paymentService);
+                    res.json({
+                        sessionId: payment
+                    });
+                    return;
+                } else {
+                    res.status(400).json({
+                        message: "Invalid car ID",
+                        status: 'failed'
+                    });
+                    return;
+                }
+            } else {
+                res.status(400).json({
+                    message: "Car ID is required",
+                    status: 'failed'
+                });
+                return;
+            }
+        }
+    );
+
     return {
         bookingUpdater,
         bookingFindingBasedOnRole,
         filteringCarsBooking,
         findBookings,
         bookingPaymentUI,
-        bookingCompletion
+        bookingCompletion,
+        bookingRescheduler
     }
 }

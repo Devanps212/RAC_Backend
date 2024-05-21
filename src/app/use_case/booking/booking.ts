@@ -14,7 +14,7 @@ export const findBooking = async(data:string, bookingInterface: ReturnType<booki
     return response
 }
 
-export const bookingPayment = async(bookingDetail : bookingDetail, car: carInterface | carInterface[] | null, userId: string ,paymentInterface: ReturnType<paymentInterfaceType>)=>{
+export const bookingPayment = async(bookingDetail : Partial<bookingDetail>, car: carInterface | carInterface[] | null, userId: string ,paymentInterface: ReturnType<paymentInterfaceType>)=>{
     const response = await paymentInterface.paymentPhonepayUser(bookingDetail, car, userId)
     return response
 }
@@ -25,6 +25,7 @@ export const bookingBasedOnRole = async(bookingData: Partial<Booking>, bookingIn
 }
 
 export const BookingUpdater = async(data: Partial<Booking> , bookingInterface: ReturnType<bookingInterfaceType>)=>{
+    console.log(data)
     const response = await bookingInterface.bookingUpdater(data)
     return response
 }

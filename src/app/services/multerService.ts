@@ -8,7 +8,7 @@ const mainFolder = (req:Request)=>{
         {
             return 'Cars'
         }
-    else if(req.baseUrl.startsWith('/api/users'))
+    else if(req.baseUrl.startsWith('/api/user-auth'))
         {
             return 'Users'
         }
@@ -21,13 +21,11 @@ const mainFolder = (req:Request)=>{
 const subFolders = (req: Request, file: Express.Multer.File) => {
     console.log("reached subfolder")
     console.log("files : ", req.files)
-    console.log("body : ", req.body)
+    console.log("body data :", req.body)
     let folderPath = '';
     if (req.body.name && file.fieldname) {
         const { name } = req.body;
         const { fieldname } = file;
-        console.log("name :", name)
-        console.log("fieldname  :", fieldname)
         const deletedInteriorIndex = parseInt(req.body.deletedInteriorIndex);
         const deletedExteriorIndex = parseInt(req.body.deletedExteriorIndex);
 
