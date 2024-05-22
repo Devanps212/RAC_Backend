@@ -8,7 +8,6 @@ export interface userInterface {
     mobile?:number | undefined | null
     password?:string | null
     DL?:string,
-    DOB?:Date,
     city?:string
     profilePic?:string,
     isActive?:boolean,

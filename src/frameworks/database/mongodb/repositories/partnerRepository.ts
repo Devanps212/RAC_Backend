@@ -20,7 +20,12 @@ export const partnerDbRepo = (model : userModelType)=>{
         return response
     }
 
-    return {partnerLogin, partnerexist, partnerSignUp}
+    const findAllPartner = async()=>{
+        const response = await PartnerEntity.findAllPartner()
+        return response
+    }
+
+    return {partnerLogin, partnerexist, partnerSignUp, findAllPartner}
 }
 
 export type partnerRepoType = typeof partnerDbRepo

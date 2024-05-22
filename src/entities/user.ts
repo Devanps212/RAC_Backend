@@ -129,6 +129,19 @@ export class UserEntity {
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  public async findAllUsersFromMongo(): Promise<userInterface[] | userInterface> {
+    try{
+      const users = await this.model.find()
+      if(users == null){
+        throw new AppError('no users found', HttpStatus.NOT_FOUND)
+      }
+      return users.map(user=>user.toObject())
+    } catch(error: any){
+      console.log(error.message)
+      throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 }
 
 

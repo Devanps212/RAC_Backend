@@ -11,7 +11,6 @@ export interface partnerDetailInterface extends partnerLoginInterface {
     password?: string;
     profilePic?: string;
     DL?: string;
-    DOB?: Date;
     address?: Address[];
     createdAt?: Date;
     isActive?: boolean;

@@ -29,6 +29,11 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
         const response = await repository.updateUser(data)
         return response
     }
+
+    const findMongoAllUsers = async()=>{
+        const response = await repository.findMongoAllUsers()
+        return response
+    }
     return {
         createUser,
         getUserByEmail,
@@ -36,7 +41,8 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
         blockUnblockUser,
         findOneUser,
         findUser,
-        userUpdate
+        userUpdate,
+        findMongoAllUsers
     }
     
 }

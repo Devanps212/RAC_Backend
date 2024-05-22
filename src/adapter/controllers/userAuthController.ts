@@ -6,7 +6,7 @@ import { userModelType } from '../../frameworks/database/mongodb/models/userMode
 import { userDbInterface } from '../../app/repositories/userDbrepository'
 import { InterfaceAuthService } from '../../app/services/authServiceInterface'
 import { AuthService } from '../../frameworks/services/authServices'
-import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser } from '../../app/use_case/auth/userAuth'
+import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser, AllMongoUsers } from '../../app/use_case/auth/userAuth'
 import { googleAuthServices } from '../../frameworks/services/googleAuthServices'
 import { authGoogleInterface } from '../../app/services/googleAuthServicesInterface'
 import { locationFinder, updateUser } from '../../app/use_case/user/user'
@@ -191,6 +191,17 @@ const authController = (
           })
         }
       )
+
+      const MongoAllUsers = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+          const users = await AllMongoUsers(dbrepositoryUser)
+          console.log("user :", users)
+          res.json({
+            data: users,
+            status: 'success'
+          })
+        }
+      )
     
     return {userSignup, 
       userLogin, 
@@ -198,7 +209,8 @@ const authController = (
       upDateDetail,
       findSingleUser,
       locationFinders,
-      signInUpWithGoogle, 
+      signInUpWithGoogle,
+      MongoAllUsers 
       }
 }
 

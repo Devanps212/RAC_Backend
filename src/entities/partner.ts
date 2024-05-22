@@ -73,5 +73,18 @@ export class partnerEntity{
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public async findAllPartner(): Promise<partnerDetailInterface[] | partnerDetailInterface> {
+        try{
+            const partners = await this.model.find({isPartner:true})
+            if(partners === null){
+                throw new AppError("no partners Found", HttpStatus.NOT_FOUND)
+            }
+
+            return partners.map(partner=>partner.toObject())
+        } catch(error: any){
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
 
