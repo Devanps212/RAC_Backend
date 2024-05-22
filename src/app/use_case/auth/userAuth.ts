@@ -195,3 +195,8 @@ export const findUser = async(userId : string, userRepository : ReturnType<userD
 
 }
 
+export const AllMongoUsers = async(userRepository : ReturnType<userDbInterface>)=>{
+    const response = await userRepository.findMongoAllUsers()
+    return response
+}
+

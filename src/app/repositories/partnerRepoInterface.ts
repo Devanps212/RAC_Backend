@@ -17,9 +17,13 @@ export const partnerRepoInterface = (repository : ReturnType<partnerRepoType>)=>
         const response = await repository.partnerSignUp(userId, transactionId, purpose, amount)
         return response
     }
+    const findPartner = async()=>{
+        const response = await repository.findAllPartner()
+        return response
+    }
 
     
-    return {partnerLogin, partnerExist, partnerSignup}
+    return {partnerLogin, partnerExist, partnerSignup, findPartner}
 }
 
 export type partnerInterfaceType = typeof partnerRepoInterface

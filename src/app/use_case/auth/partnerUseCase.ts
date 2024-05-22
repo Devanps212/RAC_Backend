@@ -39,3 +39,8 @@ export const partnerSignUp = async (userId: string, transactionId: string, partn
     }
     return partnerSignUp
 }
+
+export const findAllPartner = async(partnerInterface: ReturnType<partnerInterfaceType>)=>{
+    const response = await partnerInterface.findPartner()
+    return response
+}

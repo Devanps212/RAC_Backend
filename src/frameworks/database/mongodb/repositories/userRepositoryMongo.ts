@@ -1,6 +1,6 @@
 import { createUserInterface, userInterface } from "../../../../types/userInterface";
 import { UserEntity } from "../../../../entities/user";
-import { userModelType } from "../models/userModel";
+import { userModelType, usersModel } from "../models/userModel";
 
 
 export const userRepository = (model:userModelType)=>{
@@ -38,7 +38,12 @@ export const userRepository = (model:userModelType)=>{
         return response
     }
 
-    return {createUser, getUserByEmail, getAllUser, blockUnblockUser, findOneUser, findUser, updateUser}
+    const findMongoAllUsers = async()=>{
+        const response = await userEntity.findAllUsersFromMongo()
+        return response
+    }
+
+    return {createUser, getUserByEmail, getAllUser, blockUnblockUser, findOneUser, findUser, updateUser, findMongoAllUsers}
 }
 
 export type userRepository = typeof userRepository

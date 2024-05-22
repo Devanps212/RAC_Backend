@@ -20,6 +20,7 @@ const partnerRoute = ()=>{
     router.post('/login', controller.partnersLogin)
     router.get('/signUp', controller.signUpPartner)
     router.get('/redirect-to/:transactionId/:userId', controller.transactionHandler)
+    router.get('/All', controller.partnerFindAll)
     
 
     return router

@@ -3,7 +3,7 @@ import { partnerRepoType } from "../../frameworks/database/mongodb/repositories/
 import { partnerInterfaceType } from "../../app/repositories/partnerRepoInterface";
 import { Request, Response } from "express";
 import configFile from "../../config";
-import { partnerLogin, partnerSignUp } from "../../app/use_case/auth/partnerUseCase";
+import { findAllPartner, partnerLogin, partnerSignUp } from "../../app/use_case/auth/partnerUseCase";
 import { AuthService } from "../../frameworks/services/authServices";
 import { InterfaceAuthService } from "../../app/services/authServiceInterface";
 import expressAsyncHandler from "express-async-handler";
@@ -105,7 +105,17 @@ const partnerController = (
         }
     )
 
-    return {partnersLogin, signUpPartner, transactionHandler}
+    const partnerFindAll = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            const partners = await findAllPartner(partnerService)
+            res.json({
+                data: partners,
+                status: 'success'
+            })
+        }
+    )
+
+    return {partnersLogin, signUpPartner, transactionHandler, partnerFindAll}
     
 }
 

@@ -21,6 +21,7 @@ const userAuthentication: ()=>Router = ()=>{
     route.post('/location', controller.locationFinders)
     route.get('/findUser', controller.findSingleUser)
     route.post('/saveUser', upload.fields([{name: 'profilePic', maxCount:1}]), controller.upDateDetail)
+    route.get('/getAll', controller.MongoAllUsers)
 
     return route
 }
