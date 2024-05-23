@@ -23,10 +23,14 @@ export interface carInterface {
     insuranceDetails?: string;
     addedBy?: string;
     addedById?:string;
-    deletedInteriorIndex: string
-    deletedExteriorIndex: string
+    deletedInteriorIndex?: string
+    deletedExteriorIndex?: string
     thumbnailImg?: string
-    seats?:string
+    seats?:string;
+    offer?:{
+        discount: number;
+        price?: number | null;
+    }
 }
 
 interface commentsInterface {

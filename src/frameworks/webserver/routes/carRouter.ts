@@ -17,6 +17,8 @@ export const carRoute = ()=>{
     router.get('/carsDetails', authentication, controller.viewCar)
     router.delete('/deleteCar', authentication, controller.deletesCar)
     router.get('/getCars',authentication, controller.findsCar)
+    router.get('/CarsFromRole', authentication, controller.findCarsBasedOnRole)
+    router.patch('/partialUpdate', authentication, controller.carUpdateBasedOnRole)
 
     return router
 }

@@ -107,6 +107,16 @@ const carSchema = new mongoose.Schema({
       thumbnailImg :{
         type:String,
         required: true
+      },
+      offer: {
+        discount:{
+          type: Number,
+          default: 0,
+        },
+        price:{
+          type: Number,
+          default: null
+        }
       }
 })
 

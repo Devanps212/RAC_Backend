@@ -245,7 +245,46 @@ export class carEntity{
         }
     }
 
+    public async carBasedOnRole(role: string): Promise<carInterface[] | carInterface>{
+        try{
+            const cars = await this.model.find({owner: role})
+            if(cars === null){
+                throw new AppError('no cars found', HttpStatus.NOT_FOUND)
+            }
+            return cars.map(car=>car.toObject())
+        } catch(error: any){
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    public async carPartialUpdate(data: Partial<carInterface>): Promise<Partial<carInterface>> {
+        try {
+            if (!data._id) {
+                throw new AppError('Car ID is required', HttpStatus.BAD_REQUEST);
+            }
     
+            const car = await this.model.findByIdAndUpdate(
+                data._id,
+                { $set: data },
+                { new: true, runValidators: true }
+            ).lean();
+    
+            if (!car) {
+                throw new AppError('No car found', HttpStatus.NOT_FOUND);
+            }
+    
+            const updatedCar = await this.model.findById({_id: data._id})
+            if(!updatedCar){
+                throw new AppError("no car updated", HttpStatus.NOT_FOUND)
+            }
+
+            return updatedCar.toObject()
+           
+    
+        } catch (error: any) {
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 
