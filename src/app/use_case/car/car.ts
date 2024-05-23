@@ -61,3 +61,13 @@ export const updateCar = async(carId: string, carData:Partial<carInterface>, car
     const response = await carRepoInterface.updateCar(carId, carData)
     return response
 }
+
+export const carBasedOnRole = async(role: string,  carRepoInterface : ReturnType<carInterfaceType>)=>{
+    const response = await carRepoInterface.carBasedOnrole(role)
+    return response
+}
+
+export const carPartialUpdate = async(data: Partial<carInterface>, carRepoInterface : ReturnType<carInterfaceType>)=>{
+    const response = await carRepoInterface.carPartialUpdate(data)
+    return response
+}

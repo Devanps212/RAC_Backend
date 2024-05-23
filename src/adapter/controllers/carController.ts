@@ -2,7 +2,7 @@ import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carRepository";
 import { carModelType } from "../../frameworks/database/mongodb/models/carModel";
 import { Request, Response } from "express";
-import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar } from "../../app/use_case/car/car";
+import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate } from "../../app/use_case/car/car";
 import { carInterface } from "../../types/carInterface";
 import expressAsyncHandler from "express-async-handler";
 import { AuthService } from "../../frameworks/services/authServices";
@@ -163,5 +163,29 @@ export const carController  = (
         }
     )
 
-    return{createCars, editsCar, viewCar, deletesCar, findsCar}
+    const findCarsBasedOnRole = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+
+            const role = req.query.role as string
+            const cars = await carBasedOnRole(role, carService)
+            res.json({
+                data: cars,
+                status: 'success'
+            })
+        }
+    )
+
+    const carUpdateBasedOnRole = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            const data = req.body
+            console.log(data)
+            const updateCar = await carPartialUpdate(data, carService)
+            res.json({
+                data: updateCar,
+                status: "success"
+            })
+        }
+    )
+
+    return{createCars, editsCar, viewCar, deletesCar, findsCar, findCarsBasedOnRole, carUpdateBasedOnRole}
 }

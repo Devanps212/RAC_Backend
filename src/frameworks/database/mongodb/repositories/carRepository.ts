@@ -41,7 +41,17 @@ export const carRepository = (model: carModelType)=>{
         const response = await CarEntity.carUpdater(carId, carData)
         return response
     }
-    return {createCar, delteCar, editCar, findCar, viewdetails, carExist, carUpdate}
+    
+    const carFindBasedOnRole = async(role: string)=>{
+        const response = await CarEntity.carBasedOnRole(role)
+        return response
+    }
+
+    const carUpdateBasedOnRole = async(data: Partial<carInterface>)=>{
+        const response = await CarEntity.carPartialUpdate(data)
+        return response
+    }
+    return {createCar, delteCar, editCar, findCar, viewdetails, carExist, carUpdate, carFindBasedOnRole, carUpdateBasedOnRole}
 }
 
 export type CarRepoType = typeof carRepository
