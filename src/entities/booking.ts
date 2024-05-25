@@ -25,6 +25,7 @@ export class BookingEnity{
             console.log("booking Detail :", data.bookingDetails)
             let bookingFormat : Booking | null = null;
             const { pickupLocation, dropOffLocation, pickupTime, dropOffTime, startDate, endDate, amount, total } = data.bookingDetails;
+            console.log("checking condition")
             console.log(pickupLocation, dropOffLocation, pickupTime, dropOffTime, startDate, endDate, amount)
             if (pickupLocation !== undefined && 
                 dropOffLocation !== undefined && 
@@ -52,6 +53,7 @@ export class BookingEnity{
             }
 
             const bookingData = await this.model.create(bookingFormat)
+            console.log("booking created : ", bookingData)
             if(bookingData !== null){
                 console.log("Booked")
                 return bookingData.toObject()
@@ -62,12 +64,15 @@ export class BookingEnity{
             }
         }
         catch(error: any){
+            console.log(error)
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     public async findBooking(data: string) : Promise<Booking[] | Booking | {message: string} | null | undefined >{
         try{
+            console.log("reached entity")
+            console.log("data : ", data)
             if(data === 'all'){
                 const bookingFinding = await this.model.find().populate("carId")
                 console.log("bookings found : ", bookingFinding)
@@ -89,7 +94,8 @@ export class BookingEnity{
             }
             else
             {
-                throw new AppError('no data found', HttpStatus.NOT_IMPLEMENTED)
+                console.log("no booking found")
+                return null
             }
             
         }

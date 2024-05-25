@@ -36,6 +36,7 @@ export const paymentService = () => {
                 throw new Error('Car is not provided');
               }
 
+            console.log("bookingDetail : ", bookingDetail)
             const carDetail = Array.isArray(car) ? car[0] : car;
             const carId = carDetail._id
             const carPriceData = {
@@ -60,7 +61,7 @@ export const paymentService = () => {
             const encodedData = encodeURIComponent(JSON.stringify(sessionData));
             
             
-
+            console.log("making payment request to stripe")
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
@@ -73,7 +74,7 @@ export const paymentService = () => {
             console.log("session Id: ", session.id)
             return session.id;
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             throw new AppError(error.message, HttpStatus.BAD_GATEWAY);
         }
     };

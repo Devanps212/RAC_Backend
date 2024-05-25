@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 
 const transactionSchema = new mongoose.Schema({
@@ -6,6 +6,22 @@ const transactionSchema = new mongoose.Schema({
     amount: {type:Number , required: true},
     purpose:{type:String, required: true}
 })
+
+const couponSchema = new mongoose.Schema({
+    coupon: { type: String, required: true },
+    discountData: {
+        amount: { type: Number, required: true },
+        percentage: { type: String, required: true }
+    },
+    price: { type: Number, required: true },
+    ApplyPrice: {
+        minApply: { type: Number, required: true },
+        maxApply: { type: Number, required: true }
+    },
+    expiry: { type: Date, required: true },
+    active: { type: Boolean, required: true },
+    couponUsed: { type: Boolean }
+});
 
 
 const userSchema = new mongoose.Schema({
@@ -61,8 +77,8 @@ const userSchema = new mongoose.Schema({
     },
     transactions:{
         type: [transactionSchema]
-    }
-
+    },
+    coupons: { type: [couponSchema], default: [] }
 })
 
 export const usersModel = mongoose.model('User', userSchema)

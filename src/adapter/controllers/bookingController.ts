@@ -18,6 +18,14 @@ import { findUser } from "../../app/use_case/auth/userAuth";
 import { paymentInterfaceType } from "../../app/services/paymentInterface";
 import { paymentServiceType } from "../../frameworks/services/paymentService";
 import { error } from "console";
+import { couponInterfaceType } from "../../app/repositories/couponInterface";
+import { couponModelType } from "../../frameworks/database/mongodb/models/couponModel";
+import { couponRepositoryType } from "../../frameworks/database/mongodb/repositories/couponRepository";
+import { findAllCoupon } from "../../app/use_case/coupon/coupon";
+import { couponInterface } from "../../types/couponInetrface";
+import { userInterface } from "../../types/userInterface";
+import { updateUser } from "../../app/use_case/user/user";
+import { ObjectId, Types } from "mongoose";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -30,13 +38,17 @@ export const bookingController = (
     userInterface: userDbInterface,
     userRepository: userRepository,
     paymentInterface: paymentInterfaceType,
-    paymentServices: paymentServiceType
+    paymentServices: paymentServiceType,
+    couponInterface: couponInterfaceType,
+    couponRepository: couponRepositoryType,
+    couponModel: couponModelType
 )=>{
     
     const bookingService = bookingInterface(bookingDBRepository(bookingModel))
     const carService = carInterface(carRepository(carModel))
     const userService = userInterface(userRepository(userModel))
     const paymentService = paymentInterface(paymentServices())
+    const couponService = couponInterface(couponRepository(couponModel))
 
     const filteringCarsBooking = expressAsyncHandler(
         async(req: Request, res: Response)=>{
@@ -103,12 +115,13 @@ export const bookingController = (
             if(sesssionVerification){
                 paymentDetail.transactionId = session_id
             }
+            console.log(paymentDetail)
 
             const bookingId = paymentDetail.bookingDetails.bookingId || ''
             const booking = await findBooking(bookingId, bookingService)
+            console.log("bookking: ", booking)
             if(booking !== null){
                 console.log("BookingFound")
-                // console.log(paymentDetail.bookingDetails)
                 const bookingData = paymentDetail.bookingDetails
                 console.log(bookingData.total, bookingData.startDate, bookingData.endDate, session_id)
                 if(bookingData.total && bookingData.startDate && bookingData.endDate){
@@ -139,9 +152,34 @@ export const bookingController = (
                 }
                 
             } else {
+                console.log("no booking found")
                 const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
-
+                console.log("bookingCreation : ", bookingCreation)
                     if(bookingCreation !== null){
+                        const price = bookingCreation.transaction.amount
+                        const AllCoupons = await findAllCoupon(couponService)
+                        console.log("all coupons :", AllCoupons)
+                        if (AllCoupons && AllCoupons.length > 0) {
+                            const matchedCoupons = AllCoupons.filter(coupon => {
+                              return coupon.ApplyPrice.minApply <= price && coupon.ApplyPrice.maxApply >= price;
+                            });
+                            console.log("Matched coupons:", matchedCoupons);
+                            if(matchedCoupons.length > 0){
+                                const data: Partial<userInterface> = {
+                                    _id: new Types.ObjectId(bookingCreation.userId),
+                                    coupons:matchedCoupons
+                                }
+                                const userUpdate = await updateUser(data, userService)
+                                console.log("user Updated : ", userUpdate)
+                                if(userUpdate === null){
+                                    res.json({
+                                        messgae: 'cannot apply coupon',
+                                        status: 'failed'
+                                    })
+                                }
+                            }
+                          }
+                        
                         const data = JSON.stringify(bookingCreation)
                         const update : Partial<carInterface> = {status:'booked'}
                         const statusUpdateCar = await updateCar(carId, update, carService)
