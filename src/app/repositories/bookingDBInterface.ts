@@ -10,6 +10,7 @@ export const bookingDBInterface = (repository: ReturnType<bookingRepositoryType>
     }
 
     const findBooking = async(data: string )=>{
+        console.log("reached interface")
         const findingBooking = await repository.findBooking(data)
         return findingBooking
     }

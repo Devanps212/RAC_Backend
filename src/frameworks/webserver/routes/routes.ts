@@ -6,6 +6,8 @@ import { carRoute } from "./carRouter"
 import adminUserRouter from "./adminUser"
 import partnerRoute from "./partnerRoutes/partnerRoute"
 import { bookingRoute } from "./bookingRoute"
+import { couponRoute } from "./couponRouter"
+
 
 const routes = (app: Application)=>{
     app.use('/api/user-auth',  userAuthentication())
@@ -13,6 +15,7 @@ const routes = (app: Application)=>{
     app.use('/api/admin', adminUserRouter())
     app.use('/api/category', categoryRoute())
     app.use('/api/cars', carRoute())
+    app.use('/api/coupon', couponRoute())
     app.use('/api/partner', partnerRoute())
     app.use('/api/booking', bookingRoute())
 }

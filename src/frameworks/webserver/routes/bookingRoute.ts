@@ -11,6 +11,9 @@ import { userRepository } from "../../database/mongodb/repositories/userReposito
 import express from 'express'
 import { paymentInterface } from "../../../app/services/paymentInterface";
 import { paymentService } from "../../services/paymentService";
+import couponInterface from "../../../app/repositories/couponInterface";
+import { couponRepository } from "../../database/mongodb/repositories/couponRepository";
+import { couponModel } from "../../database/mongodb/models/couponModel";
 
 export const bookingRoute = ()=>{
     const controller = bookingController(bookingDBInterface, 
@@ -23,7 +26,10 @@ export const bookingRoute = ()=>{
         userdbRepository,
         userRepository,
         paymentInterface,
-        paymentService
+        paymentService,
+        couponInterface,
+        couponRepository,
+        couponModel
         )
 
     const router = express.Router()

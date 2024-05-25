@@ -14,6 +14,7 @@ export const bookingRepository = (bookingModel : BookingModelType)=>{
     }
 
     const findBooking = async(bookingDetail: string)=>{
+        console.log("reached repository")
         const response = await enitityBooking.findBooking(bookingDetail)
         return response
     }

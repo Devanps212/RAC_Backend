@@ -1,4 +1,3 @@
-import { App } from "react-bootstrap-icons";
 import { userModelType } from "../frameworks/database/mongodb/models/userModel";
 import { HttpStatus } from "../types/httpTypes";
 import { createUserInterface, userInterface, userAdminInterface } from "../types/userInterface";
@@ -73,8 +72,8 @@ export class UserEntity {
     try {
       console.log("userId in findOneUser : ", userId);
   
-      const user: userModelType | null = await this.model.findOne({ _id: userId }).lean();
-  
+      const user: userInterface | null = await this.model.findOne({ _id: userId }).lean();
+
       if (!user) 
       {
         throw new AppError('user not found', HttpStatus.NOT_FOUND)
@@ -88,10 +87,12 @@ export class UserEntity {
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+ 
   public async findUsers(id: string) : Promise<userInterface | {message: string} | null>{
     try{
+      console.log(id)
       const user = this.model.findOne({_id:id})
+      console.log("userData : ",user)
       if(user!==null){
         return user as userInterface
       }

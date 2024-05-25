@@ -10,6 +10,7 @@ export const createBooking = async(data: SessionDataInterface, carDetails : carI
 }
 
 export const findBooking = async(data:string, bookingInterface: ReturnType<bookingInterfaceType>)=>{
+    console.log("reached usecase")
     const response = await bookingInterface.findBooking(data)
     return response
 }

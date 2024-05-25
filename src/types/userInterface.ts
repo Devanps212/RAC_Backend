@@ -1,5 +1,6 @@
 import { Types } from "mongoose"
 import { GeneratedSecret } from 'speakeasy';
+import { couponInterface } from "./couponInetrface";
 
 export interface userInterface {
     _id?: Types.ObjectId,
@@ -14,7 +15,8 @@ export interface userInterface {
     isGoogleUser?:boolean,
     address?:string,
     amount?:number,
-    role?:string
+    role?:string;
+    coupons?:string[] | couponInterface[]
 }
 export interface createUserInterface {
     name:string,

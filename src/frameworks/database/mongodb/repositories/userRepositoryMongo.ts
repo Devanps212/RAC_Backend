@@ -24,6 +24,7 @@ export const userRepository = (model:userModelType)=>{
     }
 
     const findOneUser = async(userId:string)=>{
+        console.log("userId: ", userId)
         const user = await userEntity.userFindOne(userId)
         return user
     }
