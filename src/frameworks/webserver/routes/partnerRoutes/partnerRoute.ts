@@ -21,6 +21,7 @@ const partnerRoute = ()=>{
     router.get('/signUp', controller.signUpPartner)
     router.get('/redirect-to/:transactionId/:userId', controller.transactionHandler)
     router.get('/All', controller.partnerFindAll)
+    router.get('/findOne', controller.findOnePartner)
     
 
     return router

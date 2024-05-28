@@ -52,3 +52,10 @@ declare module 'express-session' {
     }
 }
 
+export interface sessionInterface {
+    payload: string,
+    role: string,
+    iat: number,
+    exp: number
+}
+

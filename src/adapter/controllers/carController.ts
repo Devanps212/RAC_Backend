@@ -167,6 +167,7 @@ export const carController  = (
         async(req: Request, res: Response)=>{
 
             const role = req.query.role as string
+            console.log(role)
             const cars = await carBasedOnRole(role, carService)
             res.json({
                 data: cars,

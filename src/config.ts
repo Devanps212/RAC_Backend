@@ -19,7 +19,9 @@ const configFile = {
 
     LOCATION_ACCESS_TOKEN : process.env.LOCATION_ACCESS_TOKEN as string,
 
-    STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY as string
+    STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY as string,
+
+    ORIGIN_PORT: process.env.ORIGIN_PORT as string,
 }
 
 export default configFile

@@ -2,6 +2,7 @@
 import { userModelType } from "../frameworks/database/mongodb/models/userModel";
 import { HttpStatus } from "../types/httpTypes";
 import { partnerDetailInterface } from "../types/partnerInterface";
+import { userInterface } from "../types/userInterface";
 import AppError from "../utils/appErrors";
 
 
@@ -32,13 +33,15 @@ export class partnerEntity{
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-    public async partnerExist(partnerId:string) : Promise<partnerDetailInterface | null>{
+    public async partnerExist(partnerId:string) : Promise<userInterface | null>{
         try
         {
-            console.log(partnerId)
             const partner = await this.model.findOne({_id:partnerId, isPartner: true})
-            console.log("partner Exist :", partner)
-            return partner ? partner as partnerDetailInterface : null
+
+            if(partner === null){
+                throw new AppError('no partner found', HttpStatus.NOT_FOUND)
+            }
+            return partner.toObject()
         }
         catch(error:any)
         {
