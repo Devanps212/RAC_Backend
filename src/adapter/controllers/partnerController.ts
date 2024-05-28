@@ -115,7 +115,17 @@ const partnerController = (
         }
     )
 
-    return {partnersLogin, signUpPartner, transactionHandler, partnerFindAll}
+    const findOnePartner = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            const {id} = req.query
+            const partnerId = id as string
+            console.log("partner id found :", partnerId)
+            const findPartner = await partnerExist(partnerId, partnerService)
+            res.json(findPartner)
+        }
+    )
+
+    return {partnersLogin, signUpPartner, transactionHandler, partnerFindAll, findOnePartner}
     
 }
 

@@ -19,7 +19,6 @@ const expressConfig = (app:Application)=>{
             "Access-Control-Allow-Origin",
           ],
     }
-    console.log("session key :", configFile.SESSION_KEY)
     const store = new MemoryStore()
     app.use(session({
         secret: configFile.SESSION_KEY,

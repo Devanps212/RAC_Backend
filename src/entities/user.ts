@@ -70,7 +70,6 @@ export class UserEntity {
 
   public async userFindOne(userId: string): Promise<userInterface | null> {
     try {
-      console.log("userId in findOneUser : ", userId);
   
       const user: userInterface | null = await this.model.findOne({ _id: userId }).lean();
 
@@ -90,9 +89,7 @@ export class UserEntity {
  
   public async findUsers(id: string) : Promise<userInterface | {message: string} | null>{
     try{
-      console.log(id)
       const user = this.model.findOne({_id:id})
-      console.log("userData : ",user)
       if(user!==null){
         return user as userInterface
       }

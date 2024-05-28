@@ -7,7 +7,8 @@ import adminUserRouter from "./adminUser"
 import partnerRoute from "./partnerRoutes/partnerRoute"
 import { bookingRoute } from "./bookingRoute"
 import { couponRoute } from "./couponRouter"
-
+import conversationRoute from "./conversationRoute"
+// import messageRoute from "./messageRoute"
 
 const routes = (app: Application)=>{
     app.use('/api/user-auth',  userAuthentication())
@@ -18,5 +19,8 @@ const routes = (app: Application)=>{
     app.use('/api/coupon', couponRoute())
     app.use('/api/partner', partnerRoute())
     app.use('/api/booking', bookingRoute())
+    app.use('/api/messenger-conversation', conversationRoute())
+    // app.use('/api/messenger-message', messageRoute())
+
 }
 export default routes

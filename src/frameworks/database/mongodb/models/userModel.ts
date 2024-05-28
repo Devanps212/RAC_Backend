@@ -79,7 +79,7 @@ const userSchema = new mongoose.Schema({
         type: [transactionSchema]
     },
     coupons: { type: [couponSchema], default: [] }
-})
+}, {timestamps: true})
 
 export const usersModel = mongoose.model('User', userSchema)
 export type userModelType = typeof usersModel
