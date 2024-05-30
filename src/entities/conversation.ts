@@ -13,12 +13,10 @@ export class conversationEntity{
 
     public async createConversation(data: messageInterface) : Promise<conversationInterface>{
         try{
-          console.log("data : ", data)
+
             let conversation = await this.model.findOne({participants: {$all: [data.senderId, data.recieverId]}})
 
-            console.log(data.senderId, data.recieverId)
             if(!conversation){
-              console.log("no conversation found")
                 conversation = await this.model.create({participants: [ data.senderId, data.recieverId]})
                 console.log(conversation)
             }
@@ -30,17 +28,18 @@ export class conversationEntity{
 
     public async MessageAdd(messageId: string, conversationId: string): Promise<conversationInterface>{
         try{
-          console.log("messageId :", messageId)
           const edit = await this.model.findOneAndUpdate({_id: conversationId}, {$push:{messages:messageId}}, { new: true, useFindAndModify: false })
           if(!edit){
             throw new AppError("can't save message", HttpStatus.NOT_MODIFIED)
           }
-          console.log("edit :", edit)
+          
           return edit.toObject()
         } catch(error: any){
           throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
       }
+
+
       public async getMessage(oppositeUserId: string, senderId:string):Promise<messageInterface>{
         try{
           const findMessage = await this.model.findOne({participants:{$all:[oppositeUserId, senderId]}}).populate('messages')

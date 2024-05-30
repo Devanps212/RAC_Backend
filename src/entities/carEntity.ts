@@ -121,7 +121,6 @@ export class carEntity{
     public async findCar(carData:string):Promise<carInterface[]|carInterface| null>{
         try
         {
-            console.log("carData :",carData)
             let allDetails;
             if(carData === 'all')
             {

@@ -51,7 +51,7 @@ export const conversationController = (
         console.log("newMessage : ", newMessage)
         console.log("newMessage id : ", newMessage._id)
         const addMessageToConversation = await addMessage(newMessage._id as string, saveConversation._id as string, conversationService);
-        
+
         res.json(newMessage);
       } catch (error: any) {
         console.error("Error in sendMessages:", error);
@@ -61,8 +61,11 @@ export const conversationController = (
 
   const getMessage = expressAsyncHandler(
     async(req: Request, res: Response)=>{
-      const {userToChat, senderId} =req.params
-      const getMessage = await findMessage(userToChat, senderId, conversationService)
+      const {userToChat} =req.params
+      const { userId } = req.body
+      console.log(userId)
+      console.log(req.body)
+      const getMessage = await findMessage(userToChat, userId, conversationService)
       console.log("get message : ", getMessage)
       res.json(
         getMessage

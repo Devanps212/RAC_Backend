@@ -117,8 +117,10 @@ const partnerController = (
 
     const findOnePartner = expressAsyncHandler(
         async(req: Request, res: Response)=>{
+            console.log("reached partner for finding one")
             const {id} = req.query
             const partnerId = id as string
+            
             console.log("partner id found :", partnerId)
             const findPartner = await partnerExist(partnerId, partnerService)
             res.json(findPartner)
