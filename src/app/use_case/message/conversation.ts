@@ -11,20 +11,6 @@ export const sendMessage = async(data: messageInterface, conversationInterface :
         if(!data.senderId){
             throw new AppError("token not found", HttpStatus.NOT_FOUND)
         }
-        console.log("verifying token")
-        const verifyToken = await authInterface.tokenVerification(data.senderId as string)
-        console.log("token verified : ", verifyToken)
-
-        if(!verifyToken){
-            throw new AppError("User is unAuthorized", HttpStatus.NOT_FOUND)
-        }
-        if(typeof verifyToken === 'object' && 'payload' in verifyToken){
-            data.senderId = verifyToken.payload
-        } else {
-            throw new AppError("un Authorized user", HttpStatus.UNAUTHORIZED)
-        }
-       
-
         const response = await conversationInterface.setParticipants(data)
         return response
 

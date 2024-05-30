@@ -151,7 +151,6 @@ export const carController  = (
 
     const findsCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("reached car controller for getting cars")
             const carData = req?.query.carData as string
             console.log(carData)
             const response = await findCar(carData, carService)

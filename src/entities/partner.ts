@@ -37,7 +37,7 @@ export class partnerEntity{
         try
         {
             const partner = await this.model.findOne({_id:partnerId, isPartner: true})
-
+            console.log("partner foud : ", partner)
             if(partner === null){
                 throw new AppError('no partner found', HttpStatus.NOT_FOUND)
             }
