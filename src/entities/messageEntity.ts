@@ -27,6 +27,7 @@ export class MessagesEntity {
       })
       
       if(message.recieverId){
+        console.log("going to listen to the message")
         io.to(recieverSocketId).emit("newMessage", message.message)
       }
 

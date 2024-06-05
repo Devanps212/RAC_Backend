@@ -12,7 +12,14 @@ import upload from '../../../app/services/multerService'
 const userAuthentication: ()=>Router = ()=>{
     const route = express.Router()
 
-    const controller = authController(authService, interfaceAuthService, userdbRepository, userRepository, usersModel, googleAuthService, googleAuthInterface)
+    const controller = authController(
+        authService, 
+        interfaceAuthService, 
+        userdbRepository, 
+        userRepository, 
+        usersModel, 
+        googleAuthService, 
+        googleAuthInterface)
 
     route.post('/signup', controller.userSignup)
     route.post('/login', controller.userLogin)

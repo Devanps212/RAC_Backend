@@ -23,6 +23,7 @@ export const couponRoute = ()=>{
     route.get('/findAll', controller.findAllCoupons)
     route.patch('/updateCoupon', controller.updateCoupons)
     route.post('/applyCoupon', controller.couponApply)
+    // route.get('/userCoupon', controller.findUserCoupon)
 
     return route
 }

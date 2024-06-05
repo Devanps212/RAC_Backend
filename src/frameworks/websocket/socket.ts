@@ -18,6 +18,7 @@ const socketConfig = (io: Server) => {
         
         const userId = socket.handshake.query.userId as string;
         console.log("userId in socket : ", userId);
+        console.log("socket object :", usersSocketMap)
 
         if (userId) {
             usersSocketMap[userId] = socket.id;

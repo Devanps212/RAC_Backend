@@ -36,7 +36,6 @@ export const paymentService = () => {
                 throw new Error('Car is not provided');
               }
 
-            console.log("bookingDetail : ", bookingDetail)
             const carDetail = Array.isArray(car) ? car[0] : car;
             const carId = carDetail._id
             const carPriceData = {
@@ -46,10 +45,11 @@ export const paymentService = () => {
                         name: carDetail?.name || '',
                         images: carDetail?.thumbnailImg ? [carDetail.thumbnailImg] : [],
                     },
-                    unit_amount: bookingDetail.total ? bookingDetail.total * 100  : carDetail.rentPricePerDay
+                    unit_amount: bookingDetail.total ? Math.round(bookingDetail.total * 100) : carDetail.rentPricePerDay
                 },
                 quantity: 1,
             };
+
             
             const bookingDetails = encodeURIComponent(JSON.stringify(bookingDetail))
             const sessionData = {
@@ -57,6 +57,8 @@ export const paymentService = () => {
                 carId,
                 userId
             };
+
+            console.log("session detail : ", sessionData)
 
             const encodedData = encodeURIComponent(JSON.stringify(sessionData));
             
@@ -111,9 +113,10 @@ export const paymentService = () => {
             }
             
             try {
+                const refundAmount = Math.round(booking.transaction.amount * 100);;
                 const refund = await stripe.refunds.create({
                     charge: latestChargeId as string,
-                    amount: booking.transaction.amount,
+                    amount:  refundAmount
                 });
     
                 console.log('Refund successful:', refund.amount);
@@ -123,7 +126,7 @@ export const paymentService = () => {
                 console.log(`Expiry: ${card.exp_month}/${card.exp_year}`);
                 const refundDetails = {
                     transactionId: refund.id,
-                    amount: refund.amount,
+                    amount: parseFloat((refundAmount / 100).toFixed(2)),
                     currency: refund.currency,
                     created: refund.created,
                     status: refund.status,

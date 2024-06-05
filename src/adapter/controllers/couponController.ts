@@ -87,12 +87,13 @@ const couponController = (
         })
       }
     })
-      ;
+
+
     return{
         generateCoupon,
         updateCoupons,
         findAllCoupons,
-        couponApply
+        couponApply,
     }
 }
 

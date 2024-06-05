@@ -21,6 +21,7 @@ export const authService = ()=>{
         return token
     }
     const verifyToken = (token:string)=>{
+        console.log("verifying token")
         return jwt.verify(token, configFile.JWT_KEY)
     }
 
