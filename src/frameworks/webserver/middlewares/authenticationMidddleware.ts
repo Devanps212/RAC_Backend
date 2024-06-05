@@ -22,7 +22,10 @@ export const authentication = (req: Request, res: Response, next: NextFunction) 
         throw new AppError('User is not authorized', HttpStatus.UNAUTHORIZED);
     }
 
+    console.log("token checking")
+
     const verifyTokens = authService().verifyToken(token)
+    console.log("token verified")
     console.log(verifyTokens)
     if(!verifyTokens)
     {

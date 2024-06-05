@@ -23,6 +23,11 @@ const couponSchema = new mongoose.Schema({
     couponUsed: { type: Boolean }
 });
 
+const refundModel = new Schema({
+    Amount : {type: Number, required: true},
+    paymentId: {type: String, required: true}
+}, {timestamps:true})
+
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -78,6 +83,10 @@ const userSchema = new mongoose.Schema({
     transactions:{
         type: [transactionSchema]
     },
+    refund:{
+        type: [refundModel],
+        default:[]
+    }, 
     coupons: { type: [couponSchema], default: [] }
 }, {timestamps: true})
 

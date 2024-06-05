@@ -28,10 +28,14 @@ const authController = (
     const userSignup = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const user : createUserInterface = req?.body
-            await signUp(user, dbrepositoryUser, authService)
+            const DBuser = await signUp(user, dbrepositoryUser, authService)
+            const userId = DBuser?._id?.toString() || '';
+            const jwtGeneration = await authService.jwtGeneration(userId, 'user');
+
             res.json({
                 status:"success",
-                message:"User signUp successful"
+                message:"User signUp successful",
+                token: jwtGeneration
             })
         }
     )
@@ -202,7 +206,6 @@ const authController = (
           })
         }
       )
-    
     return {userSignup, 
       userLogin, 
       otpGenerate,

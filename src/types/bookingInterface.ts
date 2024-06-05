@@ -48,6 +48,13 @@ export interface Booking {
     };
   }
 
+  export interface Refund {
+    Amount: number;
+    paymentId: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
   export interface backendBooking { 
     sessionId: string,
     carId: string,

@@ -8,7 +8,7 @@ import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import expressAsyncHandler from "express-async-handler";
 import { findCar, updateCar, viewCarDetails } from "../../app/use_case/car/car";
 import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund } from "../../app/use_case/booking/booking";
-import { Booking, RefundDetails, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
+import { Booking, Refund, RefundDetails, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
 import { userDbInterface } from "../../app/repositories/userDbrepository";
@@ -68,7 +68,7 @@ export const bookingController = (
     const findBookings = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const data = req.query.bookingData
-            console.log("data  found : ",data)
+            
             if (typeof data === 'string') { 
                 const findingBookings = await findBooking(data, bookingService);
                 res.json({
@@ -83,6 +83,7 @@ export const bookingController = (
     const bookingPaymentUI = expressAsyncHandler(
         async(req:Request, res:Response)=>{
             const { dataString, carId, userId } = req.body
+            
             const bookingDetail = JSON.parse(dataString)
             const carData = await findCar(carId, carService)
             const payment = await bookingPayment(bookingDetail, carData, userId, paymentService)
@@ -97,7 +98,7 @@ export const bookingController = (
     const bookingCompletion = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const {val, bookingDetail, session_id} = req.query
-            console.log(session_id)
+            
             
             if(typeof val === 'string' &&  typeof bookingDetail === 'string' && typeof session_id === 'string'){ 
             const decodedVal = decodeURIComponent(val);
@@ -119,9 +120,9 @@ export const bookingController = (
 
             const bookingId = paymentDetail.bookingDetails.bookingId || ''
             const booking = await findBooking(bookingId, bookingService)
-            console.log("bookking: ", booking)
+           
             if(booking !== null){
-                console.log("BookingFound")
+                
                 const bookingData = paymentDetail.bookingDetails
                 console.log(bookingData.total, bookingData.startDate, bookingData.endDate, session_id)
                 if(bookingData.total && bookingData.startDate && bookingData.endDate){
@@ -136,7 +137,7 @@ export const bookingController = (
                         },
                         _id:bookingData.bookingId
                     }
-                    console.log("data : ", data)
+                    
                     const updateBooking = await BookingUpdater(data, bookingService)
                     console.log(updateBooking)
                     if(updateBooking !== null){
@@ -152,25 +153,25 @@ export const bookingController = (
                 }
                 
             } else {
-                console.log("no booking found")
+                
                 const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
-                console.log("bookingCreation : ", bookingCreation)
+                
                     if(bookingCreation !== null){
                         const price = bookingCreation.transaction.amount
                         const AllCoupons = await findAllCoupon(couponService)
-                        console.log("all coupons :", AllCoupons)
+                        
                         if (AllCoupons && AllCoupons.length > 0) {
                             const matchedCoupons = AllCoupons.filter(coupon => {
                               return coupon.ApplyPrice.minApply <= price && coupon.ApplyPrice.maxApply >= price;
                             });
-                            console.log("Matched coupons:", matchedCoupons);
+                            
                             if(matchedCoupons.length > 0){
                                 const data: Partial<userInterface> = {
                                     _id: new Types.ObjectId(bookingCreation.userId),
                                     coupons:matchedCoupons
                                 }
                                 const userUpdate = await updateUser(data, userService)
-                                console.log("user Updated : ", userUpdate)
+
                                 if(userUpdate === null){
                                     res.json({
                                         messgae: 'cannot apply coupon',
@@ -184,7 +185,7 @@ export const bookingController = (
                         const update : Partial<carInterface> = {status:'booked'}
                         const statusUpdateCar = await updateCar(carId, update, carService)
                         if(statusUpdateCar){
-                            res.redirect(`http://localhost:5173/users/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
+                            res.redirect(`http://localhost:5173/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
                         } else {
                             res.json({
                                 statusUpdateCar
@@ -201,7 +202,6 @@ export const bookingController = (
             const { bookingData } = req.body
             console.log(bookingData)
             const findBooking = await bookingBasedOnRole(bookingData, bookingService)
-            console.log("booking : ", findBooking)
             res.json({
                 data: findBooking
             })
@@ -210,7 +210,7 @@ export const bookingController = (
 
     const bookingUpdater = expressAsyncHandler(
         async (req: Request, res: Response) => {
-            const { data } = req.body;
+            const { data, purpose } = req.body;
             const bookingDetail: Partial<Booking> = data;
             
             if (bookingDetail && bookingDetail._id) {
@@ -223,7 +223,7 @@ export const bookingController = (
                     });
                     return;
                 }
-                console.log("booking found")
+                
                 
                 if (Array.isArray(booking)) {
                     res.status(400).json({
@@ -233,10 +233,8 @@ export const bookingController = (
                     return;
                 }
 
-                console.log("single booking")
-
                 if (booking.status === 'Cancelled') {
-                    console.log("booking is already cancelled")
+
                     res.status(400).json({
                         message: "Booking is already cancelled, no further action can be taken.",
                         status: 'failed'
@@ -253,12 +251,27 @@ export const bookingController = (
                     });
                     return;
                 }
-    
-                if (update.status === 'Cancelled') {
-                    console.log("status is cancelled, processing refund");
+                
+                if (update.status === 'Cancelled' && purpose ==='refund') {
+
                     const refund: Partial<RefundDetails> = await stripeRefund(update, paymentService);
-                    console.log("refund : ", refund)
-                    console.log("booking car : ", booking.carId)
+                    const refundData : Refund = {
+                        Amount: refund.amount as number,
+                        paymentId: refund.transactionId as string,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+
+                    }
+                    const userId = new Types.ObjectId(booking.userId)
+                    const data : Partial<userInterface> = {
+                        _id: userId ,
+                        refund:[refundData]
+                    }
+                    const userRefundUpdate = await updateUser(data, userService)
+                    if(!userRefundUpdate){
+                        res.json({error:"refund Failed", status: "failed"})
+                    }
+                    
                     if (typeof booking.carId === 'object') {
                         refund.bookingDetail = {
                             itemName: booking.carId.name ?? '',
@@ -266,15 +279,16 @@ export const bookingController = (
                         };
                     }
 
-                    console.log("refund success data : ",refund )
+                    
                     res.json({
                         message: "Refund success",
                         data: refund
                     });
                 } else {
+
                     res.json({
-                        message:"booking failed to cancel",
-                        status: "failed"
+                        message:"booking update successfull",
+                        status: "success"
                     });
                 }
             } else {
@@ -292,7 +306,6 @@ export const bookingController = (
             const datas: Partial<bookingDetail> = data;
     
             
-            console.log("backend datas : ",datas)
             const bookingId = datas.bookingId || '';
             if (!bookingId) {
                 res.status(400).json({

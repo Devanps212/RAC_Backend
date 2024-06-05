@@ -47,7 +47,7 @@ export class BookingEnity{
                     owner: addedById,
                     transaction: { amount: total , transactionId: data.transactionId },
                     ownerRole: addedRole,
-                    issues:''
+                    issues:'',
                 };
                 console.log(bookingFormat)
             }

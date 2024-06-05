@@ -1,6 +1,7 @@
 import { Types } from "mongoose"
 import { GeneratedSecret } from 'speakeasy';
 import { couponInterface } from "./couponInetrface";
+import { Refund } from "./bookingInterface";
 
 export interface userInterface {
     _id?: Types.ObjectId,
@@ -17,6 +18,7 @@ export interface userInterface {
     amount?:number,
     role?:string;
     coupons?:string[] | couponInterface[]
+    refund?: Refund[]
 }
 export interface createUserInterface {
     name:string,
