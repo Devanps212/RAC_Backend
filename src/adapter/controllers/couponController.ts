@@ -69,13 +69,17 @@ const couponController = (
         if (user!==null  && user.coupons) {
           const updatedCoupons = (user.coupons as couponInterface[]).map((c) => {
             if (c.coupon === couponCode) {
-              c.couponUsed = false;
+              c.couponUsed = true,
+              c.active = false
             }
             return c;
           });
+
           const updatedUser = { ...user, coupons: updatedCoupons };
-          console.log("updatd User : ", updatedUser)
+
           const update = await updateUser(updatedUser, userService)
+
+          console.log("updated :-------------", update)
           res.json({
             data: updatedCoupons,
             status: "success"

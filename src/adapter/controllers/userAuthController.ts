@@ -206,7 +206,8 @@ const authController = (
           })
         }
       )
-    return {userSignup, 
+    return {
+      userSignup, 
       userLogin, 
       otpGenerate,
       upDateDetail,

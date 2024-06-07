@@ -19,7 +19,7 @@ export class partnerEntity{
         {
             console.log(email)
             const user: partnerDetailInterface | null  = await this.model.findOne({email: email, isPartner: true})
-            console.log(user)
+            console.log("partner found in entity : ", user)
             if(!user)
             {
                 throw new AppError('User not found', HttpStatus.UNAUTHORIZED)

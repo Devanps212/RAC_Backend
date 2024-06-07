@@ -25,7 +25,6 @@ export class CouponEntity {
             const expiryDate= new Date(expiry)
 
 
-            console.log(priceReduced)
     
             console.log("Saving coupon...");
             const newCoupon = await this.model.create({
@@ -43,11 +42,9 @@ export class CouponEntity {
                 expiry: expiryDate
             });
     
-            console.log("Coupon saved:", newCoupon);
     
             return newCoupon.toObject();
         } catch (error: any) {
-            console.error("Failed to generate coupon:", error.message);
             throw new Error("Failed to generate coupon: " + error.message);
         }
     }
@@ -80,9 +77,7 @@ export class CouponEntity {
             amount = price * 0.1;
             percentage = '10.00';
         }
-    
-        console.log(`Discount Amount: ${amount.toFixed(2)}`);
-        console.log(`Discount Percentage: ${percentage}%`);
+
     
         return { percentage, amount };
     }
@@ -131,11 +126,8 @@ export class CouponEntity {
                 }
             }
     
-            // query.expiry = { $gte: new Date() };
-            console.log("query: ", query);
     
             const allCoupon = await this.model.find(query);
-            console.log("Found coupons: ", allCoupon);
             
             if (!allCoupon.length) {
                 throw new AppError('No coupons found', HttpStatus.NOT_FOUND);
@@ -162,7 +154,6 @@ export class CouponEntity {
                 { new: true}
             )
     
-            console.log("updated: ", updatedCoupon)
             if (!updatedCoupon) {
                 throw new AppError('Coupon not found', HttpStatus.NOT_FOUND);
             }
@@ -181,6 +172,17 @@ export class CouponEntity {
             }
             return null
         } catch(error: any){
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    public async deleteCoupon(id: string){
+        try{
+            const deleteCoupon = await this.model.deleteOne({_id: id})
+            if(deleteCoupon.deletedCount === 0){
+                throw new AppError('coupon deletion failed' , HttpStatus.NOT_MODIFIED)
+            } 
+        } catch(error: any) {
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

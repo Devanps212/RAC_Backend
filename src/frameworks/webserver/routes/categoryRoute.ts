@@ -7,7 +7,7 @@ import express from 'express'
 
 const categoryRoute = ()=>{
 
-    const AuthRoleMiddleware = RoleAuthMiddleware('admin')
+    const AuthRoleMiddleware = RoleAuthMiddleware(['admin', 'partner'])
 
     const router = express.Router()
     const controller = categoryController(categoryRepoInterface, categoryRepository, categoryModel)

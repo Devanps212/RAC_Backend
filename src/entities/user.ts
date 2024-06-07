@@ -12,7 +12,6 @@ export class UserEntity {
 
   public async createUser(userData: createUserInterface): Promise<userInterface | null> {
     const newUser: any = await this.model.create(userData);
-    console.log(newUser)
     return newUser;
   }
   
@@ -34,7 +33,6 @@ export class UserEntity {
         mobile: user.mobile || undefined,
       }))
 
-      console.log(userDetails)
       return userDetails
     }
     catch(error:any)
@@ -98,7 +96,7 @@ export class UserEntity {
       }
     }
     catch(error: any){
-      console.log(error.message)
+
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
@@ -106,14 +104,18 @@ export class UserEntity {
 
   public async userUpdate(data: Partial<userInterface>): Promise<userInterface> {
     try {
-      console.log("reached entity : ", data)
+
+      console.log("data : ", data)
       const user = await this.model.findById({_id:data._id});
-      console.log(user)
+      console.log("user found :", user)
+      console.log("updating user")
       if (!user) {
+        console.log('no User Found')
         throw new AppError('No user found', HttpStatus.NOT_FOUND);
       }
 
       if (Object.keys(data).length === 0) {
+        console.log("nothing to update")
         throw new AppError('No update data provided', HttpStatus.BAD_REQUEST);
       }
 
@@ -123,7 +125,6 @@ export class UserEntity {
 
       return user.toObject();
     } catch (error: any) {
-      console.log(error)
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -136,7 +137,6 @@ export class UserEntity {
       }
       return users.map(user=>user.toObject())
     } catch(error: any){
-      console.log(error.message)
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }

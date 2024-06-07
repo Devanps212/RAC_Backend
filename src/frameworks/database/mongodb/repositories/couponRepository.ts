@@ -32,12 +32,18 @@ export const couponRepository = (model: couponModelType)=>{
         return response
     }
 
+    const deleteCoupon = async(couponId: string)=>{
+        const response = await couponEntity
+        return response
+    }
+
     return{
         generateCoupon,
         confirmCoupon,
         findCoupon, 
         updateCoupon,
-        findAllCoupon
+        findAllCoupon,
+        deleteCoupon
     }
 }
 

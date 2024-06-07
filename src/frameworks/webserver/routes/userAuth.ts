@@ -8,6 +8,7 @@ import { interfaceAuthService } from '../../../app/services/authServiceInterface
 import { googleAuthInterface } from '../../../app/services/googleAuthServicesInterface'
 import { googleAuthService } from '../../services/googleAuthServices'
 import upload from '../../../app/services/multerService'
+import { UserAuthentication } from '../middlewares/userAuthMiddleware'
 
 const userAuthentication: ()=>Router = ()=>{
     const route = express.Router()
@@ -26,8 +27,8 @@ const userAuthentication: ()=>Router = ()=>{
     route.post('/VOTP', controller.otpGenerate)
     route.post('/Google-SignIn-Up', controller.signInUpWithGoogle)
     route.post('/location', controller.locationFinders)
-    route.get('/findUser', controller.findSingleUser)
-    route.post('/saveUser', upload.fields([{name: 'profilePic', maxCount:1}]), controller.upDateDetail)
+    route.get('/findUser', UserAuthentication, controller.findSingleUser)
+    route.post('/saveUser', UserAuthentication, upload.fields([{name: 'profilePic', maxCount:1}]), controller.upDateDetail)
     route.get('/getAll', controller.MongoAllUsers)
 
     return route

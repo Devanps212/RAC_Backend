@@ -8,6 +8,7 @@ export const createCar = async(carData: carInterface, carRepInterface: ReturnTyp
         console.log("reached edit car");
         const tokenData = await authInterface.tokenVerification(carData.addedById);
         if (typeof tokenData === 'object' && tokenData.hasOwnProperty('payload')) {
+            console.log(tokenData)
             const payload = tokenData.payload;
             console.log("Token payload:", payload);
             carData.addedById = payload;

@@ -1,23 +1,32 @@
 import { HttpStatus } from "../../../types/httpTypes";
+import { partnerDetailInterface } from "../../../types/partnerInterface";
+import { userInterface } from "../../../types/userInterface";
 import AppError from "../../../utils/appErrors";
 import { partnerInterfaceType } from "../../repositories/partnerRepoInterface";
 import { InterfaceAuthService } from "../../services/authServiceInterface";
 
 export const partnerLogin = async(email: string, password: string, partnerInterface: ReturnType<partnerInterfaceType>, authService: ReturnType<InterfaceAuthService>)=>{
-    const user = await partnerInterface.partnerLogin(email)
-    if(user && user.password)
-    {
-        const checkPassword = await authService.decryptPassword(password, user.password)
-        if(checkPassword)
-        {
-            return user
+    const user: partnerDetailInterface | null = await partnerInterface.partnerLogin(email);
+    console.log("userData: ", user);
+
+    if (user) {
+        if (user.isGoogleUser) {
+            return user;
+        } else if (user.password) {
+            const checkPassword = await authService.decryptPassword(password, user.password);
+            console.log("password check: ", checkPassword);
+
+            if (checkPassword) {
+                return user;
+            } else {
+                throw new AppError('Incorrect password', HttpStatus.UNAUTHORIZED);
+            }
+        } else {
+            throw new AppError('Password not set for this user', HttpStatus.BAD_REQUEST);
         }
-        else
-        {
-            throw new AppError('Password error', HttpStatus.UNAUTHORIZED)
-        }
+    } else {
+        throw new AppError('User not found', HttpStatus.NOT_FOUND);
     }
-    return null
 }
 
 export const partnerSignUp = async (userId: string, transactionId: string, partnerInterface: ReturnType<partnerInterfaceType>)=>{
