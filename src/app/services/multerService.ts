@@ -12,6 +12,10 @@ const mainFolder = (req:Request)=>{
         {
             return 'Users'
         }
+    else if(req.baseUrl.startsWith('/api/admin-auth'))
+        {
+            return 'Admin'
+        }
     else
         {
             return 'Others'
@@ -21,11 +25,13 @@ const mainFolder = (req:Request)=>{
 const subFolders = (req: Request, file: Express.Multer.File) => {
     console.log("reached subfolder")
     console.log("files : ", req.files)
+    console.log("fieldName : ", file.fieldname)
     console.log("body data :", req.body)
     let folderPath = '';
     if (req.body.name && file.fieldname) {
         const { name } = req.body;
         const { fieldname } = file;
+        console.log("field Names : -------------------",fieldname)
         const deletedInteriorIndex = parseInt(req.body.deletedInteriorIndex);
         const deletedExteriorIndex = parseInt(req.body.deletedExteriorIndex);
 
@@ -51,6 +57,7 @@ const subFolders = (req: Request, file: Express.Multer.File) => {
             return folderPath;
         }
     } else {
+        console.log("no field name recieved")
         throw new Error('Name or fieldname is missing');
     }
 }

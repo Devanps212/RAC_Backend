@@ -32,7 +32,6 @@ export const carController  = (
             if (files.interior) {
                 console.log("Filenames for interior:");
                 interior = files.interior.map(data=>data.path)
-                console.log("interior :", interior)
             } else {
                 throw new Error("No 'interior' files found.");
             }
@@ -40,7 +39,6 @@ export const carController  = (
             if (files.exterior) {
                 console.log("\nFilenames for exterior:");
                 exterior = files.exterior.map(data=>data.path)
-                console.log("exterior :", exterior)
             } else {
                 throw new Error("No 'exterior' files found.");
             }
@@ -86,7 +84,7 @@ export const carController  = (
             }
     
             if (files.exterior) {
-                exterior = files.exterior.map(data => data.path); // Corrected this line
+                exterior = files.exterior.map(data => data.path); 
                 console.log("exterior:", exterior);
                 carData.exterior = exterior;
             }
@@ -152,7 +150,7 @@ export const carController  = (
     const findsCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const carData = req?.query.carData as string
-            console.log(carData)
+            console.log("carData : ", carData)
             const response = await findCar(carData, carService)
             res.json({
                 status:"success",

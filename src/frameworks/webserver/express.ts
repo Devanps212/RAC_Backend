@@ -8,7 +8,6 @@ import configFile from "../../config";
 import session, {MemoryStore} from "express-session";
 
 const expressConfig = (app:Application)=>{
-    //Necessary Middlewares
 
     const corsOptions = {
         origin : "*",
@@ -33,10 +32,6 @@ const expressConfig = (app:Application)=>{
     console.log(__dirname)
     app.use(cors(corsOptions))
     app.use(express.json())
-    // const dirname =__dirname
-    // const pathBuild = path.join(dirname, '/Frontend/src/assets')
-    // console.log(pathBuild)
-    // app.use(express.static(pathBuild))
     app.use(express.urlencoded({limit: "10mb", extended:true}))
     app.use(bodyparser.json({limit: "10mb"}))
     app.use(bodyparser.urlencoded({extended:true}))
@@ -51,9 +46,6 @@ const expressConfig = (app:Application)=>{
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
         next()
     })
-    
-    
-    
     
 }
 

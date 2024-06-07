@@ -9,7 +9,21 @@ export const adminDBRepository = (repository: ReturnType<adminRepositoryMongoDB>
         return await repository.createAdmin(adminData)
     }
 
-    return {getAdminByEmail, createAdmin}
+    const findOneAdmin = async(data: string)=>{
+        const response = await  repository.findOneAdmin(data)
+        return response
+    }
+
+    const updateAdmin = async(data: Partial<createAdminInterface>)=>{
+        const response = await repository.updateAdmin(data)
+        return response
+    }
+
+    return {getAdminByEmail, 
+            createAdmin,
+            findOneAdmin,
+            updateAdmin
+        }
 }
 
 export type adminDBInterface = typeof adminDBRepository

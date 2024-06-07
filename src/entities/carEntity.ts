@@ -17,7 +17,6 @@ export class carEntity{
     {
         try
         {
-            console.log("car details :", carData)
             const carCreate = await this.model.create(carData)
             if(carCreate)
             {
@@ -53,9 +52,7 @@ export class carEntity{
                         PictureUpdate.exterior[parseInt(deletedExteriorIndex)] = exterior[0];
                         shouldUpdateMongo = true;
                     }
-                console.log("exterior after update:", PictureUpdate);
             }
-            console.log("deleted exterior :",deletedExteriorIndex)
     
             if (deletedInteriorIndex && PictureUpdate) {
                     console.log("Interior before update:", PictureUpdate);
@@ -64,9 +61,7 @@ export class carEntity{
                         PictureUpdate.interior[parseInt(deletedInteriorIndex)] = interior[0];
                         shouldUpdateMongo = true;
                     }
-                    console.log("Interior after update:", PictureUpdate)
             }
-            console.log("delete Interior :" ,deletedInteriorIndex)
     
             if (deletedInteriorIndex || deletedExteriorIndex) {
                         if(interior && interior.length > 1 && PictureUpdate)
@@ -91,17 +86,15 @@ export class carEntity{
                     shouldUpdateMongo = true
                 }
     
-            console.log("id :", _id);
-            console.log("rest data : ", restData);
     
             if (PictureUpdate) {
                 const updatedDocument = await PictureUpdate.save();
-                console.log("Updated document:", updatedDocument);
                 const dataSave = await this.model.updateOne({_id}, {$set: restData});
-                console.log("Data save object result : ", dataSave);
+
                 if ((updatedDocument !== null || (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount > 0))) {
+                    
                     const carDetails = await this.model.findOne({_id});
-                    console.log("car details :", carDetails);
+
                     console.log("car updated");
                     return {status: "success"};
                 } else if (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount === 0 && updatedDocument === null) {
@@ -114,7 +107,6 @@ export class carEntity{
                 return {status: "success"};
             }
         } catch (error: any) {
-            console.log(error.message);
             throw new AppError('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -163,7 +155,6 @@ export class carEntity{
             const carDelete = await this.model.deleteOne({_id:carId})
             if(carDelete.deletedCount > 0)
             {
-                console.log("car Deleted")
                 return{status:'success', message:'car deletd successfully'}
             }
             else
@@ -187,7 +178,6 @@ export class carEntity{
             {
                 return {message: "not found"}
             }
-            console.log("car details : ",details.toObject())
             return details.toObject()
             
         }
@@ -215,7 +205,6 @@ export class carEntity{
         }
         catch(error:any)
         {
-            console.log(error);
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
             
         }

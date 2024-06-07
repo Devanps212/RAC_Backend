@@ -2,8 +2,7 @@ import express, {Application, NextFunction} from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import cors from 'cors'
-
-
+import { scheduleDeleteExpiredCoupons } from './frameworks/services/cronJob'
 import connectDb from './frameworks/database/mongodb/connection'
 import expressConfig from './frameworks/webserver/express'
 import errorHandling from './frameworks/webserver/middlewares/errorHandling'
@@ -29,6 +28,8 @@ export const io = new Server(server, {
 socketConfig(io)
 
 connectDb()
+
+scheduleDeleteExpiredCoupons()
 
 expressConfig(app)
 

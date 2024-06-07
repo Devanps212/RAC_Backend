@@ -16,6 +16,7 @@ export interface partnerDetailInterface extends partnerLoginInterface {
     isActive?: boolean;
     amount?:number;
     isPartner?:boolean;
+    isGoogleUser?:boolean
     transaction?: transaction[]
 }
 

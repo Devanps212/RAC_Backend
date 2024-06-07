@@ -41,8 +41,9 @@ const partnerController = (
             if(email && password)
             {
                 const partner = await partnerLogin(email, password, partnerService, authServices)
+                console.log("partner found : ", partner)
                 const payload = partner?._id ? partner._id.toString() : ''
-                console.log(payload)
+                console.log("payload============== : ", payload)
                 const token = await authServices.jwtGeneration(payload, 'partner')
                 console.log("generated token for partner : ", token)
                 res.json({
