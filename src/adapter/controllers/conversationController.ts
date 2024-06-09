@@ -34,13 +34,13 @@ export const conversationController = (
         console.log("req.jwt : ", req.body.message);
         
         const { Id } = req.params;
-        const { message, userId } = req.body;
-        
+        const { message, senderId } = req.body;
+
         console.log("params received from send Message", Id);
-        
+          
         const data: Partial<messageInterface> = {
           message: message,
-          senderId: userId,
+          senderId: senderId,
           recieverId: Id
         };
         
@@ -61,11 +61,13 @@ export const conversationController = (
 
   const getMessage = expressAsyncHandler(
     async(req: Request, res: Response)=>{
+      console.log("data reached")
+      console.log(req.params)
       const {userToChat} =req.params
-      const { userId } = req.body
-      console.log(userId)
-      console.log(req.body)
-      const getMessage = await findMessage(userToChat, userId, conversationService)
+      const { recieverId } = req.body
+      console.log(recieverId)
+      console.log(userToChat)
+      const getMessage = await findMessage(userToChat, recieverId, conversationService)
       console.log("get message : ", getMessage)
       res.json(
         getMessage

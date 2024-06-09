@@ -2,7 +2,7 @@ import { messageInterface } from "../types/messageModelInterfaces";
 import { MessageModelType } from "../frameworks/database/mongodb/models/messageModel";
 import AppError from "../utils/appErrors";
 import { HttpStatus } from "../types/httpTypes";
-import { getRecieverSocketId } from "../frameworks/websocket/socket";
+import { getReceiverSocketId } from "../frameworks/websocket/socket";
 import { io } from "..";
 
 
@@ -16,7 +16,7 @@ export class MessagesEntity {
   public async createMessage(message : messageInterface) : Promise<messageInterface>{
     try{
 
-      const recieverSocketId = getRecieverSocketId(message.recieverId as string)
+      const recieverSocketId = getReceiverSocketId(message.recieverId as string)
 
 
       console.log(message)
@@ -28,7 +28,7 @@ export class MessagesEntity {
       
       if(message.recieverId){
         console.log("going to listen to the message")
-        io.to(recieverSocketId).emit("newMessage", message.message)
+        io.to(recieverSocketId).emit("newMessage", message)
       }
 
       if(!createMessage){

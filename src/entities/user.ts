@@ -120,11 +120,13 @@ export class UserEntity {
       }
 
       Object.assign(user, data);
+  
       console.log("saving")
       await user.save();
 
       return user.toObject();
     } catch (error: any) {
+      console.log(error)
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -140,6 +142,23 @@ export class UserEntity {
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
+
+  public async findUsersForConversation(id: string): Promise<userInterface[] | userInterface> {
+    try{
+      const users = await this.model.find({_id: {$ne:id}}).exec()
+      if(users == null){
+        throw new AppError('no users found', HttpStatus.NOT_FOUND)
+      }
+      return users.map(user=>user.toObject())
+    } catch(error: any){
+      throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+
 }
+
+
+
 
 

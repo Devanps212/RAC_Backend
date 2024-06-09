@@ -8,7 +8,7 @@ import { authService } from '../../services/authServices'
 import { messageDbInterface } from '../../../app/repositories/messanger'
 import { messageRepository } from '../../database/mongodb/repositories/messageRepository'
 import { MessageModel } from '../../database/mongodb/models/messageModel'
-import { protectRoute } from '../middlewares/protectionMiddleware'
+import { PartnerUserAuthentication } from '../middlewares/partnerUserProtectMiddleware'
 
 const conversationRoute = ()=>{
     
@@ -25,8 +25,8 @@ const conversationRoute = ()=>{
         MessageModel
     )
     
-    router.post('/send/:Id', protectRoute, controller.sendMessages)
-    router.get('/:userToChat/', protectRoute, controller.getMessage)
+    router.post('/send/:Id', PartnerUserAuthentication, controller.sendMessages)
+    router.get('/:userToChat/', PartnerUserAuthentication, controller.getMessage)
 
     return router
 }

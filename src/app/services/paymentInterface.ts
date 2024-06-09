@@ -16,11 +16,21 @@ export const paymentInterface = (paymentService: ReturnType<paymentServiceType>)
         return response
     }
 
+    const paymentExtent = async(bookingDetail: Partial<bookingDetail>, car: carInterface | carInterface[] | null, userId: string)=>{
+        const response = await paymentService.paymentExtent(bookingDetail, car, userId)
+        return response
+    }
+
     const paymentRefund = async(bookingData: Partial<Booking>)=>{
         const response = await paymentService.PaymentRefund(bookingData)
         return response
     }
-    return {paymentPhonepayUser, sessionVerification, paymentRefund}
+    return {
+        paymentPhonepayUser, 
+        sessionVerification, 
+        paymentRefund,
+        paymentExtent
+    }
 }
 
 export type paymentInterfaceType = typeof paymentInterface

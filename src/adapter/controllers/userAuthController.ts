@@ -9,7 +9,7 @@ import { AuthService } from '../../frameworks/services/authServices'
 import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser, AllMongoUsers } from '../../app/use_case/auth/userAuth'
 import { googleAuthServices } from '../../frameworks/services/googleAuthServices'
 import { authGoogleInterface } from '../../app/services/googleAuthServicesInterface'
-import { locationFinder, updateUser } from '../../app/use_case/user/user'
+import { findUsersForConversation, locationFinder, updateUser } from '../../app/use_case/user/user'
 
 
 const authController = (
@@ -206,6 +206,17 @@ const authController = (
           })
         }
       )
+
+      const findUsersConversation = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+          const userId = req.query
+          const findUsers = await findUsersForConversation(String(userId), dbrepositoryUser)
+          res.json({
+            data: findUsers,
+            status: 'success'
+          })
+        }
+      )
     return {
       userSignup, 
       userLogin, 
@@ -214,7 +225,8 @@ const authController = (
       findSingleUser,
       locationFinders,
       signInUpWithGoogle,
-      MongoAllUsers 
+      MongoAllUsers,
+      findUsersConversation
       }
 }
 

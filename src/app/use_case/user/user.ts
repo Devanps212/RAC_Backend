@@ -23,3 +23,8 @@ export const updateUser = async(data: Partial<userInterface>, userInterface: Ret
     const response = await userInterface.userUpdate(data)
     return response
 }
+
+export const findUsersForConversation = async(id: string, userInterface: ReturnType<userDbInterface>)=>{
+    const response = await userInterface.findUsersForConversation(id)
+    return response
+}

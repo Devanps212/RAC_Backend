@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
-import { Booking, bookingDetail } from "../../types/bookingInterface";
+import { Booking, bookingDetail, bookingInterfaceReschedule } from "../../types/bookingInterface";
 import { carInterface } from "../../types/carInterface";
 import configFile from "../../config";
 
@@ -68,8 +68,8 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `http://localhost:5000/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: "http://localhost:5173/users/home"
+                success_url: `${process.env.SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: "http://localhost:5173/home"
             });
             
 
@@ -149,6 +149,77 @@ export const paymentService = () => {
         }
     }
 
+    const paymentExtent = async (bookingDetail: Partial<bookingDetail>, car: carInterface | carInterface[] | null, userId: string) => {
+        try {
+            console.log("payment extending")
+
+            const transactionId = await generateTransactionId()
+            if (!stripe) {
+                throw new Error('Stripe is not initialized');
+            }
+
+            if (!car) {
+                throw new Error('Car is not provided');
+              }
+
+            const carDetail = Array.isArray(car) ? car[0] : car;
+            const carId = carDetail._id
+            const carPriceData = {
+                price_data: {
+                    currency: 'inr',
+                    product_data: {
+                        name: carDetail?.name || '',
+                        images: carDetail?.thumbnailImg ? [carDetail.thumbnailImg] : [],
+                    },
+                    unit_amount: bookingDetail.total ? Math.round(bookingDetail.total * 100) : carDetail.rentPricePerDay
+                },
+                quantity: 1,
+            };
+            console.log(bookingDetail)
+
+            const bookingData : Partial<bookingInterfaceReschedule> = {
+                pickupLocation: bookingDetail.pickupLocation,
+                dropOffLocation: bookingDetail.dropOffLocation,
+                startDate: bookingDetail.startDate,
+                endDate: bookingDetail.endDate,
+                pickupTime:bookingDetail.pickupTime,
+                dropOffTime: bookingDetail.dropOffTime,
+                amount: bookingDetail.total,
+                discount: bookingDetail.discount,
+                bookingId: bookingDetail.bookingId,
+            } 
+
+            console.log("bookingDetail : ", bookingData)
+            const bookingDetails = encodeURIComponent(JSON.stringify(bookingData))
+            const sessionData = {
+                transactionId,
+                carId,
+                userId
+            };
+
+            console.log("session detail : ", sessionData)
+
+            const encodedData = encodeURIComponent(JSON.stringify(sessionData));
+            
+            
+            console.log("making payment request to stripe")
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ["card"],
+                line_items: [carPriceData],
+                mode: "payment",
+                success_url: `${process.env.SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: "http://localhost:5173/home"
+            });
+            
+
+            console.log("session Id: ", session.id)
+            return session.id;
+        } catch (error: any) {
+            console.error(error);
+            throw new AppError(error.message, HttpStatus.BAD_GATEWAY);
+        }
+    };
+
     const stripeSessionVerify = async(session_id: string)=>{
         const session = await stripe.checkout.sessions.retrieve(session_id)
         if(!session){
@@ -157,7 +228,15 @@ export const paymentService = () => {
         return session
     }
 
-    return { paymentMakingService, generateTransactionId, stripeSessionVerify, PaymentRefund };
+    
+
+    return { 
+        paymentMakingService, 
+        generateTransactionId, 
+        stripeSessionVerify, 
+        PaymentRefund,
+        paymentExtent     
+    };
 };
 
 export type paymentServiceType = typeof paymentService;

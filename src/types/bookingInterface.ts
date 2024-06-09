@@ -87,3 +87,17 @@ export interface RefundDetails {
       thumbnail: string;
   };
 }
+
+export interface bookingInterfaceReschedule {
+  pickupLocation?: string;
+  dropOffLocation?: string;
+  startDate?: Date;
+  endDate?: Date;
+  pickupTime?: string;
+  dropOffTime?: string
+  amount?:number
+  discount?:number
+  total?:number
+  bookingId?:string,
+  carId: string
+}
