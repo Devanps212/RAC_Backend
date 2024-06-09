@@ -53,7 +53,7 @@ export class BookingEnity{
             }
 
             const bookingData = await this.model.create(bookingFormat)
-            console.log("booking created : ", bookingData)
+        
             if(bookingData !== null){
                 console.log("Booked")
                 return bookingData.toObject()
@@ -71,11 +71,10 @@ export class BookingEnity{
 
     public async findBooking(data: string) : Promise<Booking[] | Booking | {message: string} | null | undefined >{
         try{
-            console.log("reached entity")
-            console.log("data : ", data)
+            
             if(data === 'all'){
                 const bookingFinding = await this.model.find().populate("carId")
-                console.log("bookings found : ", bookingFinding)
+                
                 if(bookingFinding.length ===0){
                     return {message:"no bookings found"}
                 }
@@ -106,6 +105,7 @@ export class BookingEnity{
 
     public async bookingFindingBasedOnRole(bookingData: Partial<Booking>): Promise<Booking | Booking[]>{
         try{
+            console.log("updating")
             const bookingDetail = await this.model.find(bookingData).populate('carId')
             if (bookingDetail.length === 0) {
                 return []; 
@@ -122,6 +122,7 @@ export class BookingEnity{
 
     public async BookingUpdater(data: Partial<Booking>):Promise<Booking| {message: string}>{
         try{
+            console.log("reached booking updating")
             if (!data._id) {
                 return { message: "No booking ID provided" };
             }
@@ -129,9 +130,10 @@ export class BookingEnity{
 
             const booking = await this.model.findById(bookingId)
             if(booking){
+                console.log("datas for update : ", data)
                 if(Object.keys(data).length > 0){
                     Object.assign(booking, data)
-                    console.log(booking)
+                    console.log("updating booking :", booking)
                     await booking.save()
                     return booking.toObject()
                 } else {

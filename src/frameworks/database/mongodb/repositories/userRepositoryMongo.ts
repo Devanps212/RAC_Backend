@@ -43,8 +43,23 @@ export const userRepository = (model:userModelType)=>{
         const response = await userEntity.findAllUsersFromMongo()
         return response
     }
+    
+    const findUsersForConversation = async(id: string)=>{
+        const response = await userEntity.findUsersForConversation(id)
+        return response
+    } 
 
-    return {createUser, getUserByEmail, getAllUser, blockUnblockUser, findOneUser, findUser, updateUser, findMongoAllUsers}
+    return {
+        createUser, 
+        getUserByEmail, 
+        getAllUser, 
+        blockUnblockUser, 
+        findOneUser, 
+        findUser, 
+        updateUser, 
+        findMongoAllUsers,
+        findUsersForConversation
+    }
 }
 
 export type userRepository = typeof userRepository

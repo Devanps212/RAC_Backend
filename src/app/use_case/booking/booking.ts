@@ -31,10 +31,16 @@ export const BookingUpdater = async(data: Partial<Booking> , bookingInterface: R
     return response
 }
 
+export const bookingReschedule = async(bookingDetail : Partial<bookingDetail>, car: carInterface | carInterface[] | null, userId: string ,paymentInterface: ReturnType<paymentInterfaceType>)=>{
+    const response = await paymentInterface.paymentExtent(bookingDetail, car, userId)
+    return response
+}
+
 export const stripePaymentVeification = async(sessionId: string, paymentInterface: ReturnType<paymentInterfaceType>)=>{
     const response = await paymentInterface.sessionVerification(sessionId)
     return response
 }
+
 
 export const stripeRefund = async(data: Partial<Booking>, paymentInterface: ReturnType<paymentInterfaceType>)=>{
     const response = await paymentInterface.paymentRefund(data)

@@ -15,6 +15,7 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
     const blockUnblockUser = async(userId:string)=>{
         await repository.blockUnblockUser(userId)
     }
+
     const findOneUser = async(userId: string)=>{
         const user = await repository.findOneUser(userId)
         return user
@@ -34,6 +35,12 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
         const response = await repository.findMongoAllUsers()
         return response
     }
+
+    const findUsersForConversation = async(id: string)=>{
+        const user = await repository.findUsersForConversation(id)
+        return user
+    }
+
     return {
         createUser,
         getUserByEmail,
@@ -42,7 +49,8 @@ export const userdbRepository = (repository: ReturnType<userRepository>)=>{
         findOneUser,
         findUser,
         userUpdate,
-        findMongoAllUsers
+        findMongoAllUsers,
+        findUsersForConversation
     }
     
 }

@@ -7,7 +7,7 @@ import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carR
 import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import expressAsyncHandler from "express-async-handler";
 import { findCar, updateCar, viewCarDetails } from "../../app/use_case/car/car";
-import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund } from "../../app/use_case/booking/booking";
+import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund, bookingReschedule } from "../../app/use_case/booking/booking";
 import { Booking, Refund, RefundDetails, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
@@ -26,6 +26,7 @@ import { couponInterface } from "../../types/couponInetrface";
 import { userInterface } from "../../types/userInterface";
 import { updateUser } from "../../app/use_case/user/user";
 import { ObjectId, Types } from "mongoose";
+import { decode } from "punycode";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -98,16 +99,19 @@ export const bookingController = (
     const bookingCompletion = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const {val, bookingDetail, session_id} = req.query
-            
+            console.log("val : ", val)
+           
             
             if(typeof val === 'string' &&  typeof bookingDetail === 'string' && typeof session_id === 'string'){ 
             const decodedVal = decodeURIComponent(val);
             const decodedBooking = decodeURIComponent(bookingDetail)
             const paymentDetail: SessionDataInterface = JSON.parse(decodedVal);
-            console.log(session_id)
+            console.log("payment details : ", paymentDetail)
+            
 
             paymentDetail.bookingDetails = JSON.parse(decodedBooking)
-            
+            console.log("checking bookingDetail :", paymentDetail )
+            console.log("finding car")
             const carId = paymentDetail.carId
             const carDetails = await findCar(carId, carService) as carInterface
 
@@ -116,33 +120,50 @@ export const bookingController = (
             if(sesssionVerification){
                 paymentDetail.transactionId = session_id
             }
-            console.log(paymentDetail)
-
+            
+            console.log("session verified")
             const bookingId = paymentDetail.bookingDetails.bookingId || ''
+            console.log(bookingId)
             const booking = await findBooking(bookingId, bookingService)
            
+            console.log("booking found", booking)
+
             if(booking !== null){
                 
+                console.log("booking found")
                 const bookingData = paymentDetail.bookingDetails
-                console.log(bookingData.total, bookingData.startDate, bookingData.endDate, session_id)
-                if(bookingData.total && bookingData.startDate && bookingData.endDate){
+                console.log("bookingData : ", bookingData)
+                
+                if(bookingData.amount && bookingData.startDate && bookingData.endDate){
                     const data : Partial<Booking> = {
                         transaction : {
                             transactionId: session_id,
-                            amount: bookingData.total || 0,
+                            amount: bookingData.amount || 0,
                         }, 
                         date:{
                             start: new Date(bookingData.startDate),
                             end: new Date(bookingData.endDate)
                         },
+                        location: {
+                            start: bookingData.pickupLocation!,
+                            end: bookingData.dropOffLocation!
+                        },
+                        time: {
+                            start: bookingData.pickupTime!,
+                            end: bookingData.dropOffTime!
+                        },
                         _id:bookingData.bookingId
                     }
+
+                    console.log("updating booking")
+
                     
                     const updateBooking = await BookingUpdater(data, bookingService)
-                    console.log(updateBooking)
+                    console.log("updated booking : ", updateBooking)
                     if(updateBooking !== null){
+                        console.log("booking successfull")
                         const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
-                        const redirectUrl = `http://localhost:5173/users/BookedCars?message=${message}&status=success`;
+                        const redirectUrl = `http://localhost:5173/BookedCars?message=${message}&status=success`;
                         res.redirect(redirectUrl)
                     }
                 } else {
@@ -153,6 +174,7 @@ export const bookingController = (
                 }
                 
             } else {
+                console.log("no bookingf ound")
                 
                 const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
                 
@@ -267,6 +289,7 @@ export const bookingController = (
                         _id: userId ,
                         refund:[refundData]
                     }
+                    console.log('updating refund')
                     const userRefundUpdate = await updateUser(data, userService)
                     if(!userRefundUpdate){
                         res.json({error:"refund Failed", status: "failed"})
@@ -304,7 +327,7 @@ export const bookingController = (
         async (req: Request, res: Response) => {
             const { data, userId } = req.body;
             const datas: Partial<bookingDetail> = data;
-    
+            console.log("data : ", data)
             
             const bookingId = datas.bookingId || '';
             if (!bookingId) {
@@ -353,7 +376,15 @@ export const bookingController = (
                         return;
                     }
     
-                    const payment = await bookingPayment(datas, carData, userId, paymentService);
+                    console.log("rescheduling")
+                    datas.dropOffLocation = booking.location.end
+                    datas.pickupLocation = booking.location.start
+                    datas.dropOffTime = booking.time.start
+                    datas.pickupTime = booking.time.end
+                    datas.discount = 0,
+                    datas.bookingId = booking._id
+                    console.log("updated datas  :", datas)
+                    const payment = await bookingReschedule(datas, carData, userId, paymentService);
                     res.json({
                         sessionId: payment
                     });
