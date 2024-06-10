@@ -41,6 +41,7 @@ export const bookingRoute = ()=>{
     router.get('/redirect-to', controller.bookingCompletion)
     router.patch('/updater', controller.bookingUpdater)
     router.patch('/rescheduler', controller.bookingRescheduler)
+    router.patch('/bookCarReport', controller.carReportHandler)
     return router
     
 }

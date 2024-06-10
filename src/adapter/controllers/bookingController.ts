@@ -27,6 +27,8 @@ import { userInterface } from "../../types/userInterface";
 import { updateUser } from "../../app/use_case/user/user";
 import { ObjectId, Types } from "mongoose";
 import { decode } from "punycode";
+import AppError from "../../utils/appErrors";
+import { HttpStatus } from "../../types/httpTypes";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -406,6 +408,45 @@ export const bookingController = (
         }
     );
 
+    const carReportHandler = expressAsyncHandler(
+        async (req: Request, res: Response) => {
+            const { data, bookingId } = req.body;
+            const carDetails: Partial<carInterface> = data;
+    
+            const carResult = await findCar(String(carDetails._id), carService);
+            if (carResult === undefined || carResult === null || Array.isArray(carResult)) {
+                throw new AppError('Expected a single car', HttpStatus.EXPECTATION_FAILED);
+            }
+    
+            const bookingResult = await findBooking(bookingId, bookingService);
+            if (bookingResult === undefined || bookingResult === null) {
+                throw new AppError("No booking found or an error occurred.", HttpStatus.EXPECTATION_FAILED);
+            }
+    
+            if ('message' in bookingResult) {
+                throw new AppError(bookingResult.message, HttpStatus.EXPECTATION_FAILED);
+            }
+    
+            if (Array.isArray(bookingResult)) {
+                throw new AppError("Multiple bookings found", HttpStatus.EXPECTATION_FAILED);
+            }
+    
+            if (bookingResult.status === 'Cancelled' || bookingResult.status ==='Completed') {
+                console.log("car Result : ", carResult._id)
+                carResult.status = 'maintenance'
+                bookingResult.issues = ''
+                const data = await updateCar(String(carResult._id), carResult, carService);
+                await BookingUpdater(bookingResult, bookingService)
+                
+                console.log("data updated : ", data)
+                res.json({ message: 'Car status updated to maintenance' });
+            } else {
+                throw new AppError("User hasn't cancelled or completed the renting", HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+    );
+    
+
     return {
         bookingUpdater,
         bookingFindingBasedOnRole,
@@ -413,6 +454,8 @@ export const bookingController = (
         findBookings,
         bookingPaymentUI,
         bookingCompletion,
-        bookingRescheduler
+        bookingRescheduler,
+        carReportHandler
+
     }
 }
