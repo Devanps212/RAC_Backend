@@ -27,6 +27,7 @@ export interface carInterface {
     deletedExteriorIndex?: string
     thumbnailImg?: string
     seats?:string;
+    ratingsCount?:number;
     offer?:{
         discount: number;
         price?: number | null;
