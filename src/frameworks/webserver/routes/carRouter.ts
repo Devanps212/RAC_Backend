@@ -19,6 +19,7 @@ export const carRoute = ()=>{
     router.get('/getCars',authentication, controller.findsCar)
     router.get('/CarsFromRole', authentication, controller.findCarsBasedOnRole)
     router.patch('/partialUpdate', authentication, controller.carUpdateBasedOnRole)
+    router.patch('/updateRating', authentication, controller.updateRating)
 
     return router
 }

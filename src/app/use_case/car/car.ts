@@ -53,10 +53,10 @@ export const checkCar = async(name: string, carRepoInterface: ReturnType<carInte
     return carExist
 }
 
-export const statusUpdater = async(carId: string, carRepoInterface : ReturnType<carInterfaceType>)=>{
-    const response = await carRepoInterface
-    return response 
-}
+// export const statusUpdater = async(carId: string, carRepoInterface : ReturnType<carInterfaceType>)=>{
+//     const response = await carRepoInterface
+//     return response 
+// }
 
 export const updateCar = async(carId: string, carData:Partial<carInterface>, carRepoInterface : ReturnType<carInterfaceType>)=>{
     const response = await carRepoInterface.updateCar(carId, carData)

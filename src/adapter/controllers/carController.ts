@@ -2,11 +2,14 @@ import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carRepository";
 import { carModelType } from "../../frameworks/database/mongodb/models/carModel";
 import { Request, Response } from "express";
-import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate } from "../../app/use_case/car/car";
+import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate, updateCar } from "../../app/use_case/car/car";
 import { carInterface } from "../../types/carInterface";
 import expressAsyncHandler from "express-async-handler";
 import { AuthService } from "../../frameworks/services/authServices";
 import { InterfaceAuthService } from "../../app/services/authServiceInterface";
+import { reviewInterface } from "../../types/reviewInterface";
+import AppError from "../../utils/appErrors";
+import { HttpStatus } from "../../types/httpTypes";
 
 
 export const carController  = (
@@ -185,5 +188,48 @@ export const carController  = (
         }
     )
 
-    return{createCars, editsCar, viewCar, deletesCar, findsCar, findCarsBasedOnRole, carUpdateBasedOnRole}
+    const updateRating = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            const { data , carId, userId } = req.body
+            const car = await findCar(carId, carService)
+            if(Array.isArray(car) || car === null){
+                throw new AppError("car isn't availbale", HttpStatus.EXPECTATION_FAILED)
+            }
+            const ratingDetail : reviewInterface = data
+            
+            const totalRatings = car.ratingsCount || 0;
+            const currentRating = car.rating || 0;
+            const newRating = (ratingDetail.car + ratingDetail.valueForMoney + ratingDetail.comfort + ratingDetail.performance) / 4;
+            const updatedRating = ((currentRating * totalRatings) + newRating) / (totalRatings + 1);
+
+            car.rating = updatedRating;
+            car.ratingsCount = totalRatings + 1;
+
+
+            if (ratingDetail.review && car.comments !== undefined && Array.isArray(car.comments)) {
+                car.comments.push({
+                    userId: userId,
+                    comment: ratingDetail.review,
+                    userRating: newRating,
+                });
+            }
+
+            const update = await updateCar(car._id?.toString() ?? '', car, carService)
+
+            res.json({
+                data: update,
+                message: 'success fully submitted review'
+            })
+        }
+    )
+
+    return{
+        createCars, 
+        editsCar, 
+        viewCar, 
+        deletesCar, 
+        findsCar,
+        updateRating,
+        findCarsBasedOnRole, 
+        carUpdateBasedOnRole}
 }

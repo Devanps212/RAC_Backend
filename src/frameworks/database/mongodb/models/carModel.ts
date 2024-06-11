@@ -63,6 +63,10 @@ const carSchema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
+      ratingsCount: {
+        type: Number,
+        default: 0
+    },
       description: {
         type: String,
         default: '',
