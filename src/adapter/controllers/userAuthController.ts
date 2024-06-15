@@ -6,10 +6,10 @@ import { userModelType } from '../../frameworks/database/mongodb/models/userMode
 import { userDbInterface } from '../../app/repositories/userDbrepository'
 import { InterfaceAuthService } from '../../app/services/authServiceInterface'
 import { AuthService } from '../../frameworks/services/authServices'
-import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser, AllMongoUsers } from '../../app/use_case/auth/userAuth'
+import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser, AllMongoUsers, checkUserByEmail } from '../../app/use_case/auth/userAuth'
 import { googleAuthServices } from '../../frameworks/services/googleAuthServices'
 import { authGoogleInterface } from '../../app/services/googleAuthServicesInterface'
-import { findUsersForConversation, locationFinder, updateUser } from '../../app/use_case/user/user'
+import { locationFinder, passwordReset, updateUser } from '../../app/use_case/user/user'
 
 
 const authController = (
@@ -59,9 +59,10 @@ const authController = (
     )
     
     const otpGenerate = expressAsyncHandler(async (req: Request, res: Response) => {
-        console.log("Reached auth controller for OTP verification");
-        const { email, password }: { email: string; password: string } = req?.body;
+        console.log("Reached auth controller for OTP generation");
+        const { email, password, purpose }: { email: string; password: string, purpose: string } = req?.body;
       
+        console.log("purpose : ", purpose)
         try {
           if (email && password !== '') 
           {
@@ -86,8 +87,9 @@ const authController = (
               OTP,
             });
           } 
-          else 
+          else if(email && password && purpose === '') 
           {
+            
             console.log("email from userSignup",email)
             const sendOtp = await otpGenr(email, dbrepositoryUser, 'signup');
             const OTP = sendOtp.otp;
@@ -100,6 +102,21 @@ const authController = (
               purpose: 'signup',
               OTP,
             });
+          } else {
+              const user = await checkUserByEmail(email, dbrepositoryUser)
+              console.log("reset password", purpose)
+              const sendOtp = await otpGenr(email, dbrepositoryUser, 'FPOTP');
+              const OTP = sendOtp.otp;
+              console.log("Secret: ", OTP);
+        
+              res.json({
+                status: 'success',
+                code: 200,
+                message: 'OTP generated successfully',
+                purpose: 'signup',
+                OTP,
+                user
+              });
           }
         } catch (error:any) {
           console.error("Error in OTP generation:", error.message,"statusCode :", error.statusCode);
@@ -207,26 +224,44 @@ const authController = (
         }
       )
 
-      const findUsersConversation = expressAsyncHandler(
+      const findUserBasedOnEmail = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-          const userId = req.query
-          const findUsers = await findUsersForConversation(String(userId), dbrepositoryUser)
+          const email = req.headers['x-user-email'] as string;
+          const userExist = await checkUserByEmail(email, dbrepositoryUser)
+          console.log("user Exist : ", userExist)
           res.json({
-            data: findUsers,
-            status: 'success'
+            user: userExist,
+            status:'success'
           })
         }
       )
-    return {
+
+      const resetPassword = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+          console.log("reached controller")
+          const { password, userId } = req.body
+          console.log("password : ", password, userId)
+          console.log("body data :", req.body)
+          const reset = await passwordReset(password, userId, authService, dbrepositoryUser)
+          res.json({
+            message:'success fully updated password',
+            status:"success"
+          })
+        }
+      )
+
+      
+    return { 
+      userLogin,
       userSignup, 
-      userLogin, 
       otpGenerate,
       upDateDetail,
+      MongoAllUsers,
+      resetPassword,
       findSingleUser,
       locationFinders,
       signInUpWithGoogle,
-      MongoAllUsers,
-      findUsersConversation
+      findUserBasedOnEmail,
       }
 }
 

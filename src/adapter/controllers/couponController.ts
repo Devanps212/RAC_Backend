@@ -52,6 +52,7 @@ const couponController = (
     const findAllCoupons = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             console.log("reached coupon controller")
+            console.log("api key : ",process.env.API_KEY)
             const allCoupon = await findAllCoupon(couponService)
             res.json({
                 data: allCoupon,

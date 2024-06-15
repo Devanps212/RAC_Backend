@@ -8,7 +8,9 @@ import { sessionInterface } from "../../../types/userInterface";
 
 export const sendMessage = async(data: messageInterface, conversationInterface : ReturnType<conversationInterfaceType>, authInterface : ReturnType<InterfaceAuthService>)=>{
     try{
+        console.log("data :", data)
         if(!data.senderId){
+            console.log(data)
             throw new AppError("token not found", HttpStatus.NOT_FOUND)
         }
         const response = await conversationInterface.setParticipants(data)

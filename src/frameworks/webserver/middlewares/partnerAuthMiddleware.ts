@@ -4,7 +4,7 @@ import AppError from "../../../utils/appErrors";
 import { HttpStatus } from "../../../types/httpTypes";
 
 
-export const UserAuthentication = (req: Request, res: Response, next: NextFunction) => {
+export const PartnerAuthentication = (req: Request, res: Response, next: NextFunction) => {
 
     const authHeader = req.headers['Authorization'] || req.headers['authorization']
     console.log("authHeader : ",authHeader)

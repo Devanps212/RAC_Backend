@@ -4,6 +4,9 @@ import configFile from "../../../config"
 import axios from "axios"
 import { userInterface } from "../../../types/userInterface"
 import { userDbInterface } from "../../repositories/userDbrepository"
+import { App } from "react-bootstrap-icons"
+import { InterfaceAuthService } from "../../services/authServiceInterface"
+import { Types } from "mongoose"
 
 export const locationFinder = async(data: string)=>{
     try
@@ -27,4 +30,23 @@ export const updateUser = async(data: Partial<userInterface>, userInterface: Ret
 export const findUsersForConversation = async(id: string, userInterface: ReturnType<userDbInterface>)=>{
     const response = await userInterface.findUsersForConversation(id)
     return response
+}
+export const passwordReset = async(password: string, userId: string, authInterface: ReturnType<InterfaceAuthService>, userInterface: ReturnType<userDbInterface>)=>{
+    try{
+        const hashPassword = await authInterface.encryptPassword(password)
+        if(!hashPassword){
+            throw new AppError('password checking bcryption failed Please try again', HttpStatus.NOT_IMPLEMENTED)
+        }
+        const data : userInterface = {
+            _id: new Types.ObjectId(userId),
+            password: hashPassword
+        }
+
+        const updateUser = await userInterface.userUpdate(data)
+        
+        return updateUser
+
+    } catch(error: any){
+        throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
 }

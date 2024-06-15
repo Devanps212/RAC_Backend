@@ -273,6 +273,26 @@ export class carEntity{
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public async carPagination(page: number, limit: number): Promise<{ cars: carInterface[], totalCount: number }> {
+        try {
+            const cars = await this.model.find()
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .populate('category')
+                .exec();
+
+                console.log("cars from enity : ", cars)
+            const totalCount = await this.model.countDocuments();
+
+            return {
+                cars: cars.map(car => car.toObject()),
+                totalCount: totalCount
+            };
+        } catch (error: any) {
+            throw new Error(error.message);
+        }
+    }
 }
 
 

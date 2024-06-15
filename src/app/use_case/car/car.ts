@@ -72,3 +72,8 @@ export const carPartialUpdate = async(data: Partial<carInterface>, carRepoInterf
     const response = await carRepoInterface.carPartialUpdate(data)
     return response
 }
+
+export const carPagination = async(page: number, limit:number, carRepoInterface : ReturnType<carInterfaceType>)=>{
+    const response = await carRepoInterface.carPagination(page, limit)
+    return response
+}

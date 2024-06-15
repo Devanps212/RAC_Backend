@@ -57,13 +57,12 @@ export const loginUser = async(email:string, password:string, userRepository: Re
     
 }
 
-export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbInterface>, purpose : 'signup' | 'signin')=>{
+export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbInterface>, purpose : 'signup' | 'signin' | 'FPOTP')=>{
     try{
-
         console.log("reached usecase")
+        console.log(purpose)
         const { sendOtp } = otpAuth();
-        if(purpose == 'signin')
-        {
+        if(purpose == 'signin'){
             console.log("checking login")
             const checksUser = await userRepInterface.getUserByEmail(email)
             if(!checksUser)
@@ -74,8 +73,7 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
             console.log("send : ", sendOTP)
             return sendOTP
         }
-        else
-        {
+        else if(purpose =='signup'){
             console.log("checking signUp")
             const checksUser = await userRepInterface.getUserByEmail(email)
             if(checksUser)
@@ -86,6 +84,11 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
             const sendOTP = await sendOtp(email)
             console.log("send : ", sendOTP)
             return sendOTP
+        } else {
+            console.log("checking user in FPOTP =========")
+            const checksUser = await userRepInterface.getUserByEmail(email)
+            const OTP = await sendOtp(email)
+            return OTP
         }
         
     }
@@ -197,6 +200,11 @@ export const findUser = async(userId : string, userRepository : ReturnType<userD
 
 export const AllMongoUsers = async(userRepository : ReturnType<userDbInterface>)=>{
     const response = await userRepository.findMongoAllUsers()
+    return response
+}
+
+export const checkUserByEmail = async(email: string, userRepository : ReturnType<userDbInterface>)=>{
+    const response = await userRepository.getUserByEmail(email)
     return response
 }
 

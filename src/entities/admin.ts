@@ -20,6 +20,7 @@ export class adminEntity{
     public async getAdminByEmail(email :string): Promise<createAdminInterface | null>
     {
         const adminData = await this.model.findOne({email})
+        
         return adminData
     }
     public async findOneAdmin(id:string):Promise<createAdminInterface>{
@@ -52,6 +53,8 @@ export class adminEntity{
             if(!saveAdmin){
                 throw new AppError('admin update failed', HttpStatus.NOT_MODIFIED)
             }
+
+           
 
             console.log("saved admin : ", saveAdmin)
             return saveAdmin

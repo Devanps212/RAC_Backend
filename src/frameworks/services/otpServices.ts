@@ -85,6 +85,7 @@ export const otpAuth = ()=>{
   })
 
   const sendOtp = async(email:string) =>{
+    console.log("email found : ", email)
     try
     {
       console.log('secret generated =', secret)

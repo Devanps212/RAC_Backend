@@ -30,7 +30,8 @@ const userAuthentication: ()=>Router = ()=>{
     route.get('/findUser', UserAuthentication, controller.findSingleUser)
     route.post('/saveUser', UserAuthentication, upload.fields([{name: 'profilePic', maxCount:1}]), controller.upDateDetail)
     route.get('/getAll', controller.MongoAllUsers)
-    route.get('/getUserForConversation', controller.findUsersConversation)
+    route.get('/userEmail', controller.findUserBasedOnEmail)
+    route.post('/resetPassword', controller.resetPassword)
 
     return route
 }

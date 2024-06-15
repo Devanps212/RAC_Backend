@@ -39,7 +39,22 @@ export const carRepoInterface = (repository:ReturnType<CarRepoType>)=>{
     const carPartialUpdate = async(data :Partial<carInterface>)=>{
         return await repository.carUpdateBasedOnRole(data)
     }
-    return{createCar, deleteCar ,editCar, findCar, viewCar, checkCar, updateCar, carBasedOnrole, carPartialUpdate}
+
+    const carPagination = async(page: number, limit: number)=>{
+        return await repository.carPagination(page, limit)
+    }
+    return{
+        createCar, 
+        deleteCar ,
+        editCar, 
+        findCar, 
+        viewCar, 
+        checkCar, 
+        updateCar, 
+        carPagination,
+        carBasedOnrole, 
+        carPartialUpdate
+    }
 }
 
 export type carInterfaceType = typeof carRepoInterface

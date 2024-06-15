@@ -10,7 +10,7 @@ import { paymentInterface } from '../../../../app/services/paymentInterface'
 import { userdbRepository } from '../../../../app/repositories/userDbrepository'
 import { userRepository } from '../../../database/mongodb/repositories/userRepositoryMongo'
 import { usersModel } from '../../../database/mongodb/models/userModel'
-
+import { PartnerAuthentication } from '../../middlewares/partnerAuthMiddleware'
 
 const partnerRoute = ()=>{
 
@@ -22,6 +22,7 @@ const partnerRoute = ()=>{
     router.get('/redirect-to/:transactionId/:userId', controller.transactionHandler)
     router.get('/All', controller.partnerFindAll)
     router.get('/findOne', controller.findOnePartner)
+    router.get('/getUserForConversation', PartnerAuthentication, controller.findUsersConversation)
     
 
     return router
