@@ -44,7 +44,6 @@ export const conversationController = (
           recieverId: Id
         };
         
-        console.log("conversationData : ", data);
         
         const saveConversation = await sendMessage(data, conversationService, authService);
         const newMessage = await createNewMessage(data, messageServices);
@@ -68,7 +67,6 @@ export const conversationController = (
       console.log(recieverId)
       console.log(userToChat)
       const getMessage = await findMessage(userToChat, recieverId, conversationService)
-      console.log("get message : ", getMessage)
       res.json(
         getMessage
       )

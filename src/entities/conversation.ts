@@ -18,7 +18,7 @@ export class conversationEntity{
 
             if(!conversation){
                 conversation = await this.model.create({participants: [ data.senderId, data.recieverId]})
-                console.log(conversation)
+                
             }
             return conversation.toObject()
         } catch(error: any){

@@ -1,4 +1,6 @@
 import { Application } from "express"
+import express from 'express'
+import { Request, Response } from "express"
 import userAuthentication from "./userAuth"
 import { adminAuthentication } from "./adminAuth"
 import categoryRoute from "./categoryRoute"
@@ -11,6 +13,8 @@ import conversationRoute from "./conversationRoute"
 // import messageRoute from "./messageRoute"
 
 const routes = (app: Application)=>{
+
+    const router = express.Router()
     app.use('/api/user-auth',  userAuthentication())
     app.use('/api/admin-auth', adminAuthentication())
     app.use('/api/admin', adminUserRouter())

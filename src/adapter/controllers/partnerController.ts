@@ -15,6 +15,7 @@ import { userRepository } from "../../frameworks/database/mongodb/repositories/u
 import { userDbInterface } from "../../app/repositories/userDbrepository";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { checkUserExists } from "../../app/use_case/auth/userAuth";
+import { findUsersForConversation } from "../../app/use_case/user/user";
 
 const partnerController = (
     // partnerModel : partnerModelType,
@@ -128,7 +129,27 @@ const partnerController = (
         }
     )
 
-    return {partnersLogin, signUpPartner, transactionHandler, partnerFindAll, findOnePartner}
+    const findUsersConversation = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+          console.log("reached controller")
+          const userId = req.query.userId
+          console.log("user id exclude :", userId)
+          const findUsers = await findUsersForConversation(String(userId), userServices)
+          res.json({
+            data: findUsers,
+            status: 'success'
+          })
+        }
+      )
+
+    return {
+        partnersLogin, 
+        signUpPartner, 
+        transactionHandler, 
+        partnerFindAll, 
+        findOnePartner,
+        findUsersConversation
+    }
     
 }
 

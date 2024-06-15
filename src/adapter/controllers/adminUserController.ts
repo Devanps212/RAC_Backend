@@ -53,7 +53,11 @@ const adminUserController = (
           })
         }
       )
-    return { getAllUsers , unblockBlockUser, findOneuser};
+    return { 
+      getAllUsers , 
+      unblockBlockUser, 
+      findOneuser
+    };
 };
 
 export default adminUserController;

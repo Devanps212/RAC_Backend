@@ -42,6 +42,7 @@ export const bookingRoute = ()=>{
     router.patch('/updater', controller.bookingUpdater)
     router.patch('/rescheduler', controller.bookingRescheduler)
     router.patch('/bookCarReport', controller.carReportHandler)
+    router.get('/topBookedCars', controller.topBookedCars)
     return router
     
 }

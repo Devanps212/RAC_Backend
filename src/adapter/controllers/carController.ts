@@ -2,7 +2,7 @@ import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carRepository";
 import { carModelType } from "../../frameworks/database/mongodb/models/carModel";
 import { Request, Response } from "express";
-import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate, updateCar } from "../../app/use_case/car/car";
+import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate, updateCar, carPagination } from "../../app/use_case/car/car";
 import { carInterface } from "../../types/carInterface";
 import expressAsyncHandler from "express-async-handler";
 import { AuthService } from "../../frameworks/services/authServices";
@@ -223,6 +223,20 @@ export const carController  = (
         }
     )
 
+    const carPaginations = expressAsyncHandler(
+        async (req: Request, res: Response) => {
+        const page = Number(req.query.page) || 1
+        const limit = Number(req.query.limit) || 10
+    
+        const carPage = await carPagination(page, limit, carService);
+    
+        res.json({
+            cars: carPage.cars,
+            totalCount: carPage.totalCount,
+            status: "success"
+        });
+    });
+
     return{
         createCars, 
         editsCar, 
@@ -231,5 +245,7 @@ export const carController  = (
         findsCar,
         updateRating,
         findCarsBasedOnRole, 
-        carUpdateBasedOnRole}
+        carUpdateBasedOnRole,
+        carPaginations,
+    }
 }

@@ -15,10 +15,17 @@ export class UserEntity {
     return newUser;
   }
   
-  public async getUserByEmail(email:string): Promise<userInterface | null> {
-    const user :any = await this.model.findOne({email})
-    return user;
-  }
+  public async getUserByEmail(email: string): Promise<userInterface | null> {
+    try {
+        const user = await this.model.findOne({ email }).exec();
+        if(!user){
+          return null
+        }
+        return user.toObject();
+    } catch (error: any) {
+        throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
   public async allUser(): Promise<userAdminInterface[] | null> {
     try
@@ -145,7 +152,9 @@ export class UserEntity {
 
   public async findUsersForConversation(id: string): Promise<userInterface[] | userInterface> {
     try{
+      console.log("id found : ", id)
       const users = await this.model.find({_id: {$ne:id}}).exec()
+      console.log("users length", users.length)
       if(users == null){
         throw new AppError('no users found', HttpStatus.NOT_FOUND)
       }

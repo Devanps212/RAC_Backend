@@ -28,7 +28,10 @@ export class MessagesEntity {
       
       if(message.recieverId){
         console.log("going to listen to the message")
-        io.to(recieverSocketId).emit("newMessage", message)
+        console.log("receiver in entity  : ", recieverSocketId)
+        io.to(recieverSocketId).emit("newMessage", createMessage)
+      } else {
+        console.log("no receiever id found")
       }
 
       if(!createMessage){

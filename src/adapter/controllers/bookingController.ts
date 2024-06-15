@@ -445,6 +445,43 @@ export const bookingController = (
             }
         }
     );
+
+    const topBookedCars = expressAsyncHandler(
+        async (req: Request, res: Response) => {
+          const bookingResult = await findBooking('all', bookingService);
+          const carResult = await findCar('all', carService);
+      
+          if (Array.isArray(carResult) && Array.isArray(bookingResult)) {
+            const carBookingCount: Record<string, number> = {};
+      
+            bookingResult.forEach((booking) => {
+              const carId = typeof booking.carId === 'string' ? booking.carId : booking.carId._id?.toString();
+              if (carId) {
+                carBookingCount[carId] = (carBookingCount[carId] || 0) + 1;
+              }
+            });
+      
+            const sortedCars = Object.entries(carBookingCount)
+              .map(([carId, count]) => ({ carId, count }))
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 4);
+
+              console.log("sorted cars")
+      
+            const topCars = sortedCars.map(({ carId }) => carResult.find(car => car._id?.toString() === carId)).filter(car => car);
+      
+            
+            console.log("top cars : ", topCars) 
+      
+            res.status(200).json({
+                car: topCars as carInterface[],
+                status: "success"
+            });
+          } else {
+            res.status(400).json({ message: 'Invalid data received' });
+          }
+        }
+      );
     
 
     return {
@@ -455,7 +492,7 @@ export const bookingController = (
         bookingPaymentUI,
         bookingCompletion,
         bookingRescheduler,
-        carReportHandler
-
+        carReportHandler,
+        topBookedCars
     }
 }
