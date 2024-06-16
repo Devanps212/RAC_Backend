@@ -25,7 +25,12 @@ export const partnerDbRepo = (model : userModelType)=>{
         return response
     }
 
-    return {partnerLogin, partnerexist, partnerSignUp, findAllPartner}
+    return {
+        partnerLogin, 
+        partnerexist, 
+        partnerSignUp, 
+        findAllPartner
+    }
 }
 
 export type partnerRepoType = typeof partnerDbRepo

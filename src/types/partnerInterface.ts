@@ -40,5 +40,7 @@ interface Address {
 export interface partnerData {
     token:string,
     amount:number,
-    role:string
+    role:string,
+    email?:string,
+    userId?:string
 }

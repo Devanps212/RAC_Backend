@@ -4,6 +4,7 @@ import { HttpStatus } from "../../types/httpTypes";
 import { Booking, bookingDetail, bookingInterfaceReschedule } from "../../types/bookingInterface";
 import { carInterface } from "../../types/carInterface";
 import configFile from "../../config";
+import { partnerData } from "../../types/partnerInterface";
 
 const stripe = new Stripe(configFile.STRIPE_SECRET_KEY, {
     apiVersion: '2024-04-10',
@@ -220,6 +221,43 @@ export const paymentService = () => {
         }
     };
 
+    const partnerPaymentForSignUp = async (paymentData: partnerData) => {
+        try {
+            console.log("Payment service reached");
+    
+            if (!paymentData || !paymentData.amount || !paymentData.role) {
+                throw new AppError('Invalid payment data', HttpStatus.BAD_REQUEST);
+            }
+    
+            const payment = {
+                price_data: {
+                    currency: 'inr',
+                    product_data: {
+                        name: "SignUp Payment",
+                    },
+                    unit_amount: Math.round(paymentData.amount * 100) || 250
+                },
+                quantity: 1,
+            };
+    
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ["card"],
+                line_items: [payment],
+                mode: "payment",
+                success_url: `${process.env.ORIGIN_PORT}partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
+                cancel_url: "http://localhost:5173/home" 
+            });
+    
+            console.log("Checkout session created:", session);
+    
+            return session;
+    
+        } catch (error: any) {
+            console.error("Error creating checkout session:", error);
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    };
+
     const stripeSessionVerify = async(session_id: string)=>{
         const session = await stripe.checkout.sessions.retrieve(session_id)
         if(!session){
@@ -231,7 +269,8 @@ export const paymentService = () => {
     
 
     return { 
-        paymentMakingService, 
+        paymentMakingService,
+        partnerPaymentForSignUp, 
         generateTransactionId, 
         stripeSessionVerify, 
         PaymentRefund,

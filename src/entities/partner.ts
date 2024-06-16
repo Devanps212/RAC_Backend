@@ -38,10 +38,7 @@ export class partnerEntity{
         {
             const partner = await this.model.findOne({_id:partnerId, isPartner: true})
             console.log("partner foud : ", partner)
-            if(partner === null){
-                throw new AppError('no partner found', HttpStatus.NOT_FOUND)
-            }
-            return partner.toObject()
+            return partner ? partner.toObject() : null;
         }
         catch(error:any)
         {
@@ -89,5 +86,6 @@ export class partnerEntity{
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+    
 }
 

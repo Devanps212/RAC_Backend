@@ -23,7 +23,12 @@ export const partnerRepoInterface = (repository : ReturnType<partnerRepoType>)=>
     }
 
     
-    return {partnerLogin, partnerExist, partnerSignup, findPartner}
+    return {
+        partnerLogin, 
+        partnerExist, 
+        partnerSignup, 
+        findPartner
+    }
 }
 
 export type partnerInterfaceType = typeof partnerRepoInterface

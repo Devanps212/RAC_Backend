@@ -25,7 +25,13 @@ export const paymentInterface = (paymentService: ReturnType<paymentServiceType>)
         const response = await paymentService.PaymentRefund(bookingData)
         return response
     }
+
+    const signUpPartnerPayment = async(paymentData : partnerData)=>{
+        const response = await paymentService.partnerPaymentForSignUp(paymentData)
+        return response
+    }
     return {
+        signUpPartnerPayment,
         paymentPhonepayUser, 
         sessionVerification, 
         paymentRefund,
