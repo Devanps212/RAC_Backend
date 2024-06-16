@@ -5,6 +5,7 @@ import { categoryRepos } from "../../frameworks/database/mongodb/repositories/ca
 import expressAsyncHandler from "express-async-handler"
 import { createCateg, editCategory, listCateg, unlistCateg, checkCateg, getAllCateg } from "../../app/use_case/category/category"
 
+
 const categoryController = (
     categoryInterface: categoryInterfaces,
     categoryImpl : categoryRepos,

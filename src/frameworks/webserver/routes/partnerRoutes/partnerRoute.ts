@@ -18,7 +18,7 @@ const partnerRoute = ()=>{
     const router = express.Router()
 
     router.post('/login', controller.partnersLogin)
-    router.get('/signUp', controller.signUpPartner)
+    router.post('/signUp', controller.signUpPartner)
     router.get('/redirect-to/:transactionId/:userId', controller.transactionHandler)
     router.get('/All', controller.partnerFindAll)
     router.get('/findOne', controller.findOnePartner)

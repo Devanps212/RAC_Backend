@@ -9,13 +9,15 @@ import { InterfaceAuthService } from "../../app/services/authServiceInterface";
 import expressAsyncHandler from "express-async-handler";
 import { paymentInterfaceType } from "../../app/services/paymentInterface";
 import { paymentServiceType } from "../../frameworks/services/paymentService";
-import { partnerExist } from "../../app/use_case/partner/partnerUseCase";
+import { partnerExist, signUpPayment } from "../../app/use_case/partner/partnerUseCase";
 import { partnerData } from "../../types/partnerInterface";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
 import { userDbInterface } from "../../app/repositories/userDbrepository";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { checkUserExists } from "../../app/use_case/auth/userAuth";
 import { findUsersForConversation } from "../../app/use_case/user/user";
+import AppError from "../../utils/appErrors";
+import { HttpStatus } from "../../types/httpTypes";
 
 const partnerController = (
     // partnerModel : partnerModelType,
@@ -59,7 +61,7 @@ const partnerController = (
 
     const signUpPartner = expressAsyncHandler(
         async(req:Request, res:Response)=>{
-            const partnerData : partnerData = JSON.parse(req.query.partnerData as string)
+            const { partnerData }= req.body as { partnerData:partnerData }
             console.log("PartnerData : ",partnerData)
             const payload = await authServices.tokenVerification(partnerData.token)
             let partnerId : string =''
@@ -72,31 +74,34 @@ const partnerController = (
             const userExists = await checkUserExists(partnerId, userServices)
             console.log("useExists : ",userExists)
             const partnerExists = await partnerExist(partnerId, partnerService)
-            // if(partnerExists === null && userExists)
-            // {
-            //     console.log("entering payment")
-            //     userExists.amount = partnerData.amount
-            //     userExists.role = "partner"
-            //     const paymentStarts = await signUpPayment(userExists, paymentServices)
-            //     console.log("payment data recieved :", paymentStarts)
-            //     res.json({
-            //         data: paymentStarts,
-            //         message:"success",
-            //     })   
-            // }
-            // else
-            // {
-            //     console.log("Partner already exist")
-            //     res.json({
-            //         data:null,
-            //         message:"Partner already exist"
-            //     })
-            // }
+            if(partnerExists === null && userExists)
+            {
+                console.log("entering payment")
+                // userExists.amount = partnerData.amount
+                // userExists.role = "partner"
+                partnerData.email = userExists.email
+                partnerData.userId = userExists._id?.toString()
+                const paymentStarts = await signUpPayment(partnerData, paymentServices)
+                console.log("payment data recieved :", paymentStarts)
+                res.json({
+                    data: paymentStarts,
+                    message:"success",
+                })   
+            }
+            else
+            {
+                console.log("Partner already exist")
+                res.json({
+                    data:null,
+                    message:"Partner already exist"
+                })
+            }
         }
     )
 
     const transactionHandler = expressAsyncHandler(
         async(req: Request, res: Response)=>{
+            console.log("reached transactionHandler")
             const transactionId = req.params.transactionId
             const partnerId = req.params.userId
             console.log(transactionId, partnerId)
@@ -125,6 +130,9 @@ const partnerController = (
             
             console.log("partner id found :", partnerId)
             const findPartner = await partnerExist(partnerId, partnerService)
+            if(!findPartner){
+                throw new AppError('no partner found', HttpStatus.NO_CONTENT)
+            }
             res.json(findPartner)
         }
     )

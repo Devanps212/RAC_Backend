@@ -108,7 +108,7 @@ const authController = (
               const sendOtp = await otpGenr(email, dbrepositoryUser, 'FPOTP');
               const OTP = sendOtp.otp;
               console.log("Secret: ", OTP);
-        
+              
               res.json({
                 status: 'success',
                 code: 200,
