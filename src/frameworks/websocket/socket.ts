@@ -79,55 +79,115 @@
 // };
 
 // export default socketConfig;
+
+
+//2nd socket
+
+// interface UsersSocketMap {
+//     [senderId: string]: string; 
+// }
+
+// export const getReceiverSocketId = (receiverId: string) => {
+//     console.log("receiver id : ", receiverId)
+//     console.log("id present : ", usersSocketMap[receiverId])
+//     console.log("whole ids : ", usersSocketMap)
+//     return usersSocketMap[receiverId];
+// }
+
+// const usersSocketMap: UsersSocketMap = {};
+
+// const socketConfig = (io: Server) => {
+//     io.on('connection', (socket: Socket) => {
+//         console.log(`Socket id created: ${socket.id}`);
+        
+//         const senderId = socket.handshake.query.senderId as string;
+//         console.log("userId in socket:", senderId);
+//         console.log("socket object:", usersSocketMap);
+
+//         if (senderId) {
+//             usersSocketMap[senderId] = socket.id;
+//             io.emit("getOnlineUsers", Object.keys(usersSocketMap));
+//         }
+
+//         socket.on("disconnect", () => {
+//             console.log("User disconnected:", socket.id);
+//             if (senderId && usersSocketMap[senderId]) {
+//                 delete usersSocketMap[senderId]; 
+//                 io.emit("getOnlineUsers", Object.keys(usersSocketMap));
+//             }
+//         });
+
+//         socket.on("sendMessage", ({ receiverId, message }) => {
+//             console.log("mesage and id : ", receiverId, message)
+//             const receiverSocketId = getReceiverSocketId(receiverId);
+//             if (receiverSocketId) {
+//                 console.log("receiever Id in socket : ", receiverSocketId )
+//                 io.to(receiverSocketId).emit("newMessage", message);
+//             } else {
+//                 console.error(`Receiver socket id for user ${receiverId} is undefined.`);
+//             }
+//         });
+//     });
+// };
+
+// export default socketConfig;
+
+import { text } from 'body-parser';
 import { Server, Socket } from 'socket.io';
 
-interface UsersSocketMap {
-    [senderId: string]: string; 
+let users : any[] =[]
+
+const addUser = (userId: string , socketId: string)=>{
+    !users.some((user :  any)=>user.userId === userId) && 
+    users.push({userId,socketId})
 }
 
-export const getReceiverSocketId = (receiverId: string) => {
-    console.log("receiver id : ", receiverId)
-    return usersSocketMap[receiverId];
+const removeUser = (socketId: string)=>{
+    users = users.filter((user:any)=>user.socketId !== socketId)
 }
 
-const usersSocketMap: UsersSocketMap = {};
+const getUser = (userId:string) =>{
+    return users.find(user=>user.userId === userId)
+}
 
-const socketConfig = (io: Server) => {
-    io.on('connection', (socket: Socket) => {
-        console.log(`Socket id created: ${socket.id}`);
-        
-        const senderId = socket.handshake.query.senderId as string;
-        console.log("userId in socket:", senderId);
-        console.log("socket object:", usersSocketMap);
 
-        if (senderId) {
-            usersSocketMap[senderId] = socket.id;
-            io.emit("getOnlineUsers", Object.keys(usersSocketMap));
-        }
+const socketConfig = (io: Server)=>{
+    io.on('connection', (socket)=>{
+        console.log(`user connected with socket ID : ${socket.id}`)
 
-        socket.on("disconnect", () => {
-            console.log("User disconnected:", socket.id);
-            if (senderId && usersSocketMap[senderId]) {
-                delete usersSocketMap[senderId]; 
-                io.emit("getOnlineUsers", Object.keys(usersSocketMap));
-            }
-        });
+        socket.on('addUser', (userId)=>{
+            addUser(userId, socket.id)
+            io.emit("getUsers", users)
+        })
 
-        // Example: Handle other socket events here
-        socket.on("someEvent", (data) => {
-            console.log("Received some event:", data);
-            // Handle the event as needed
-        });
-
-        socket.on("sendMessage", ({ receiverId, message }) => {
-            const receiverSocketId = getReceiverSocketId(receiverId);
-            if (receiverSocketId) {
-                io.to(receiverSocketId).emit("newMessage", message);
+        socket.on("sendMessageUser", ({senderId, receiverId, message})=>{
+            const user = getUser(receiverId)
+            if(user){
+                io.to(user.socketId).emit("getMessagePartner", {
+                    senderId,
+                    message
+                })
             } else {
-                console.error(`Receiver socket id for user ${receiverId} is undefined.`);
+                console.log(`User with userId ${receiverId} not found`);
             }
-        });
-    });
-};
+        })
 
-export default socketConfig;
+        socket.on("sendMessagePartner", ({ senderId, receiverId, message })=>{
+            const user = getUser(receiverId)
+            if(user){
+                io.to(user.socketId).emit("getMessageUser", {
+                    senderId,
+                    message
+                })
+            } else {
+                console.log(`User with userId ${receiverId} not found.`);
+            }
+        })
+
+        socket.on("disconnect", ()=>{
+            console.log("a user disconnected")
+            removeUser(socket.id)
+        })
+
+    })
+}

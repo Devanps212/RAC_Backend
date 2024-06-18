@@ -20,7 +20,6 @@ import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
 
 const partnerController = (
-    // partnerModel : partnerModelType,
     partnerRepository: partnerRepoType,
     partnerInterface : partnerInterfaceType,
     authService: AuthService,
@@ -44,11 +43,11 @@ const partnerController = (
             if(email && password)
             {
                 const partner = await partnerLogin(email, password, partnerService, authServices)
-                console.log("partner found : ", partner)
+                
                 const payload = partner?._id ? partner._id.toString() : ''
-                console.log("payload============== : ", payload)
+                
                 const token = await authServices.jwtGeneration(payload, 'partner')
-                console.log("generated token for partner : ", token)
+                
                 res.json({
                     status:"success",
                     message:"successfully logged in",
@@ -62,27 +61,23 @@ const partnerController = (
     const signUpPartner = expressAsyncHandler(
         async(req:Request, res:Response)=>{
             const { partnerData }= req.body as { partnerData:partnerData }
-            console.log("PartnerData : ",partnerData)
+           
             const payload = await authServices.tokenVerification(partnerData.token)
             let partnerId : string =''
             if(typeof payload ==='object' && 'payload' in payload)
             {
                 partnerId = payload.payload
             }
-            console.log(partnerId)
-            console.log(partnerData.role)
+            
             const userExists = await checkUserExists(partnerId, userServices)
-            console.log("useExists : ",userExists)
+            
             const partnerExists = await partnerExist(partnerId, partnerService)
             if(partnerExists === null && userExists)
             {
-                console.log("entering payment")
-                // userExists.amount = partnerData.amount
-                // userExists.role = "partner"
                 partnerData.email = userExists.email
                 partnerData.userId = userExists._id?.toString()
                 const paymentStarts = await signUpPayment(partnerData, paymentServices)
-                console.log("payment data recieved :", paymentStarts)
+                
                 res.json({
                     data: paymentStarts,
                     message:"success",
@@ -90,7 +85,7 @@ const partnerController = (
             }
             else
             {
-                console.log("Partner already exist")
+                
                 res.json({
                     data:null,
                     message:"Partner already exist"
@@ -101,12 +96,12 @@ const partnerController = (
 
     const transactionHandler = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("reached transactionHandler")
+            
             const transactionId = req.params.transactionId
             const partnerId = req.params.userId
-            console.log(transactionId, partnerId)
+            
             const partner = await partnerSignUp(partnerId, transactionId, partnerService)
-            console.log("partner :", partner)
+            
             
             res.redirect(`http://localhost:5173/partner/success/${transactionId}/${partnerId}`)
         }
@@ -124,11 +119,11 @@ const partnerController = (
 
     const findOnePartner = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("reached partner for finding one")
+            
             const {id} = req.query
             const partnerId = id as string
             
-            console.log("partner id found :", partnerId)
+            
             const findPartner = await partnerExist(partnerId, partnerService)
             if(!findPartner){
                 throw new AppError('no partner found', HttpStatus.NO_CONTENT)
@@ -139,9 +134,9 @@ const partnerController = (
 
     const findUsersConversation = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-          console.log("reached controller")
+          
           const userId = req.query.userId
-          console.log("user id exclude :", userId)
+          
           const findUsers = await findUsersForConversation(String(userId), userServices)
           res.json({
             data: findUsers,

@@ -25,9 +25,9 @@ const adminUserController = (
 
     const unblockBlockUser = expressAsyncHandler(
         async (req: Request, res: Response) => {
-          console.log(req.headers);
+          
           const userId = req.headers['x-user-id'] as string
-          console.log(userId)
+          
           try {
             await blockUnblockUser(userId, userService);
       
@@ -43,10 +43,10 @@ const adminUserController = (
 
       const findOneuser = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-          console.log(req.headers)
+          
           const userId = req.header('x-user-id') as string
           const user = await findOneUser(userId, userService)
-          console.log(user)
+          
           res.json({
             status:"success",
             user

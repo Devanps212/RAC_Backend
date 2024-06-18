@@ -17,9 +17,9 @@ export class partnerEntity{
 
         try
         {
-            console.log(email)
+           
             const user: partnerDetailInterface | null  = await this.model.findOne({email: email, isPartner: true})
-            console.log("partner found in entity : ", user)
+           
             if(!user)
             {
                 throw new AppError('User not found', HttpStatus.UNAUTHORIZED)
@@ -37,7 +37,7 @@ export class partnerEntity{
         try
         {
             const partner = await this.model.findOne({_id:partnerId, isPartner: true})
-            console.log("partner foud : ", partner)
+            
             return partner ? partner.toObject() : null;
         }
         catch(error:any)
@@ -55,12 +55,12 @@ export class partnerEntity{
                 amount:amount,
                 purpose: purpose
             }
-            console.log("newTransaction : ", newTransaction)
+            
             const partner = await this.model.updateOne({_id:userId}, {$set:{isPartner:true}, $push:{transactions:newTransaction}})
-            console.log(partner)
+            
             if(partner.matchedCount > 0 && partner.modifiedCount > 0)
             {
-                console.log("partner created : ", partner)
+                
                 return partner as partnerDetailInterface
             }
             else

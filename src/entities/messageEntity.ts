@@ -16,7 +16,9 @@ export class MessagesEntity {
   public async createMessage(message : messageInterface) : Promise<messageInterface>{
     try{
 
+      console.log("receiever id  : ", message.recieverId)
       const recieverSocketId = getReceiverSocketId(message.recieverId as string)
+      console.log("receiver socket id in entity : ", recieverSocketId)
 
 
       console.log(message)
