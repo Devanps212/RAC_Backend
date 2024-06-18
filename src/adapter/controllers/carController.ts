@@ -3,7 +3,6 @@ import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carR
 import { carModelType } from "../../frameworks/database/mongodb/models/carModel";
 import { Request, Response } from "express";
 import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate, updateCar, carPagination } from "../../app/use_case/car/car";
-import { carInterface } from "../../types/carInterface";
 import expressAsyncHandler from "express-async-handler";
 import { AuthService } from "../../frameworks/services/authServices";
 import { InterfaceAuthService } from "../../app/services/authServiceInterface";
@@ -25,15 +24,13 @@ export const carController  = (
 
     const createCars = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            // console.log("Data inside body : ", req.body)
-            // console.log("files from frontend :", req.files)
 
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             let interior :String[] = []
             let exterior = []
             let thumbnail : String[]=[] 
             if (files.interior) {
-                console.log("Filenames for interior:");
+                
                 interior = files.interior.map(data=>data.path)
             } else {
                 throw new Error("No 'interior' files found.");
@@ -48,19 +45,19 @@ export const carController  = (
 
             if(files.thumbnailImg)
             {
-                console.log("thumbnail found")
+                
                 thumbnail = files.thumbnailImg.map(data=>data.path)
             }
 
             const carData = req?.body
             const {name }= carData
-            console.log(name)
+            
             carData.interior = interior
             carData.exterior = exterior
             carData.thumbnailImg = thumbnail.join(',')
-            console.log(carData)
+            
             await checkCar(name, carService)
-            console.log("entering controller")
+            
             const carCreate = await createCar(carData, carService, authservices)
             res.json({
                 status:"success",
@@ -72,7 +69,7 @@ export const carController  = (
 
     const editsCar = expressAsyncHandler(
         async (req: Request, res: Response) => {
-            console.log("reached edits car controller")
+            
             const carData = req.body;
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             let interior: string[] = [];
@@ -81,25 +78,24 @@ export const carController  = (
     
             if (files.interior) {
                 interior = files.interior.map(data => data.path);
-                console.log("interior:", interior);
+                
                 carData.interior = interior;
-                console.log(carData.vehicleNumber)
+                
             }
     
             if (files.exterior) {
                 exterior = files.exterior.map(data => data.path); 
-                console.log("exterior:", exterior);
+                
                 carData.exterior = exterior;
             }
-            console.log("files :", req.files)
+            
             
             if(files.thumbnailImg)
             {
-                console.log("thumbnail found")
+                
                 thumbnail = files.thumbnailImg.map(data=>data.path)
                 carData.thumbnailImg = thumbnail.toString()
-                console.log("cardata in thumbnail")
-                console.log("car Data  :", carData)
+               
             }
 
         
@@ -119,7 +115,7 @@ export const carController  = (
 
     const viewCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("entering viewCar")
+            
             const {carId} = req?.body
             const response = await viewCarDetails(carId, carService)
             if(response && 'message' in response){
@@ -153,7 +149,7 @@ export const carController  = (
     const findsCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const carData = req?.query.carData as string
-            console.log("carData : ", carData)
+            
             const response = await findCar(carData, carService)
             res.json({
                 status:"success",
@@ -167,7 +163,7 @@ export const carController  = (
         async(req: Request, res: Response)=>{
 
             const role = req.query.role as string
-            console.log(role)
+            
             const cars = await carBasedOnRole(role, carService)
             res.json({
                 data: cars,
@@ -179,7 +175,7 @@ export const carController  = (
     const carUpdateBasedOnRole = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const data = req.body
-            console.log(data)
+            
             const updateCar = await carPartialUpdate(data, carService)
             res.json({
                 data: updateCar,

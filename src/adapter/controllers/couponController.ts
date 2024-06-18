@@ -25,10 +25,10 @@ const couponController = (
 
     const generateCoupon = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log(req.body)
+            
             const data  = req.body.price
             const expiryDate = req.body.expiry
-            console.log(data)
+           
             const generate = await generatingCoupon(data, expiryDate, couponService)
             res.json({
                 data: generate,
@@ -39,9 +39,9 @@ const couponController = (
 
     const updateCoupons = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log(req.body)
+            
             const {data} = req.body
-            console.log(data)
+            
             const update = await updateCoupon(data, couponService)
             res.json({
                 data: update,
@@ -51,8 +51,8 @@ const couponController = (
     )
     const findAllCoupons = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("reached coupon controller")
-            console.log("api key : ",process.env.API_KEY)
+            
+            
             const allCoupon = await findAllCoupon(couponService)
             res.json({
                 data: allCoupon,
@@ -66,7 +66,7 @@ const couponController = (
         const { couponCode, userId } = req.body;
         const user = await findOneUser(userId, userService);
         const couponFind = await findCoupon(couponCode, couponService) as couponInterface[];
-        console.log(user, user?.coupons || '')
+        
         if (user!==null  && user.coupons) {
           const updatedCoupons = (user.coupons as couponInterface[]).map((c) => {
             if (c.coupon === couponCode) {
@@ -80,7 +80,7 @@ const couponController = (
 
           const update = await updateUser(updatedUser, userService)
 
-          console.log("updated :-------------", update)
+          
           res.json({
             data: updatedCoupons,
             status: "success"

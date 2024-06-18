@@ -30,13 +30,13 @@ export const conversationController = (
   const sendMessages = expressAsyncHandler(
     async (req: Request, res: Response) => {
       try {
-        console.log("found controller");
-        console.log("req.jwt : ", req.body.message);
+        // console.log("found controller");
+        // console.log("req.jwt : ", req.body.message);
         
         const { Id } = req.params;
         const { message, senderId } = req.body;
 
-        console.log("params received from send Message", Id);
+        // console.log("params received from send Message", Id);
           
         const data: Partial<messageInterface> = {
           message: message,
@@ -47,8 +47,8 @@ export const conversationController = (
         
         const saveConversation = await sendMessage(data, conversationService, authService);
         const newMessage = await createNewMessage(data, messageServices);
-        console.log("newMessage : ", newMessage)
-        console.log("newMessage id : ", newMessage._id)
+        // console.log("newMessage : ", newMessage)
+        // console.log("newMessage id : ", newMessage._id)
         const addMessageToConversation = await addMessage(newMessage._id as string, saveConversation._id as string, conversationService);
 
         res.json(newMessage);
@@ -60,8 +60,7 @@ export const conversationController = (
 
   const getMessage = expressAsyncHandler(
     async(req: Request, res: Response)=>{
-      console.log("data reached")
-      console.log(req.params)
+      
       const {userToChat} =req.params
       const { recieverId } = req.body
       console.log(recieverId)

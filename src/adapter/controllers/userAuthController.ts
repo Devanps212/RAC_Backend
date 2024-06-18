@@ -42,14 +42,13 @@ const authController = (
 
     const userLogin = expressAsyncHandler(
         async(req:Request, res:Response)=>{
-          console.log("reached userLogin")
             const {email, password} : {email:string, password:string} = req.body
-            console.log(email, password)
+            
             const checkUser = await loginUser(email, password, dbrepositoryUser, authService)
             const payload = checkUser?._id ? checkUser._id.toString() :''
-            console.log("payload : ",payload)
+            
             const token = await authService.jwtGeneration(payload, 'user')
-            console.log("token : ",token)
+            
             res.json({
                 status:"success",
                 message:"Login success",
@@ -59,24 +58,17 @@ const authController = (
     )
     
     const otpGenerate = expressAsyncHandler(async (req: Request, res: Response) => {
-        console.log("Reached auth controller for OTP generation");
+        
         const { email, password, purpose }: { email: string; password: string, purpose: string } = req?.body;
       
-        console.log("purpose : ", purpose)
         try {
           if (email && password !== '') 
           {
-            console.log("password found")
-            console.log("Email = ", email, "Password = ", password);
-      
             const user = await loginUser(email, password, dbrepositoryUser, authService);
             const userId = user._id;
-            console.log("User exists = ", userId);
       
             const sendOtp = await otpGenr(email, dbrepositoryUser, 'signin');
             const OTP = sendOtp.otp;
-      
-            console.log("Secret: ", OTP);
       
             res.json({
               status: 'success',
@@ -89,11 +81,8 @@ const authController = (
           } 
           else if(email && password && purpose === '') 
           {
-            
-            console.log("email from userSignup",email)
             const sendOtp = await otpGenr(email, dbrepositoryUser, 'signup');
             const OTP = sendOtp.otp;
-            console.log("Secret: ", OTP);
       
             res.json({
               status: 'success',
@@ -104,10 +93,8 @@ const authController = (
             });
           } else {
               const user = await checkUserByEmail(email, dbrepositoryUser)
-              console.log("reset password", purpose)
               const sendOtp = await otpGenr(email, dbrepositoryUser, 'FPOTP');
               const OTP = sendOtp.otp;
-              console.log("Secret: ", OTP);
               
               res.json({
                 status: 'success',
@@ -140,9 +127,9 @@ const authController = (
       
       const signInUpWithGoogle = expressAsyncHandler(
         async(req:Request, res:Response)=>{
-          console.log("reached google verification")
+          
           const {credentials} : {credentials : string} = req.body
-          console.log("credentials :", credentials)
+          
           const signUpInGoogle = await signIn_UpWithGoogle(credentials, googleAuthService, dbrepositoryUser, authService)
           if(signUpInGoogle.purpose == "sigIn")
           {
@@ -165,9 +152,9 @@ const authController = (
 
       const locationFinders = expressAsyncHandler(
         async(req:Request, res:Response)=>{
-          console.log("data from body :" ,req.body)
+          
           const locations = req.body.location
-          console.log("location  :", locations)
+          
           const location = await locationFinder(locations)
           res.json({
             data:location
@@ -189,20 +176,22 @@ const authController = (
 
       const upDateDetail = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-          console.log("reached controller")
+          
           let data : Partial<userInterface>;
           if(req.files){
-            console.log("file found")
+            
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
             const path = files.profilePic[0].path
-            console.log("body data :", req.body._id)
+            
             data = {}
             data.profilePic = path
             data._id = req.body._id
+
           } else {
+
             console.log(req.body)
             data = req.body;
-            console.log(data)
+
           }
           
           const updatingUser = await updateUser(data, dbrepositoryUser)
@@ -216,7 +205,7 @@ const authController = (
       const MongoAllUsers = expressAsyncHandler(
         async(req: Request, res: Response)=>{
           const users = await AllMongoUsers(dbrepositoryUser)
-          console.log("user :", users)
+          
           res.json({
             data: users,
             status: 'success'
@@ -228,7 +217,7 @@ const authController = (
         async(req: Request, res: Response)=>{
           const email = req.headers['x-user-email'] as string;
           const userExist = await checkUserByEmail(email, dbrepositoryUser)
-          console.log("user Exist : ", userExist)
+          
           res.json({
             user: userExist,
             status:'success'
@@ -238,11 +227,11 @@ const authController = (
 
       const resetPassword = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-          console.log("reached controller")
+          
           const { password, userId } = req.body
-          console.log("password : ", password, userId)
-          console.log("body data :", req.body)
+          
           const reset = await passwordReset(password, userId, authService, dbrepositoryUser)
+          
           res.json({
             message:'success fully updated password',
             status:"success"

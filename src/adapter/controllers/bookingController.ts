@@ -55,14 +55,14 @@ export const bookingController = (
 
     const filteringCarsBooking = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log(req.query)
+           
             const { pickupLocation, dropOffLocation, startDate, endDate, pickupTime, dropOffTime } = req.query;
             const finDcars = await findCar('all', carService) as carInterface[]
             const Bookings = await findBooking('all', bookingService) as Booking
             if(finDcars){
                 const ownerId = finDcars.map((car : carInterface)=>car.addedById as string)
                 const findUsersPromises = ownerId.map(id=> findUser(id, userService))
-                console.log(findUsersPromises)
+                
                 
             }
         }
@@ -101,19 +101,18 @@ export const bookingController = (
     const bookingCompletion = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const {val, bookingDetail, session_id} = req.query
-            console.log("val : ", val)
+            
            
             
             if(typeof val === 'string' &&  typeof bookingDetail === 'string' && typeof session_id === 'string'){ 
             const decodedVal = decodeURIComponent(val);
             const decodedBooking = decodeURIComponent(bookingDetail)
             const paymentDetail: SessionDataInterface = JSON.parse(decodedVal);
-            console.log("payment details : ", paymentDetail)
+            
             
 
             paymentDetail.bookingDetails = JSON.parse(decodedBooking)
-            console.log("checking bookingDetail :", paymentDetail )
-            console.log("finding car")
+           
             const carId = paymentDetail.carId
             const carDetails = await findCar(carId, carService) as carInterface
 
@@ -123,18 +122,15 @@ export const bookingController = (
                 paymentDetail.transactionId = session_id
             }
             
-            console.log("session verified")
+            
             const bookingId = paymentDetail.bookingDetails.bookingId || ''
             console.log(bookingId)
             const booking = await findBooking(bookingId, bookingService)
            
-            console.log("booking found", booking)
 
             if(booking !== null){
                 
-                console.log("booking found")
                 const bookingData = paymentDetail.bookingDetails
-                console.log("bookingData : ", bookingData)
                 
                 if(bookingData.amount && bookingData.startDate && bookingData.endDate){
                     const data : Partial<Booking> = {
@@ -157,13 +153,11 @@ export const bookingController = (
                         _id:bookingData.bookingId
                     }
 
-                    console.log("updating booking")
-
                     
                     const updateBooking = await BookingUpdater(data, bookingService)
-                    console.log("updated booking : ", updateBooking)
+                    
                     if(updateBooking !== null){
-                        console.log("booking successfull")
+                        
                         const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
                         const redirectUrl = `http://localhost:5173/BookedCars?message=${message}&status=success`;
                         res.redirect(redirectUrl)
@@ -176,7 +170,7 @@ export const bookingController = (
                 }
                 
             } else {
-                console.log("no bookingf ound")
+                
                 
                 const bookingCreation = await createBooking(paymentDetail, carDetails,bookingService)
                 
@@ -224,7 +218,7 @@ export const bookingController = (
     const bookingFindingBasedOnRole = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const { bookingData } = req.body
-            console.log(bookingData)
+            
             const findBooking = await bookingBasedOnRole(bookingData, bookingService)
             res.json({
                 data: findBooking
@@ -291,7 +285,7 @@ export const bookingController = (
                         _id: userId ,
                         refund:[refundData]
                     }
-                    console.log('updating refund')
+                    
                     const userRefundUpdate = await updateUser(data, userService)
                     if(!userRefundUpdate){
                         res.json({error:"refund Failed", status: "failed"})
@@ -329,7 +323,7 @@ export const bookingController = (
         async (req: Request, res: Response) => {
             const { data, userId } = req.body;
             const datas: Partial<bookingDetail> = data;
-            console.log("data : ", data)
+            
             
             const bookingId = datas.bookingId || '';
             if (!bookingId) {
@@ -378,14 +372,13 @@ export const bookingController = (
                         return;
                     }
     
-                    console.log("rescheduling")
                     datas.dropOffLocation = booking.location.end
                     datas.pickupLocation = booking.location.start
                     datas.dropOffTime = booking.time.start
                     datas.pickupTime = booking.time.end
                     datas.discount = 0,
                     datas.bookingId = booking._id
-                    console.log("updated datas  :", datas)
+
                     const payment = await bookingReschedule(datas, carData, userId, paymentService);
                     res.json({
                         sessionId: payment
@@ -432,13 +425,13 @@ export const bookingController = (
             }
     
             if (bookingResult.status === 'Cancelled' || bookingResult.status ==='Completed') {
-                console.log("car Result : ", carResult._id)
+                
                 carResult.status = 'maintenance'
                 bookingResult.issues = ''
                 const data = await updateCar(String(carResult._id), carResult, carService);
                 await BookingUpdater(bookingResult, bookingService)
                 
-                console.log("data updated : ", data)
+                
                 res.json({ message: 'Car status updated to maintenance' });
             } else {
                 throw new AppError("User hasn't cancelled or completed the renting", HttpStatus.NOT_ACCEPTABLE);
@@ -466,12 +459,12 @@ export const bookingController = (
               .sort((a, b) => b.count - a.count)
               .slice(0, 4);
 
-              console.log("sorted cars")
+              
       
             const topCars = sortedCars.map(({ carId }) => carResult.find(car => car._id?.toString() === carId)).filter(car => car);
       
             
-            console.log("top cars : ", topCars) 
+            
       
             res.status(200).json({
                 car: topCars as carInterface[],

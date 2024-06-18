@@ -22,11 +22,11 @@ export const adminAuthController = (
     const adminLogin = expressAsyncHandler(
         async(req : Request, res : Response)=>{
             const {email, password} : {email :string, password : string} = req?.body
-            console.log("admin email and password : " , email, password)
+            
             const admin = await loginAdmin(email, password, adminRepoInteface, adminAuth)
             const payload = admin._id ? admin._id.toString() : '';
             const token = await adminAuth.jwtGeneration(payload, 'admin')
-            console.log("admin token :", token)
+
             res.json({
                 status : "success",
                 message:"Admin Login Success",
@@ -40,8 +40,7 @@ export const adminAuthController = (
     const findAdminOne = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const adminId = req.query.adminId
-            console.log("adminId from query : ", adminId)
-            console.log(req.query)
+            
             const admin = await findOneAdmin(String(adminId), adminRepoInteface)
             res.json({
                 data: admin,
@@ -52,10 +51,9 @@ export const adminAuthController = (
 
     const adminUpdate = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("reached controller")
-            console.log(req.body)
+            
             let data : createAdminInterface = req.body
-            console.log('data : ', data)
+            
             
             if(req.files){
                 const files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -64,7 +62,7 @@ export const adminAuthController = (
                     data.profilePic = filePath;
                 }
             }
-            console.log("datas found : ", data)
+            
             const update = await updateAdmin(data, adminRepoInteface)
             res.json({
                 data: update,
