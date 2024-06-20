@@ -61,11 +61,12 @@ export const conversationController = (
   const getMessage = expressAsyncHandler(
     async(req: Request, res: Response)=>{
       
-      const {userToChat} =req.params
-      const { recieverId } = req.body
-      console.log(recieverId)
-      console.log(userToChat)
-      const getMessage = await findMessage(userToChat, recieverId, conversationService)
+      const { receiverId, senderId } =req.params
+      
+      // console.log("receiverId : ", receiverId)
+      // console.log("sebderId : ", senderId)
+      const getMessage = await findMessage(receiverId, senderId, conversationService)
+      
       res.json(
         getMessage
       )

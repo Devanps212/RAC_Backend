@@ -2,8 +2,6 @@ import { messageInterface } from "../types/messageModelInterfaces";
 import { MessageModelType } from "../frameworks/database/mongodb/models/messageModel";
 import AppError from "../utils/appErrors";
 import { HttpStatus } from "../types/httpTypes";
-import { getReceiverSocketId } from "../frameworks/websocket/socket";
-import { io } from "..";
 
 
 export class MessagesEntity {
@@ -17,8 +15,6 @@ export class MessagesEntity {
     try{
 
       console.log("receiever id  : ", message.recieverId)
-      const recieverSocketId = getReceiverSocketId(message.recieverId as string)
-      console.log("receiver socket id in entity : ", recieverSocketId)
 
 
       console.log(message)
@@ -30,8 +26,7 @@ export class MessagesEntity {
       
       if(message.recieverId){
         console.log("going to listen to the message")
-        console.log("receiver in entity  : ", recieverSocketId)
-        io.to(recieverSocketId).emit("newMessage", createMessage)
+        
       } else {
         console.log("no receiever id found")
       }
@@ -44,8 +39,6 @@ export class MessagesEntity {
       throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
-
- 
 }
 
 

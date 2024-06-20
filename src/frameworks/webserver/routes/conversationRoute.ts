@@ -26,7 +26,7 @@ const conversationRoute = ()=>{
     )
     
     router.post('/send/:Id', PartnerUserAuthentication, controller.sendMessages)
-    router.get('/:userToChat/', PartnerUserAuthentication, controller.getMessage)
+    router.get('/:receiverId/:senderId', PartnerUserAuthentication, controller.getMessage)
 
     return router
 }
