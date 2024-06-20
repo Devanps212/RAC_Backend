@@ -9,7 +9,6 @@ import errorHandling from './frameworks/webserver/middlewares/errorHandling'
 import AppError from './utils/appErrors'
 import serverConfig from './frameworks/webserver/server'
 import routes from './frameworks/webserver/routes/routes'
-import configFile from './config'
 import socketConfig from './frameworks/websocket/socket'
 
 const app:Application = express()

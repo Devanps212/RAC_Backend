@@ -22,6 +22,7 @@ export class conversationEntity{
             }
             return conversation.toObject()
         } catch(error: any){
+            console.error(error)
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
@@ -35,6 +36,7 @@ export class conversationEntity{
           
           return edit.toObject()
         } catch(error: any){
+          console.error(error)
           throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
       }
@@ -43,10 +45,12 @@ export class conversationEntity{
       public async getMessage(oppositeUserId: string, senderId:string):Promise<messageInterface>{
         try{
           const findMessage = await this.model.findOne({participants:{$all:[oppositeUserId, senderId]}}).populate('messages')
+          // console.log("message found : ", findMessage)
           if(!findMessage){
             throw new AppError('no conversation found', HttpStatus.NOT_FOUND)
           }
           const messages = findMessage.messages
+          // console.log("message found  :", messages)
           return messages.toObject()
         } catch(error: any){
           throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
