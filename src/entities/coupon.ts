@@ -63,22 +63,33 @@ export class CouponEntity {
         return couponCode;
     }
     
-    private calculateDiscount(price: number): discountInterface {
-        let amount: number;
-        let percentage: string;
-    
-        if (price < 10000) {
-            amount = 500;
-            percentage = ((amount / price) * 100).toFixed(2);
-        } else if (price >= 10000 && price < 20000) {
-            amount = price * 0.05;
-            percentage = '5.00';
-        } else {
-            amount = price * 0.1;
-            percentage = '10.00';
+    private discountThresholds: { price: number; percentage: number }[] = [
+        { price: 1500, percentage: 5 },
+        { price: 5000, percentage: 10 },
+        { price: 10000, percentage: 15 },
+        { price: 15000, percentage: 20 },
+        { price: 20000, percentage: 25 },
+        { price: 25000, percentage: 30 },
+        { price: 30000, percentage: 35 },
+        { price: 55000, percentage: 40 },
+        { price: 65000, percentage: 45 },
+        { price: 85000, percentage: 50 },
+    ];
+
+    private calculateDiscount(price: number) {
+        let applicablePercentage = 0;
+
+        for (let i = 0; i < this.discountThresholds.length; i++) {
+            if (price >= this.discountThresholds[i].price) {
+                applicablePercentage = this.discountThresholds[i].percentage;
+            } else {
+                break;
+            }
         }
 
-    
+        const amount = (price * applicablePercentage) / 100;
+        const percentage = applicablePercentage.toFixed(2);
+
         return { percentage, amount };
     }
 
