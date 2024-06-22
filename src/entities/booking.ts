@@ -146,4 +146,41 @@ export class BookingEnity{
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    public async BookingPagination(data: string | Partial<Booking>, page: number, limit: number): Promise<{formattedBookings: Booking[], totalCount: number}> {
+        try {
+            let bookings;
+            let totalCount;
+
+            if (typeof data === "string") {
+                
+                bookings = await this.model.find()
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .populate('carId')
+                    .exec();
+
+                totalCount = await this.model.countDocuments();
+            } else {
+                
+                bookings = await this.model.find({ ...data })
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .populate('carId')
+                    .exec();
+
+                totalCount = await this.model.countDocuments({ ...data });
+            }
+
+            
+            const formattedBookings: Booking[] = bookings.map((booking) => booking.toObject());
+
+            return {
+                formattedBookings,
+                totalCount
+            };
+        } catch (error: any) {
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

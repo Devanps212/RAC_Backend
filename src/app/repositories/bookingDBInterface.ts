@@ -25,12 +25,18 @@ export const bookingDBInterface = (repository: ReturnType<bookingRepositoryType>
         const response = await repository.bookingUpdater(data)
         return response
     }
+
+    const bookingPagination = async(data: Partial<Booking>| string, page: number, limit: number)=>{
+        const response = await repository.bookingPagination(data, page, limit)
+        return response
+    }
+
     return{
         createBooking,
         findBooking,
         bookingBasedOnRole,
-        bookingUpdater
-
+        bookingUpdater,
+        bookingPagination
     }
 }
 

@@ -46,3 +46,8 @@ export const stripeRefund = async(data: Partial<Booking>, paymentInterface: Retu
     const response = await paymentInterface.paymentRefund(data)
     return response
 }
+
+export const bookingPagination = async(data: Partial<Booking>| string, page: number, limit: number, bookingInterface: ReturnType<bookingInterfaceType>)=>{
+    const response = await bookingInterface.bookingPagination(data, page , limit)
+    return response
+}

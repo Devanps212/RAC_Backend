@@ -7,7 +7,7 @@ import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carR
 import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import expressAsyncHandler from "express-async-handler";
 import { findCar, updateCar, viewCarDetails } from "../../app/use_case/car/car";
-import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund, bookingReschedule } from "../../app/use_case/booking/booking";
+import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund, bookingReschedule, bookingPagination } from "../../app/use_case/booking/booking";
 import { Booking, Refund, RefundDetails, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
@@ -29,6 +29,7 @@ import { ObjectId, Types } from "mongoose";
 import { decode } from "punycode";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
+import { json } from "body-parser";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -475,6 +476,36 @@ export const bookingController = (
           }
         }
       );
+
+      const paginationBooking = expressAsyncHandler(
+      async(req: Request, res:Response)=>{
+        let { page, limit, data} = req.query
+
+        let parsedData: Partial<Booking> | string = {};
+
+        if (typeof data === 'string') {
+            const decodedData = decodeURIComponent(data);
+            try {
+                parsedData = JSON.parse(decodedData);
+            } catch (error) {
+                parsedData = decodedData;
+            }
+        } else {
+            throw new Error('Invalid data parameter');
+        }
+
+        page = typeof page === 'string' && !isNaN(parseInt(page)) ? page : '1';
+        limit = typeof limit === 'string' && !isNaN(parseInt(limit)) ? limit : '10';
+
+        const bookingPage : {formattedBookings: Booking[], totalCount: number} = await bookingPagination(parsedData, parseInt(page), parseInt(limit), bookingService)
+        res.status(200)
+        .json({
+            message: "success",
+            bookings: bookingPage.formattedBookings,
+            totalCount: bookingPage.totalCount
+        })
+      }
+    )
     
 
     return {
@@ -486,6 +517,7 @@ export const bookingController = (
         bookingCompletion,
         bookingRescheduler,
         carReportHandler,
-        topBookedCars
+        topBookedCars,
+        paginationBooking
     }
 }
