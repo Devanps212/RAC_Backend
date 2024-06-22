@@ -29,11 +29,17 @@ export const bookingRepository = (bookingModel : BookingModelType)=>{
         return response
     }
 
+    const bookingPagination = async(data: Partial<Booking> | string, page: number, limit: number)=>{
+        const response = await enitityBooking.BookingPagination(data, page, limit)
+        return response
+    }
+
     return{
         createBooking,
         findBooking,
         bookingFindinBaedOnRole,
-        bookingUpdater
+        bookingUpdater,
+        bookingPagination
     }
 }
 
