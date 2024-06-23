@@ -1,0 +1,30 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.carRoute = void 0;
+const express_1 = __importDefault(require("express"));
+const carController_1 = require("../../../adapter/controllers/carController");
+const carRepository_1 = require("../../database/mongodb/repositories/carRepository");
+const carRepoInterface_1 = require("../../../app/repositories/carRepoInterface");
+const carModel_1 = require("../../database/mongodb/models/carModel");
+const multerService_1 = __importDefault(require("../../../app/services/multerService"));
+const authenticationMidddleware_1 = require("../middlewares/authenticationMidddleware");
+const authServices_1 = require("../../services/authServices");
+const authServiceInterface_1 = require("../../../app/services/authServiceInterface");
+const carRoute = () => {
+    const controller = (0, carController_1.carController)(carRepoInterface_1.carRepoInterface, carRepository_1.carRepository, carModel_1.carModel, authServices_1.authService, authServiceInterface_1.interfaceAuthService);
+    const router = express_1.default.Router();
+    router.post('/addCar', authenticationMidddleware_1.authentication, multerService_1.default.fields([{ name: 'interior', maxCount: 2 }, { name: 'exterior', maxCount: 2 }, { name: 'thumbnailImg', maxCount: 1 }]), controller.createCars);
+    router.patch('/editCar/', authenticationMidddleware_1.authentication, multerService_1.default.fields([{ name: 'interior', maxCount: 2 }, { name: 'exterior', maxCount: 2 }, { name: 'thumbnailImg', maxCount: 1 }]), controller.editsCar);
+    router.get('/carsDetails', authenticationMidddleware_1.authentication, controller.viewCar);
+    router.delete('/deleteCar', authenticationMidddleware_1.authentication, controller.deletesCar);
+    router.get('/getCars', authenticationMidddleware_1.authentication, controller.findsCar);
+    router.get('/CarsFromRole', authenticationMidddleware_1.authentication, controller.findCarsBasedOnRole);
+    router.patch('/partialUpdate', authenticationMidddleware_1.authentication, controller.carUpdateBasedOnRole);
+    router.patch('/updateRating', authenticationMidddleware_1.authentication, controller.updateRating);
+    router.get('/carPage', authenticationMidddleware_1.authentication, controller.carPaginations);
+    return router;
+};
+exports.carRoute = carRoute;
