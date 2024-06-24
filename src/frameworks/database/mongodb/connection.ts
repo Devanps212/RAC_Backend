@@ -2,22 +2,24 @@ import mongoose from 'mongoose'
 import configFile from '../../../config'
 
 
-mongoose.set('strictQuery', true)
+// mongoose.set('strictQuery', true)
 
-const connectDb = async()=>{    
+const connectDb = async()=>{ 
+    console.log('hi');
+       
     try
     {
-        await mongoose.connect(configFile.MONGO_URL || '')
-        .then(()=>{
+        console.log(configFile.MONGO_URL,'------')
+    
+        await mongoose.connect(configFile.MONGO_URL)
+        
             console.log('Database connected')
-        })
-        .catch((error:any)=>{
-            console.log(error.message)
-        })
+        
+        
     }
     catch(error:any)
     {
-        console.log(error.message)
+        console.log(error,'error from db ')
         process.exit(1)
     }
 }
