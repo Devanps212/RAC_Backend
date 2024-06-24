@@ -16,6 +16,8 @@ const appErrors_1 = __importDefault(require("./utils/appErrors"));
 const server_1 = __importDefault(require("./frameworks/webserver/server"));
 const routes_1 = __importDefault(require("./frameworks/webserver/routes/routes"));
 const socket_1 = __importDefault(require("./frameworks/websocket/socket"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 app.use((0, cors_1.default)());
