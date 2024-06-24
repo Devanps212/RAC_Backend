@@ -1,0 +1,38 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.bookingRoute = void 0;
+const bookingModel_1 = require("../../database/mongodb/models/bookingModel");
+const bookingDBInterface_1 = require("../../../app/repositories/bookingDBInterface");
+const bookingRepository_1 = require("../../database/mongodb/repositories/bookingRepository");
+const carModel_1 = require("../../database/mongodb/models/carModel");
+const carRepository_1 = require("../../database/mongodb/repositories/carRepository");
+const carRepoInterface_1 = require("../../../app/repositories/carRepoInterface");
+const bookingController_1 = require("../../../adapter/controllers/bookingController");
+const userModel_1 = require("../../database/mongodb/models/userModel");
+const userDbrepository_1 = require("../../../app/repositories/userDbrepository");
+const userRepositoryMongo_1 = require("../../database/mongodb/repositories/userRepositoryMongo");
+const express_1 = __importDefault(require("express"));
+const paymentInterface_1 = require("../../../app/services/paymentInterface");
+const paymentService_1 = require("../../services/paymentService");
+const couponInterface_1 = __importDefault(require("../../../app/repositories/couponInterface"));
+const couponRepository_1 = require("../../database/mongodb/repositories/couponRepository");
+const couponModel_1 = require("../../database/mongodb/models/couponModel");
+const bookingRoute = () => {
+    const controller = (0, bookingController_1.bookingController)(bookingDBInterface_1.bookingDBInterface, bookingRepository_1.bookingRepository, bookingModel_1.bookingModel, carRepoInterface_1.carRepoInterface, carRepository_1.carRepository, carModel_1.carModel, userModel_1.usersModel, userDbrepository_1.userdbRepository, userRepositoryMongo_1.userRepository, paymentInterface_1.paymentInterface, paymentService_1.paymentService, couponInterface_1.default, couponRepository_1.couponRepository, couponModel_1.couponModel);
+    const router = express_1.default.Router();
+    router.get('/filterForBooking', controller.filteringCarsBooking);
+    router.get('/findBookings', controller.findBookings);
+    router.post('/payment', controller.bookingPaymentUI);
+    router.post('/BasedOnRole', controller.bookingFindingBasedOnRole);
+    router.get('/redirect-to', controller.bookingCompletion);
+    router.patch('/updater', controller.bookingUpdater);
+    router.patch('/rescheduler', controller.bookingRescheduler);
+    router.patch('/bookCarReport', controller.carReportHandler);
+    router.get('/topBookedCars', controller.topBookedCars);
+    router.get('/pagination', controller.paginationBooking);
+    return router;
+};
+exports.bookingRoute = bookingRoute;
