@@ -15,7 +15,7 @@ dotenv.config()
 const app:Application = express()
 const server = http.createServer(app)
 
-
+console.log(process.env.TEST)
 app.use(cors())
 
 export const io = new Server(server, {

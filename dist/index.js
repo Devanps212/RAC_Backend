@@ -20,6 +20,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
+console.log(process.env.TEST);
 app.use((0, cors_1.default)());
 exports.io = new socket_io_1.Server(server, {
     cors: {
