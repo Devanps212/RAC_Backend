@@ -10,7 +10,8 @@ import AppError from './utils/appErrors'
 import serverConfig from './frameworks/webserver/server'
 import routes from './frameworks/webserver/routes/routes'
 import socketConfig from './frameworks/websocket/socket'
-
+import dotenv from 'dotenv'
+dotenv.config()
 const app:Application = express()
 const server = http.createServer(app)
 
