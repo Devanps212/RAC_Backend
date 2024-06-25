@@ -8,9 +8,9 @@ const authServices = interfaceAuthService(authService());
 
 export const protectRoute = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("reached protect route");
+        
         let token = req.body.userId;
-        console.log("token found on body : ", token)
+        
         let attachedBody = true;
 
         
@@ -53,7 +53,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         } else {
             throw new AppError('Invalid Token', HttpStatus.UNAUTHORIZED);
         }
-        console.log("payload found: ", verifyToken.payload);
+       
 
         next();
     } catch (error: any) {

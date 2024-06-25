@@ -7,14 +7,14 @@ import { InterfaceAuthService } from "../../services/authServiceInterface";
 
 export const partnerLogin = async(email: string, password: string, partnerInterface: ReturnType<partnerInterfaceType>, authService: ReturnType<InterfaceAuthService>)=>{
     const user: partnerDetailInterface | null = await partnerInterface.partnerLogin(email);
-    console.log("userData: ", user);
+   
 
     if (user) {
         if (user.isGoogleUser) {
             return user;
         } else if (user.password) {
             const checkPassword = await authService.decryptPassword(password, user.password);
-            console.log("password check: ", checkPassword);
+            
 
             if (checkPassword) {
                 return user;
@@ -39,7 +39,7 @@ export const partnerSignUp = async (userId: string, transactionId: string, partn
         throw new AppError('Partner is already exist', HttpStatus.CONFLICT)
     }
 
-    console.log("creating signUp")
+    
     const partnerSignUp = await partnerInterface.partnerSignup(userId, transactionId, purpose, amount)
     if(partnerSignUp === null)
     {

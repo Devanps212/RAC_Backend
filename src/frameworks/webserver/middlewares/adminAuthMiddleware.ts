@@ -7,7 +7,7 @@ import { HttpStatus } from "../../../types/httpTypes";
 export const AdminAuthentication = (req: Request, res: Response, next: NextFunction) => {
 
     const authHeader = req.headers['Authorization'] || req.headers['authorization']
-    console.log("authHeader : ",authHeader)
+    
     if(!authHeader ||typeof authHeader !== 'string' || !authHeader.startsWith('Bearer '))
     {
         throw new AppError('User is not authorized', HttpStatus.UNAUTHORIZED);
@@ -15,13 +15,13 @@ export const AdminAuthentication = (req: Request, res: Response, next: NextFunct
 
     const token = authHeader.substring(7);
 
-    console.log("token :", token)
+    
     if(!token)
     {
         throw new AppError('User is not authorized', HttpStatus.UNAUTHORIZED);
     }
 
-    console.log("token checking")
+   
 
     const verifyTokens = authService().verifyToken(token)
     
@@ -31,7 +31,7 @@ export const AdminAuthentication = (req: Request, res: Response, next: NextFunct
         console.log("user not authorized")
         throw new AppError('User is not authorized', HttpStatus.UNAUTHORIZED);
     }
-    console.log("token verified")
+    
 
     console.log("token verified")
     const {role}:any = authService().decodeToken(token)

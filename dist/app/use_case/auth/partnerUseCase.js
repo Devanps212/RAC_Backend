@@ -8,14 +8,12 @@ const httpTypes_1 = require("../../../types/httpTypes");
 const appErrors_1 = __importDefault(require("../../../utils/appErrors"));
 const partnerLogin = async (email, password, partnerInterface, authService) => {
     const user = await partnerInterface.partnerLogin(email);
-    console.log("userData: ", user);
     if (user) {
         if (user.isGoogleUser) {
             return user;
         }
         else if (user.password) {
             const checkPassword = await authService.decryptPassword(password, user.password);
-            console.log("password check: ", checkPassword);
             if (checkPassword) {
                 return user;
             }
@@ -40,7 +38,6 @@ const partnerSignUp = async (userId, transactionId, partnerInterface) => {
         console.log("partner exist : ", partner);
         throw new appErrors_1.default('Partner is already exist', httpTypes_1.HttpStatus.CONFLICT);
     }
-    console.log("creating signUp");
     const partnerSignUp = await partnerInterface.partnerSignup(userId, transactionId, purpose, amount);
     if (partnerSignUp === null) {
         console.log("Partner creation failed");

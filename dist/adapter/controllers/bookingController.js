@@ -91,7 +91,7 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                     const updateBooking = await (0, booking_1.BookingUpdater)(data, bookingService);
                     if (updateBooking !== null) {
                         const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
-                        const redirectUrl = `http://localhost:5173/BookedCars?message=${message}&status=success`;
+                        const redirectUrl = `${process.env.ENVIRONMENT == 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}/BookedCars?message=${message}&status=success`;
                         res.redirect(redirectUrl);
                     }
                 }
@@ -129,7 +129,7 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                     const update = { status: 'booked' };
                     const statusUpdateCar = await (0, car_1.updateCar)(carId, update, carService);
                     if (statusUpdateCar) {
-                        res.redirect(`http://localhost:5173/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`);
+                        res.redirect(`${process.env.ENVIRONMENT == 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`);
                     }
                     else {
                         res.json({
