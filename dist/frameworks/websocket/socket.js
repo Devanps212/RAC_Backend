@@ -1,12 +1,10 @@
 "use strict";
-// // import { Server, Socket } from 'socket.io';
 Object.defineProperty(exports, "__esModule", { value: true });
 let users = [];
 const socketConfig = (io) => {
     io.on("connection", (socket) => {
         console.log(`a user connected with socket id: ${socket.id}`);
         socket.on("addUser", (userId) => {
-            console.log("adding user");
             console.log("users added: ", users);
             const userExist = users.find((user) => user.userId === userId);
             if (!userExist) {
@@ -15,6 +13,7 @@ const socketConfig = (io) => {
                 users.push(user);
                 io.emit("getUsers", users);
             }
+            console.log("users =============== :", users);
         });
         socket.on("sendMessage", async ({ senderId, receiverId, message }) => {
             console.log("senderId: ", senderId);
