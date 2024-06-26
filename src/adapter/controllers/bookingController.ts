@@ -143,7 +143,7 @@ export const bookingController = (
                         
                         const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
                         console.log("domain : ", configFile.DOMAIN_URL)
-                        const redirectUrl = `${configFile.DOMAIN_URL}/BookedCars?message=${message}&status=success`;
+                        const redirectUrl = `https://gampro.shop/BookedCars?message=${message}&status=success`;
                         res.redirect(redirectUrl)
                     }
                 } else {
@@ -188,7 +188,7 @@ export const bookingController = (
                         const statusUpdateCar = await updateCar(carId, update, carService)
                         if(statusUpdateCar){
                             console.log("domain  :", configFile.DOMAIN_URL)
-                            res.redirect(`${configFile.DOMAIN_URL}/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
+                            res.redirect(`https://gampro.shop/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
                         } else {
                             res.json({
                                 statusUpdateCar
