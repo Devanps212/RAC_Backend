@@ -16,7 +16,12 @@ const configFile = {
     SALT_INDEX : process.env.SALT_INDEX as string,
     SALT_KEY : process.env.SALT_KEY as string,
     PHONEPAY_URL :process.env.PHONPAY_URL as string,
-    DOMAIN_URL: process.env.DOMAIN_URI as string, 
+    DOMAIN_URL: process.env.DOMAIN_URI as string,
+
+    PAYMENT_SUCCESS_URI: process.env.SUCCESS_URI as string,
+    CANCEL_URI: process.env.CANCEL_URI as string,
+
+    ORIGIN_PORT_DOMAIN: process.env.ORIGIN_PORT_DOMAIN as string,
     
 
     LOCATION_ACCESS_TOKEN : process.env.LOCATION_ACCESS_TOKEN as string,
