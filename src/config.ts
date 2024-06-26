@@ -18,6 +18,7 @@ const configFile = {
     PHONEPAY_URL :process.env.PHONPAY_URL as string,
 
     LOCATION_ACCESS_TOKEN : process.env.LOCATION_ACCESS_TOKEN as string,
+    SEARCH_LOCATION : process.env.LOCATION_SEARCH_API as string,
 
     STRIPE_SECRET_KEY : process.env.STRIPE_SECRET_KEY as string,
 
