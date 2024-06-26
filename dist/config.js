@@ -20,7 +20,7 @@ const configFile = {
     SALT_KEY: process.env.SALT_KEY,
     PHONEPAY_URL: process.env.PHONPAY_URL,
     LOCATION_ACCESS_TOKEN: process.env.LOCATION_ACCESS_TOKEN,
-    SEARCH_LOCATION: process.env.LOCATION_SEARCH_API,
+    SEARCH_LOCATION: process.env.SEARCH_API,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     ORIGIN_PORT: process.env.ORIGIN_PORT,
 };
