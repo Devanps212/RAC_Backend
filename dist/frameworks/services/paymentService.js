@@ -58,8 +58,8 @@ const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `${process.env.SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: "http://localhost:5173/home"
+                success_url: `${config_1.default.PAYMENT_SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: config_1.default.CANCEL_URI
             });
             console.log("session Id: ", session.id);
             return session.id;
@@ -177,8 +177,8 @@ const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `${process.env.SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: "http://localhost:5173/home"
+                success_url: `${config_1.default.PAYMENT_SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: config_1.default.CANCEL_URI
             });
             console.log("session Id: ", session.id);
             return session.id;
@@ -208,8 +208,8 @@ const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [payment],
                 mode: "payment",
-                success_url: `${process.env.ORIGIN_PORT}partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
-                cancel_url: "http://localhost:5173/home"
+                success_url: `${config_1.default.ORIGIN_PORT_DOMAIN}partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
+                cancel_url: config_1.default.CANCEL_URI
             });
             console.log("Checkout session created:", session);
             return session;

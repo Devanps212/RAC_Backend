@@ -10,6 +10,7 @@ const stripe = new Stripe(configFile.STRIPE_SECRET_KEY, {
     apiVersion: '2024-04-10',
 });
 
+
 export const paymentService = () => {
     const generateTransactionId = () => {
         const length = 10;
@@ -69,8 +70,8 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `${process.env.SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: "http://localhost:5173/home"
+                success_url: `${configFile.PAYMENT_SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: configFile.CANCEL_URI
             });
             
 
@@ -208,8 +209,8 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `${process.env.SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: "http://localhost:5173/home"
+                success_url: `${configFile.PAYMENT_SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: configFile.CANCEL_URI
             });
             
 
@@ -244,8 +245,8 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [payment],
                 mode: "payment",
-                success_url: `${process.env.ORIGIN_PORT}partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
-                cancel_url: "http://localhost:5173/home" 
+                success_url: `${configFile.ORIGIN_PORT_DOMAIN}partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
+                cancel_url: configFile.CANCEL_URI
             });
     
             console.log("Checkout session created:", session);
