@@ -58,7 +58,7 @@ const partnerController = (partnerRepository, partnerInterface, authService, aut
         const transactionId = req.params.transactionId;
         const partnerId = req.params.userId;
         const partner = await (0, partnerUseCase_1.partnerSignUp)(partnerId, transactionId, partnerService);
-        res.redirect(`http://localhost:5173/partner/success/${transactionId}/${partnerId}`);
+        res.redirect(`${process.env.ENVIRONMENT === 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}partner/success/${transactionId}/${partnerId}`);
     });
     const partnerFindAll = (0, express_async_handler_1.default)(async (req, res) => {
         const partners = await (0, partnerUseCase_1.findAllPartner)(partnerService);
