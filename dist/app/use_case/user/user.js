@@ -12,7 +12,8 @@ const mongoose_1 = require("mongoose");
 const locationFinder = async (data) => {
     try {
         console.log("Data ===>", data);
-        const response = await axios_1.default.get(`${process.env.LOCATION_SEARCH_API}suggest?q=${data}&access_token=${config_1.default.LOCATION_ACCESS_TOKEN}&session_token=ce8adf6d-f635-415e-ad83-7597a752bdfc&language=en&limit=10&types=country%2Cregion%2Cdistrict%2Cpostcode%2Clocality%2Cplace%2Cneighborhood%2Caddress%2Cpoi%2Cstreet%2Ccategory&proximity=76.3218144%2C9.9380786`);
+        console.log(process.env.LOCATION_SEARCH_API);
+        const response = await axios_1.default.get(`${config_1.default.SEARCH_LOCATION}suggest?q=${data}&access_token=${config_1.default.LOCATION_ACCESS_TOKEN}&session_token=ce8adf6d-f635-415e-ad83-7597a752bdfc&language=en&limit=10&types=country%2Cregion%2Cdistrict%2Cpostcode%2Clocality%2Cplace%2Cneighborhood%2Caddress%2Cpoi%2Cstreet%2Ccategory&proximity=76.3218144%2C9.9380786`);
         return response.data.suggestions;
     }
     catch (error) {
