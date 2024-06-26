@@ -23,7 +23,6 @@ const couponModel_1 = require("../../database/mongodb/models/couponModel");
 const bookingRoute = () => {
     const controller = (0, bookingController_1.bookingController)(bookingDBInterface_1.bookingDBInterface, bookingRepository_1.bookingRepository, bookingModel_1.bookingModel, carRepoInterface_1.carRepoInterface, carRepository_1.carRepository, carModel_1.carModel, userModel_1.usersModel, userDbrepository_1.userdbRepository, userRepositoryMongo_1.userRepository, paymentInterface_1.paymentInterface, paymentService_1.paymentService, couponInterface_1.default, couponRepository_1.couponRepository, couponModel_1.couponModel);
     const router = express_1.default.Router();
-    router.get('/filterForBooking', controller.filteringCarsBooking);
     router.get('/findBookings', controller.findBookings);
     router.post('/payment', controller.bookingPaymentUI);
     router.post('/BasedOnRole', controller.bookingFindingBasedOnRole);

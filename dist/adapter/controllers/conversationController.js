@@ -13,11 +13,8 @@ const conversationController = (conversationInterface, conversationRepository, c
     const authService = authInterface(authRepository());
     const sendMessages = (0, express_async_handler_1.default)(async (req, res) => {
         try {
-            // console.log("found controller");
-            // console.log("req.jwt : ", req.body.message);
             const { Id } = req.params;
             const { message, senderId } = req.body;
-            // console.log("params received from send Message", Id);
             const data = {
                 message: message,
                 senderId: senderId,
@@ -25,8 +22,6 @@ const conversationController = (conversationInterface, conversationRepository, c
             };
             const saveConversation = await (0, conversation_1.sendMessage)(data, conversationService, authService);
             const newMessage = await (0, message_1.createNewMessage)(data, messageServices);
-            // console.log("newMessage : ", newMessage)
-            // console.log("newMessage id : ", newMessage._id)
             const addMessageToConversation = await (0, conversation_1.addMessage)(newMessage._id, saveConversation._id, conversationService);
             res.json(newMessage);
         }
@@ -36,8 +31,6 @@ const conversationController = (conversationInterface, conversationRepository, c
     });
     const getMessage = (0, express_async_handler_1.default)(async (req, res) => {
         const { receiverId, senderId } = req.params;
-        // console.log("receiverId : ", receiverId)
-        // console.log("sebderId : ", senderId)
         const getMessage = await (0, conversation_1.findMessage)(receiverId, senderId, conversationService);
         res.json(getMessage);
     });

@@ -22,7 +22,7 @@ const categoryController = (
             
             if (categoryExist === null) 
             {
-                console.log("vrwating a new category")
+                
                 const addCategory = await createCateg(name, description, categoryDatabase);
                 res.json({
                     status: "success",

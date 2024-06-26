@@ -102,8 +102,8 @@ const partnerController = (
             
             const partner = await partnerSignUp(partnerId, transactionId, partnerService)
             
-            
-            res.redirect(`${process.env.ENVIRONMENT === 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}partner/success/${transactionId}/${partnerId}`)
+            console.log("domain : ", configFile.DOMAIN_URL)
+            res.redirect(`${configFile.DOMAIN_URL}partner/success/${transactionId}/${partnerId}`)
         }
     )
 

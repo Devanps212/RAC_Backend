@@ -11,7 +11,6 @@ const categoryController = (categoryInterface, categoryImpl, categoryModel) => {
         const { name, description } = req?.body;
         const categoryExist = await (0, category_1.checkCateg)(categoryDatabase, name);
         if (categoryExist === null) {
-            console.log("vrwating a new category");
             const addCategory = await (0, category_1.createCateg)(name, description, categoryDatabase);
             res.json({
                 status: "success",
