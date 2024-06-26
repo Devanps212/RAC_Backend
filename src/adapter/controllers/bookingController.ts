@@ -6,30 +6,26 @@ import { carModelType } from "../../frameworks/database/mongodb/models/carModel"
 import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carRepository";
 import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import expressAsyncHandler from "express-async-handler";
-import { findCar, updateCar, viewCarDetails } from "../../app/use_case/car/car";
+import { findCar, updateCar } from "../../app/use_case/car/car";
 import { bookingPayment, createBooking, findBooking, bookingBasedOnRole, BookingUpdater, stripePaymentVeification, stripeRefund, bookingReschedule, bookingPagination } from "../../app/use_case/booking/booking";
 import { Booking, Refund, RefundDetails, SessionDataInterface, bookingDetail } from "../../types/bookingInterface";
 import { userModelType } from "../../frameworks/database/mongodb/models/userModel";
 import { userRepository } from "../../frameworks/database/mongodb/repositories/userRepositoryMongo";
 import { userDbInterface } from "../../app/repositories/userDbrepository";
-import { findOneUser } from "../../app/use_case/adminUser/adminUser";
 import { carInterface } from "../../types/carInterface";
 import { findUser } from "../../app/use_case/auth/userAuth";
 import { paymentInterfaceType } from "../../app/services/paymentInterface";
 import { paymentServiceType } from "../../frameworks/services/paymentService";
-import { error } from "console";
 import { couponInterfaceType } from "../../app/repositories/couponInterface";
 import { couponModelType } from "../../frameworks/database/mongodb/models/couponModel";
 import { couponRepositoryType } from "../../frameworks/database/mongodb/repositories/couponRepository";
 import { findAllCoupon } from "../../app/use_case/coupon/coupon";
-import { couponInterface } from "../../types/couponInetrface";
 import { userInterface } from "../../types/userInterface";
 import { updateUser } from "../../app/use_case/user/user";
-import { ObjectId, Types } from "mongoose";
-import { decode } from "punycode";
+import { Types } from "mongoose";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
-import { json } from "body-parser";
+import configFile from "../../config";
 
 export const bookingController = (
     bookingInterface : bookingInterfaceType,
@@ -53,21 +49,7 @@ export const bookingController = (
     const userService = userInterface(userRepository(userModel))
     const paymentService = paymentInterface(paymentServices())
     const couponService = couponInterface(couponRepository(couponModel))
-
-    const filteringCarsBooking = expressAsyncHandler(
-        async(req: Request, res: Response)=>{
-           
-            const { pickupLocation, dropOffLocation, startDate, endDate, pickupTime, dropOffTime } = req.query;
-            const finDcars = await findCar('all', carService) as carInterface[]
-            const Bookings = await findBooking('all', bookingService) as Booking
-            if(finDcars){
-                const ownerId = finDcars.map((car : carInterface)=>car.addedById as string)
-                const findUsersPromises = ownerId.map(id=> findUser(id, userService))
-                
-                
-            }
-        }
-    )
+    
 
     const findBookings = expressAsyncHandler(
         async(req: Request, res: Response)=>{
@@ -160,7 +142,8 @@ export const bookingController = (
                     if(updateBooking !== null){
                         
                         const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
-                        const redirectUrl = `${process.env.ENVIRONMENT == 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI }/BookedCars?message=${message}&status=success`;
+                        console.log("domain : ", configFile.DOMAIN_URL)
+                        const redirectUrl = `${configFile.DOMAIN_URL}/BookedCars?message=${message}&status=success`;
                         res.redirect(redirectUrl)
                     }
                 } else {
@@ -204,7 +187,8 @@ export const bookingController = (
                         const update : Partial<carInterface> = {status:'booked'}
                         const statusUpdateCar = await updateCar(carId, update, carService)
                         if(statusUpdateCar){
-                            res.redirect(`${process.env.ENVIRONMENT == 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
+                            console.log("domain  :", configFile.DOMAIN_URL)
+                            res.redirect(`${configFile.DOMAIN_URL}/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
                         } else {
                             res.json({
                                 statusUpdateCar
@@ -511,7 +495,6 @@ export const bookingController = (
     return {
         bookingUpdater,
         bookingFindingBasedOnRole,
-        filteringCarsBooking,
         findBookings,
         bookingPaymentUI,
         bookingCompletion,

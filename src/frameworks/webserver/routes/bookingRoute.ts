@@ -34,7 +34,6 @@ export const bookingRoute = ()=>{
 
     const router = express.Router()
     
-    router.get('/filterForBooking', controller.filteringCarsBooking)
     router.get('/findBookings', controller.findBookings)
     router.post('/payment', controller.bookingPaymentUI)
     router.post('/BasedOnRole', controller.bookingFindingBasedOnRole)

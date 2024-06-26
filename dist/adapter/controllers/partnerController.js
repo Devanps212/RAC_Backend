@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __importDefault(require("../../config"));
 const partnerUseCase_1 = require("../../app/use_case/auth/partnerUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const partnerUseCase_2 = require("../../app/use_case/partner/partnerUseCase");
@@ -58,7 +59,8 @@ const partnerController = (partnerRepository, partnerInterface, authService, aut
         const transactionId = req.params.transactionId;
         const partnerId = req.params.userId;
         const partner = await (0, partnerUseCase_1.partnerSignUp)(partnerId, transactionId, partnerService);
-        res.redirect(`${process.env.ENVIRONMENT === 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}partner/success/${transactionId}/${partnerId}`);
+        console.log("domain : ", config_1.default.DOMAIN_URL);
+        res.redirect(`${config_1.default.DOMAIN_URL}partner/success/${transactionId}/${partnerId}`);
     });
     const partnerFindAll = (0, express_async_handler_1.default)(async (req, res) => {
         const partners = await (0, partnerUseCase_1.findAllPartner)(partnerService);

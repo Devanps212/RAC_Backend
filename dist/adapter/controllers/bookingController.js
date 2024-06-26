@@ -7,27 +7,18 @@ exports.bookingController = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const car_1 = require("../../app/use_case/car/car");
 const booking_1 = require("../../app/use_case/booking/booking");
-const userAuth_1 = require("../../app/use_case/auth/userAuth");
 const coupon_1 = require("../../app/use_case/coupon/coupon");
 const user_1 = require("../../app/use_case/user/user");
 const mongoose_1 = require("mongoose");
 const appErrors_1 = __importDefault(require("../../utils/appErrors"));
 const httpTypes_1 = require("../../types/httpTypes");
+const config_1 = __importDefault(require("../../config"));
 const bookingController = (bookingInterface, bookingDBRepository, bookingModel, carInterface, carRepository, carModel, userModel, userInterface, userRepository, paymentInterface, paymentServices, couponInterface, couponRepository, couponModel) => {
     const bookingService = bookingInterface(bookingDBRepository(bookingModel));
     const carService = carInterface(carRepository(carModel));
     const userService = userInterface(userRepository(userModel));
     const paymentService = paymentInterface(paymentServices());
     const couponService = couponInterface(couponRepository(couponModel));
-    const filteringCarsBooking = (0, express_async_handler_1.default)(async (req, res) => {
-        const { pickupLocation, dropOffLocation, startDate, endDate, pickupTime, dropOffTime } = req.query;
-        const finDcars = await (0, car_1.findCar)('all', carService);
-        const Bookings = await (0, booking_1.findBooking)('all', bookingService);
-        if (finDcars) {
-            const ownerId = finDcars.map((car) => car.addedById);
-            const findUsersPromises = ownerId.map(id => (0, userAuth_1.findUser)(id, userService));
-        }
-    });
     const findBookings = (0, express_async_handler_1.default)(async (req, res) => {
         const data = req.query.bookingData;
         if (typeof data === 'string') {
@@ -91,7 +82,8 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                     const updateBooking = await (0, booking_1.BookingUpdater)(data, bookingService);
                     if (updateBooking !== null) {
                         const message = encodeURIComponent(`Your booking has been successfully rescheduled to start on ${new Date(bookingData.startDate).toISOString()} and end on ${new Date(bookingData.endDate).toISOString()}.`);
-                        const redirectUrl = `${process.env.ENVIRONMENT == 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}/BookedCars?message=${message}&status=success`;
+                        console.log("domain : ", config_1.default.DOMAIN_URL);
+                        const redirectUrl = `${config_1.default.DOMAIN_URL}/BookedCars?message=${message}&status=success`;
                         res.redirect(redirectUrl);
                     }
                 }
@@ -129,7 +121,8 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                     const update = { status: 'booked' };
                     const statusUpdateCar = await (0, car_1.updateCar)(carId, update, carService);
                     if (statusUpdateCar) {
-                        res.redirect(`${process.env.ENVIRONMENT == 'dev' ? process.env.LOCALHOST : process.env.DOMAIN_URI}/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`);
+                        console.log("domain  :", config_1.default.DOMAIN_URL);
+                        res.redirect(`${config_1.default.DOMAIN_URL}/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`);
                     }
                     else {
                         res.json({
@@ -376,7 +369,6 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
     return {
         bookingUpdater,
         bookingFindingBasedOnRole,
-        filteringCarsBooking,
         findBookings,
         bookingPaymentUI,
         bookingCompletion,
