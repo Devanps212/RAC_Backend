@@ -73,6 +73,7 @@ export const paymentService = () => {
                 success_url: `${configFile.PAYMENT_SUCCESS_URI}?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: configFile.CANCEL_URI
             });
+            console.log("payment session details : ", session)
             
 
             console.log("session Id: ", session.id)
