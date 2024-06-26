@@ -4,7 +4,7 @@ import configFile from '../../../config';
 
 const connectDb = async () => {
   console.log('Attempting to connect to the database...');
-  console.log("mongo uri : ", configFile.MONGO_URL)
+  
 
   try {
 
