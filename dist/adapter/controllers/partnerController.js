@@ -60,7 +60,7 @@ const partnerController = (partnerRepository, partnerInterface, authService, aut
         const partnerId = req.params.userId;
         const partner = await (0, partnerUseCase_1.partnerSignUp)(partnerId, transactionId, partnerService);
         console.log("domain : ", config_1.default.DOMAIN_URL);
-        res.redirect(`${config_1.default.DOMAIN_URL}partner/success/${transactionId}/${partnerId}`);
+        res.redirect(`https://easyrentacar.shop/partner/success/${transactionId}/${partnerId}`);
     });
     const partnerFindAll = (0, express_async_handler_1.default)(async (req, res) => {
         const partners = await (0, partnerUseCase_1.findAllPartner)(partnerService);
