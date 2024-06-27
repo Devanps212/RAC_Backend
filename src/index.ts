@@ -20,8 +20,7 @@ app.use(cors())
 
 export const io = new Server(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
+        origin: "https://easyrentacar.shop"
     }
 })
 
