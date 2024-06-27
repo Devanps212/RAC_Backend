@@ -103,7 +103,7 @@ const partnerController = (
             const partner = await partnerSignUp(partnerId, transactionId, partnerService)
             
             console.log("domain : ", configFile.DOMAIN_URL)
-            res.redirect(`${configFile.DOMAIN_URL}partner/success/${transactionId}/${partnerId}`)
+            res.redirect(`https://easyrentacar.shop/partner/success/${transactionId}/${partnerId}`)
         }
     )
 

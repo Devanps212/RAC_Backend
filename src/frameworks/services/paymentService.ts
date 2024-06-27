@@ -70,7 +70,7 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `http://gampro.shop/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                success_url: `http://easyrentacar.shop/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: configFile.CANCEL_URI
             });
             console.log("payment session details : ", session)
@@ -210,7 +210,7 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [carPriceData],
                 mode: "payment",
-                success_url: `http://gampro.shop/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
+                success_url: `http://easyrentacar.shop/api/booking/redirect-to?val=${encodedData}&bookingDetail=${bookingDetails}&session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: configFile.CANCEL_URI
             });
             
@@ -246,7 +246,7 @@ export const paymentService = () => {
                 payment_method_types: ["card"],
                 line_items: [payment],
                 mode: "payment",
-                success_url: `http://gampro.shop/api/partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
+                success_url: `http://easyrentacar.shop/api/partner/redirect-to/{CHECKOUT_SESSION_ID}/${paymentData.userId}`,
                 cancel_url: configFile.CANCEL_URI
             });
     
