@@ -36,6 +36,7 @@ const adminUserController = (
 
     const unblockBlockUser = expressAsyncHandler(
         async (req: Request, res: Response) => {
+          console.log("block or unblocking user")
           
           const userId = req.headers['x-user-id'] as string;
           
@@ -53,6 +54,7 @@ const adminUserController = (
             console.log('User has ongoing booking');
             throw new AppError('User has an ongoing booking', HttpStatus.CONFLICT);
           } else {
+            console.log('User has no booking');
             await blockUnblockUser(userId, userService);
             res.json({
               status: 'success',
@@ -67,8 +69,10 @@ const adminUserController = (
           
           const userId = req.header('x-user-id') as string
 
+          console.log("userId : ", userId)
           const user = await findOneUser(userId, userService)
-          
+          console.log("user : ", user)
+
           res.json({
             status:"success",
             user

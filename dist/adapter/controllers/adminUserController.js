@@ -20,6 +20,7 @@ const adminUserController = (userModel, userInterface, userRepository, bookingIn
         });
     });
     const unblockBlockUser = (0, express_async_handler_1.default)(async (req, res) => {
+        console.log("block or unblocking user");
         const userId = req.headers['x-user-id'];
         const data = {
             userId: userId
@@ -33,6 +34,7 @@ const adminUserController = (userModel, userInterface, userRepository, bookingIn
             throw new appErrors_1.default('User has an ongoing booking', httpTypes_1.HttpStatus.CONFLICT);
         }
         else {
+            console.log('User has no booking');
             await (0, adminUser_1.blockUnblockUser)(userId, userService);
             res.json({
                 status: 'success',
@@ -41,7 +43,9 @@ const adminUserController = (userModel, userInterface, userRepository, bookingIn
     });
     const findOneuser = (0, express_async_handler_1.default)(async (req, res) => {
         const userId = req.header('x-user-id');
+        console.log("userId : ", userId);
         const user = await (0, adminUser_1.findOneUser)(userId, userService);
+        console.log("user : ", user);
         res.json({
             status: "success",
             user
