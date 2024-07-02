@@ -9,6 +9,11 @@ import { InterfaceAuthService } from "../../app/services/authServiceInterface";
 import { reviewInterface } from "../../types/reviewInterface";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
+import { bookingInterfaceType } from "../../app/repositories/bookingDBInterface";
+import { bookingRepositoryType } from "../../frameworks/database/mongodb/repositories/bookingRepository";
+import { BookingModelType } from "../../frameworks/database/mongodb/models/bookingModel";
+import { Booking } from "../../types/bookingInterface";
+import { bookingBasedOnRole } from "../../app/use_case/booking/booking";
 
 
 export const carController  = (
@@ -16,11 +21,15 @@ export const carController  = (
     carRepository: CarRepoType,
     carModel : carModelType,
     authService : AuthService,
-    interfaceAuthService : InterfaceAuthService
+    interfaceAuthService : InterfaceAuthService,
+    bookingInterface: bookingInterfaceType,
+    bookingRepository: bookingRepositoryType,
+    bookingModel: BookingModelType
 )=>{
     
     const carService = carInterface(carRepository(carModel))
     const authservices = interfaceAuthService(authService())
+    const bookingService = bookingInterface(bookingRepository(bookingModel))
 
     const createCars = expressAsyncHandler(
         async(req: Request, res: Response)=>{
@@ -137,11 +146,27 @@ export const carController  = (
     const deletesCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const carId = req?.header('X-Car-Id') as string
-            const carDelete = await deleteCar(carId, carService)
-            res.json({
-                status:carDelete?.status,
-                message:carDelete?.message,
-            })
+
+            const data : Partial<Booking> = {
+                carId: carId
+            }
+
+            const booking = await bookingBasedOnRole(data, bookingService)
+
+            const hasOngoingBooking = Array.isArray(booking) 
+            ? booking.some(bookings=>bookings.status === "Confirmed")
+            : booking?.status === "Confirmed"
+            
+            if(hasOngoingBooking){
+                console.log("car have a booking ongoing")
+                throw new AppError(`Unable to delete the car. There is an ongoing booking associated with it.`, HttpStatus.CONFLICT);
+            } else {
+                const carDelete = await deleteCar(carId, carService)
+                res.json({
+                    status:carDelete?.status,
+                    message:carDelete?.message,
+                })     
+            }
             
         }
     )

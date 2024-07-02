@@ -8,9 +8,11 @@ const car_1 = require("../../app/use_case/car/car");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const appErrors_1 = __importDefault(require("../../utils/appErrors"));
 const httpTypes_1 = require("../../types/httpTypes");
-const carController = (carInterface, carRepository, carModel, authService, interfaceAuthService) => {
+const booking_1 = require("../../app/use_case/booking/booking");
+const carController = (carInterface, carRepository, carModel, authService, interfaceAuthService, bookingInterface, bookingRepository, bookingModel) => {
     const carService = carInterface(carRepository(carModel));
     const authservices = interfaceAuthService(authService());
+    const bookingService = bookingInterface(bookingRepository(bookingModel));
     const createCars = (0, express_async_handler_1.default)(async (req, res) => {
         const files = req.files;
         let interior = [];
@@ -89,11 +91,24 @@ const carController = (carInterface, carRepository, carModel, authService, inter
     });
     const deletesCar = (0, express_async_handler_1.default)(async (req, res) => {
         const carId = req?.header('X-Car-Id');
-        const carDelete = await (0, car_1.deleteCar)(carId, carService);
-        res.json({
-            status: carDelete?.status,
-            message: carDelete?.message,
-        });
+        const data = {
+            carId: carId
+        };
+        const booking = await (0, booking_1.bookingBasedOnRole)(data, bookingService);
+        const hasOngoingBooking = Array.isArray(booking)
+            ? booking.some(bookings => bookings.status === "Confirmed")
+            : booking?.status === "Confirmed";
+        if (hasOngoingBooking) {
+            console.log("car have a booking ongoing");
+            throw new appErrors_1.default(`Unable to delete the car. There is an ongoing booking associated with it.`, httpTypes_1.HttpStatus.CONFLICT);
+        }
+        else {
+            const carDelete = await (0, car_1.deleteCar)(carId, carService);
+            res.json({
+                status: carDelete?.status,
+                message: carDelete?.message,
+            });
+        }
     });
     const findsCar = (0, express_async_handler_1.default)(async (req, res) => {
         const carData = req?.query.carData;

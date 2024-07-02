@@ -110,7 +110,7 @@ export class BookingEnity{
             if (bookingDetail.length === 0) {
                 return []; 
             } else if (bookingDetail.length === 1) {
-                return bookingDetail[0].toObject(); // 
+                return bookingDetail[0].toObject(); 
             } else {
                 return bookingDetail.map(booking => booking.toObject()); 
             }
