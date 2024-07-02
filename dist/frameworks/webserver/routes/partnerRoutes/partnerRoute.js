@@ -20,10 +20,10 @@ const partnerRoute = () => {
     const router = express_1.default.Router();
     router.post('/login', controller.partnersLogin);
     router.post('/signUp', controller.signUpPartner);
+    router.get('/getUserForConversation', partnerAuthMiddleware_1.PartnerAuthentication, controller.findUsersConversation);
     router.get('/redirect-to/:transactionId/:userId', controller.transactionHandler);
     router.get('/All', controller.partnerFindAll);
     router.get('/findOne', controller.findOnePartner);
-    router.get('/getUserForConversation', partnerAuthMiddleware_1.PartnerAuthentication, controller.findUsersConversation);
     return router;
 };
 exports.default = partnerRoute;

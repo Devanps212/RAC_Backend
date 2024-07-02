@@ -13,8 +13,11 @@ const multerService_1 = __importDefault(require("../../../app/services/multerSer
 const authenticationMidddleware_1 = require("../middlewares/authenticationMidddleware");
 const authServices_1 = require("../../services/authServices");
 const authServiceInterface_1 = require("../../../app/services/authServiceInterface");
+const bookingDBInterface_1 = require("../../../app/repositories/bookingDBInterface");
+const bookingRepository_1 = require("../../database/mongodb/repositories/bookingRepository");
+const bookingModel_1 = require("../../database/mongodb/models/bookingModel");
 const carRoute = () => {
-    const controller = (0, carController_1.carController)(carRepoInterface_1.carRepoInterface, carRepository_1.carRepository, carModel_1.carModel, authServices_1.authService, authServiceInterface_1.interfaceAuthService);
+    const controller = (0, carController_1.carController)(carRepoInterface_1.carRepoInterface, carRepository_1.carRepository, carModel_1.carModel, authServices_1.authService, authServiceInterface_1.interfaceAuthService, bookingDBInterface_1.bookingDBInterface, bookingRepository_1.bookingRepository, bookingModel_1.bookingModel);
     const router = express_1.default.Router();
     router.post('/addCar', authenticationMidddleware_1.authentication, multerService_1.default.fields([{ name: 'interior', maxCount: 2 }, { name: 'exterior', maxCount: 2 }, { name: 'thumbnailImg', maxCount: 1 }]), controller.createCars);
     router.patch('/editCar/', authenticationMidddleware_1.authentication, multerService_1.default.fields([{ name: 'interior', maxCount: 2 }, { name: 'exterior', maxCount: 2 }, { name: 'thumbnailImg', maxCount: 1 }]), controller.editsCar);

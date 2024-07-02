@@ -18,6 +18,7 @@ import { checkUserExists } from "../../app/use_case/auth/userAuth";
 import { findUsersForConversation } from "../../app/use_case/user/user";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
+import { getAllCateg } from "../../app/use_case/category/category";
 
 const partnerController = (
     partnerRepository: partnerRepoType,

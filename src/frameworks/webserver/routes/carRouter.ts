@@ -7,9 +7,22 @@ import upload from '../../../app/services/multerService'
 import { authentication } from '../middlewares/authenticationMidddleware'
 import { authService } from '../../services/authServices'
 import { interfaceAuthService } from '../../../app/services/authServiceInterface'
+import { bookingDBInterface } from '../../../app/repositories/bookingDBInterface'
+import { bookingRepository } from '../../database/mongodb/repositories/bookingRepository'
+import { bookingModel } from '../../database/mongodb/models/bookingModel'
+
 
 export const carRoute = ()=>{
-    const controller = carController(carRepoInterface, carRepository, carModel, authService, interfaceAuthService) 
+    const controller = carController(
+        carRepoInterface, 
+        carRepository, 
+        carModel, 
+        authService, 
+        interfaceAuthService,
+        bookingDBInterface,
+        bookingRepository,
+        bookingModel
+    ) 
     const router = express.Router()
 
     router.post('/addCar', authentication, upload.fields([{name:'interior', maxCount:2}, {name:'exterior', maxCount:2}, {name:'thumbnailImg', maxCount:1}]), controller.createCars)

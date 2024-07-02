@@ -9,10 +9,13 @@ const userRepositoryMongo_1 = require("../../database/mongodb/repositories/userR
 const adminUserController_1 = __importDefault(require("../../../adapter/controllers/adminUserController"));
 const authenticationMidddleware_1 = require("../middlewares/authenticationMidddleware");
 const authenticationMidddleware_2 = require("../middlewares/authenticationMidddleware");
+const bookingDBInterface_1 = require("../../../app/repositories/bookingDBInterface");
+const bookingRepository_1 = require("../../database/mongodb/repositories/bookingRepository");
+const bookingModel_1 = require("../../database/mongodb/models/bookingModel");
 const express_1 = __importDefault(require("express"));
 const adminMiddleware = (0, authenticationMidddleware_2.RoleAuthMiddleware)('admin');
 const adminUserRouter = () => {
-    const controllers = (0, adminUserController_1.default)(userModel_1.usersModel, userDbrepository_1.userdbRepository, userRepositoryMongo_1.userRepository);
+    const controllers = (0, adminUserController_1.default)(userModel_1.usersModel, userDbrepository_1.userdbRepository, userRepositoryMongo_1.userRepository, bookingDBInterface_1.bookingDBInterface, bookingRepository_1.bookingRepository, bookingModel_1.bookingModel);
     const userAdminRouter = express_1.default.Router();
     userAdminRouter.get('/allUsers', authenticationMidddleware_1.authentication, adminMiddleware, controllers.getAllUsers);
     userAdminRouter.patch('/UBUser', authenticationMidddleware_1.authentication, adminMiddleware, controllers.unblockBlockUser);
