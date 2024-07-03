@@ -202,6 +202,8 @@ export const carController  = (
     const carUpdateBasedOnRole = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const data = req.body
+
+            console.log("data recieved : ", data)
             
             const updateCar = await carPartialUpdate(data, carService)
             res.json({

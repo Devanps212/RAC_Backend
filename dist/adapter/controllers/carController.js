@@ -131,6 +131,7 @@ const carController = (carInterface, carRepository, carModel, authService, inter
     });
     const carUpdateBasedOnRole = (0, express_async_handler_1.default)(async (req, res) => {
         const data = req.body;
+        console.log("data recieved : ", data);
         const updateCar = await (0, car_1.carPartialUpdate)(data, carService);
         res.json({
             data: updateCar,
