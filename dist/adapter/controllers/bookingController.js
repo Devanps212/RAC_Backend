@@ -9,6 +9,7 @@ const car_1 = require("../../app/use_case/car/car");
 const booking_1 = require("../../app/use_case/booking/booking");
 const coupon_1 = require("../../app/use_case/coupon/coupon");
 const user_1 = require("../../app/use_case/user/user");
+const __1 = require("../..");
 const mongoose_1 = require("mongoose");
 const appErrors_1 = __importDefault(require("../../utils/appErrors"));
 const httpTypes_1 = require("../../types/httpTypes");
@@ -122,6 +123,7 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                     const statusUpdateCar = await (0, car_1.updateCar)(carId, update, carService);
                     if (statusUpdateCar) {
                         console.log("domain  :", config_1.default.DOMAIN_URL);
+                        __1.io.emit('newBooking', { message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.` });
                         res.redirect(`https://easyrentacar.shop/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`);
                     }
                     else {

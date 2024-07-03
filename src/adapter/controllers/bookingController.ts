@@ -22,6 +22,7 @@ import { couponRepositoryType } from "../../frameworks/database/mongodb/reposito
 import { findAllCoupon } from "../../app/use_case/coupon/coupon";
 import { userInterface } from "../../types/userInterface";
 import { updateUser } from "../../app/use_case/user/user";
+import { io } from "../..";
 import { Types } from "mongoose";
 import AppError from "../../utils/appErrors";
 import { HttpStatus } from "../../types/httpTypes";
@@ -188,6 +189,7 @@ export const bookingController = (
                         const statusUpdateCar = await updateCar(carId, update, carService)
                         if(statusUpdateCar){
                             console.log("domain  :", configFile.DOMAIN_URL)
+                            io.emit('newBooking',  {message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.`})
                             res.redirect(`https://easyrentacar.shop/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
                         } else {
                             res.json({
