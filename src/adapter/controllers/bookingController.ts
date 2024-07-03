@@ -188,8 +188,13 @@ export const bookingController = (
                         const update : Partial<carInterface> = {status:'booked'}
                         const statusUpdateCar = await updateCar(carId, update, carService)
                         if(statusUpdateCar){
+                            if(bookingCreation.ownerRole ==='Admin'){
+                                io.emit('newBookingAdmin',  {message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.`})
+                            } else {
+                                io.emit('newBookingPartner',  {message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.`})
+                            }
                             console.log("domain  :", configFile.DOMAIN_URL)
-                            io.emit('newBooking',  {message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.`})
+                            
                             res.redirect(`https://easyrentacar.shop/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`)
                         } else {
                             res.json({

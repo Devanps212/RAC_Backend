@@ -122,8 +122,13 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                     const update = { status: 'booked' };
                     const statusUpdateCar = await (0, car_1.updateCar)(carId, update, carService);
                     if (statusUpdateCar) {
+                        if (bookingCreation.ownerRole === 'Admin') {
+                            __1.io.emit('newBookingAdmin', { message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.` });
+                        }
+                        else {
+                            __1.io.emit('newBookingPartner', { message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.` });
+                        }
                         console.log("domain  :", config_1.default.DOMAIN_URL);
-                        __1.io.emit('newBooking', { message: `New Booking Alert: A booking has been created for ${statusUpdateCar.carData?.name}. Check the details in your dashboard.` });
                         res.redirect(`https://easyrentacar.shop/TransactionSuccess?bokingDetail=${data}&car=${carDetails}`);
                     }
                     else {
