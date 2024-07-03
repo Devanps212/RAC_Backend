@@ -43,7 +43,8 @@ const carController = (carInterface, carRepository, carModel, authService, inter
         await (0, car_1.checkCar)(name, carService);
         const carCreate = await (0, car_1.createCar)(carData, carService, authservices);
         __1.io.emit('carCreation', {
-            message: `New Car Added: The car ${carData.name} has been added by our ${carCreate?.owner} ${carCreate?.addedBy} and is now available for rent. Check it out in our listings!`
+            message: `New Car Added: The car ${carData.name} has been added by our ${carCreate?.owner} ${carCreate?.addedBy} and is now available for rent. Check it out in our listings!`,
+            picture: carCreate?.thumbnailImg
         });
         res.json({
             status: "success",

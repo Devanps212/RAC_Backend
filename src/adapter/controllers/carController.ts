@@ -70,7 +70,8 @@ export const carController  = (
             
             const carCreate = await createCar(carData, carService, authservices)
             io.emit('carCreation', {
-                message: `New Car Added: The car ${carData.name} has been added by our ${carCreate?.owner} ${carCreate?.addedBy} and is now available for rent. Check it out in our listings!`
+                message: `New Car Added: The car ${carData.name} has been added by our ${carCreate?.owner} ${carCreate?.addedBy} and is now available for rent. Check it out in our listings!`,
+                picture: carCreate?.thumbnailImg
             })
             res.json({
                 status:"success",
