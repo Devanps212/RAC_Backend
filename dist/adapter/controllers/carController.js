@@ -9,6 +9,7 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const appErrors_1 = __importDefault(require("../../utils/appErrors"));
 const httpTypes_1 = require("../../types/httpTypes");
 const booking_1 = require("../../app/use_case/booking/booking");
+const __1 = require("../..");
 const carController = (carInterface, carRepository, carModel, authService, interfaceAuthService, bookingInterface, bookingRepository, bookingModel) => {
     const carService = carInterface(carRepository(carModel));
     const authservices = interfaceAuthService(authService());
@@ -41,6 +42,9 @@ const carController = (carInterface, carRepository, carModel, authService, inter
         carData.thumbnailImg = thumbnail.join(',');
         await (0, car_1.checkCar)(name, carService);
         const carCreate = await (0, car_1.createCar)(carData, carService, authservices);
+        __1.io.emit('carCreation', {
+            message: `New Car Added: The car ${carData.name} has been added by our ${carCreate?.owner} ${carCreate?.addedBy} and is now available for rent. Check it out in our listings!`
+        });
         res.json({
             status: "success",
             message: "car added successfully",

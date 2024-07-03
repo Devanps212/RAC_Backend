@@ -14,6 +14,7 @@ import { bookingRepositoryType } from "../../frameworks/database/mongodb/reposit
 import { BookingModelType } from "../../frameworks/database/mongodb/models/bookingModel";
 import { Booking } from "../../types/bookingInterface";
 import { bookingBasedOnRole } from "../../app/use_case/booking/booking";
+import { io } from "../..";
 
 
 export const carController  = (
@@ -68,6 +69,9 @@ export const carController  = (
             await checkCar(name, carService)
             
             const carCreate = await createCar(carData, carService, authservices)
+            io.emit('carCreation', {
+                message: `New Car Added: The car ${carData.name} has been added by our ${carCreate?.owner} ${carCreate?.addedBy} and is now available for rent. Check it out in our listings!`
+            })
             res.json({
                 status:"success",
                 message:"car added successfully",
