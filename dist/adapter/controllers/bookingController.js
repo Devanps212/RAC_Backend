@@ -174,6 +174,16 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                 return;
             }
             const update = await (0, booking_1.BookingUpdater)(bookingDetail, bookingService);
+            if (bookingDetail.issues && bookingDetail.ownerRole === "Admin") {
+                __1.io.emit("adminReport", {
+                    message: `Report Alert: A new report has been filed. Please check Manage bookings`
+                });
+            }
+            else {
+                __1.io.emit("partnerReport", {
+                    message: `Report Alert: A new report has been filed. Please check Manage bookings`
+                });
+            }
             if (!update || (update && 'message' in update)) {
                 res.status(404).json({
                     message: update?.message || "Failed to update booking",

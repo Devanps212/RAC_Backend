@@ -253,6 +253,15 @@ export const bookingController = (
                 }
     
                 const update = await BookingUpdater(bookingDetail, bookingService);
+                if(bookingDetail.issues && bookingDetail.ownerRole === "Admin"){
+                    io.emit("adminReport", {
+                        message: `Report Alert: A new report has been filed. Please check Manage bookings`
+                    });
+                } else {
+                    io.emit("partnerReport", {
+                        message: `Report Alert: A new report has been filed. Please check Manage bookings`
+                    });
+                }
     
                 if (!update || (update && 'message' in update)) {
                     res.status(404).json({
@@ -422,6 +431,7 @@ export const bookingController = (
                 bookingResult.issues = ''
                 const data = await updateCar(String(carResult._id), carResult, carService);
                 await BookingUpdater(bookingResult, bookingService)
+                
                 
                 
                 res.json({ message: 'Car status updated to maintenance' });
