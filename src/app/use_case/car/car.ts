@@ -74,7 +74,7 @@ export const carPartialUpdate = async(data: Partial<carInterface>, carRepoInterf
     if(data && data.offer && response){
         console.log("offer updating")
         io.emit('offerUpdate', {
-            message: `Offer updated for car ${response.name}: ${response.offer?.discount || 'No description provided'}`,
+            message:`The offer for the car ${response.name} has been updated: We are excited to inform you that the latest offer for the ${response.name} includes a discount of ${response.offer?.discount || 'No description provided'}. Take advantage of this special deal and enjoy great savings on your rental!`,
             car:response.name,
             carImage:response.thumbnailImg
         })
