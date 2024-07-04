@@ -1,3 +1,4 @@
+import { io } from "../../..";
 import { carInterface } from "../../../types/carInterface";
 import { carInterfaceType } from "../../repositories/carRepoInterface";
 import { InterfaceAuthService } from "../../services/authServiceInterface";
@@ -70,6 +71,13 @@ export const carBasedOnRole = async(role: string,  carRepoInterface : ReturnType
 
 export const carPartialUpdate = async(data: Partial<carInterface>, carRepoInterface : ReturnType<carInterfaceType>)=>{
     const response = await carRepoInterface.carPartialUpdate(data)
+    if(data && data.offer && response){
+        io.emit('offerUpdate', {
+            message: `Offer updated for car ${response.name}: ${response.offer?.discount || 'No description provided'}`,
+            car:response.name,
+            carImage:response.thumbnailImg
+        })
+    }
     return response
 }
 

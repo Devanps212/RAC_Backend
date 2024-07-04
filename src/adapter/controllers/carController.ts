@@ -210,7 +210,9 @@ export const carController  = (
 
             console.log("data recieved : ", data)
             
+            
             const updateCar = await carPartialUpdate(data, carService)
+            
             res.json({
                 data: updateCar,
                 status: "success"

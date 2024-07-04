@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.carPagination = exports.carPartialUpdate = exports.carBasedOnRole = exports.updateCar = exports.checkCar = exports.viewCarDetails = exports.findCar = exports.deleteCar = exports.editCar = exports.createCar = void 0;
+const __1 = require("../../..");
 const createCar = async (carData, carRepInterface, authInterface) => {
     console.log("Data received");
     if (carData.addedById) {
@@ -62,6 +63,13 @@ const carBasedOnRole = async (role, carRepoInterface) => {
 exports.carBasedOnRole = carBasedOnRole;
 const carPartialUpdate = async (data, carRepoInterface) => {
     const response = await carRepoInterface.carPartialUpdate(data);
+    if (data && data.offer && response) {
+        __1.io.emit('offerUpdate', {
+            message: `Offer updated for car ${response.name}: ${response.offer?.discount || 'No description provided'}`,
+            car: response.name,
+            carImage: response.thumbnailImg
+        });
+    }
     return response;
 };
 exports.carPartialUpdate = carPartialUpdate;
