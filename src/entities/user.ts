@@ -54,7 +54,6 @@ export class UserEntity {
     {
       if(userId === undefined)
       {
-        console.log("user not found")
         throw new AppError('userId is Invalid', HttpStatus.NOT_FOUND)
       }
       const user = await this.model.findOne({_id:userId})
@@ -112,23 +111,19 @@ export class UserEntity {
   public async userUpdate(data: Partial<userInterface>): Promise<userInterface> {
     try {
 
-      console.log("data : ", data)
+      
       const user = await this.model.findById({_id:data._id});
-      console.log("user found :", user)
-      console.log("updating user")
+      
       if (!user) {
-        console.log('no User Found')
         throw new AppError('No user found', HttpStatus.NOT_FOUND);
       }
 
       if (Object.keys(data).length === 0) {
-        console.log("nothing to update")
         throw new AppError('No update data provided', HttpStatus.BAD_REQUEST);
       }
 
       Object.assign(user, data);
   
-      console.log("saving")
       await user.save();
 
       return user.toObject();
@@ -152,9 +147,9 @@ export class UserEntity {
 
   public async findUsersForConversation(id: string): Promise<userInterface[] | userInterface> {
     try{
-      console.log("id found : ", id)
+      
       const users = await this.model.find({_id: {$ne:id}}).exec()
-      console.log("users length", users.length)
+      
       if(users == null){
         throw new AppError('no users found', HttpStatus.NOT_FOUND)
       }

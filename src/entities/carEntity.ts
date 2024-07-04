@@ -20,7 +20,6 @@ export class carEntity{
             const carCreate = await this.model.create(carData)
             if(carCreate)
             {
-                console.log("car created")
                 return carCreate.toObject()
             }
             else
@@ -36,8 +35,6 @@ export class carEntity{
     }
     public async editCar(carData:carInterface): Promise<{status:string} | null>
     {
-        console.log("reached car Enitity")
-        console.log("reached car Enitity");
         try {
             const {_id, deletedExteriorIndex, deletedInteriorIndex, interior, exterior, thumbnailImg, seats, comments, ...restData} = carData;
 
@@ -46,8 +43,7 @@ export class carEntity{
             let shouldUpdateMongo = false;
     
             if (deletedExteriorIndex && PictureUpdate) {
-                    console.log("exterior after update:", PictureUpdate);
-                    console.log("delted exterior :", deletedExteriorIndex)
+                    
                     if (exterior && exterior.length === 1) {
                         PictureUpdate.exterior[parseInt(deletedExteriorIndex)] = exterior[0];
                         shouldUpdateMongo = true;
@@ -55,8 +51,7 @@ export class carEntity{
             }
     
             if (deletedInteriorIndex && PictureUpdate) {
-                    console.log("Interior before update:", PictureUpdate);
-                    console.log("delyted Interior : ", deletedInteriorIndex)
+                    
                     if (interior && interior.length === 1) {
                         PictureUpdate.interior[parseInt(deletedInteriorIndex)] = interior[0];
                         shouldUpdateMongo = true;
@@ -95,7 +90,6 @@ export class carEntity{
                     
                     const carDetails = await this.model.findOne({_id});
 
-                    console.log("car updated");
                     return {status: "success"};
                 } else if (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount === 0 && updatedDocument === null) {
                     throw new AppError('Please edit something to change', HttpStatus.NOT_MODIFIED);
@@ -151,7 +145,6 @@ export class carEntity{
     public async deleteCar(carId : string): Promise<{status: string, message:string}| null>{
         try
         {
-            console.log("carU=Id : ",carId)
             const carDelete = await this.model.deleteOne({_id:carId})
             if(carDelete.deletedCount > 0)
             {
@@ -172,7 +165,6 @@ export class carEntity{
     public async viewCarDetails(carId:string) : Promise<carInterface | {message: string} | null >{
         try
         {
-            console.log("carId for view details :", carId)
             const details = await this.model.findOne({_id:carId})
             if(!details)
             {
@@ -282,7 +274,6 @@ export class carEntity{
                 .populate('category')
                 .exec();
 
-                console.log("cars from enity : ", cars)
             const totalCount = await this.model.countDocuments();
 
             return {

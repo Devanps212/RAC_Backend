@@ -64,12 +64,14 @@ exports.carBasedOnRole = carBasedOnRole;
 const carPartialUpdate = async (data, carRepoInterface) => {
     const response = await carRepoInterface.carPartialUpdate(data);
     if (data && data.offer && response) {
+        console.log("offer updating");
         __1.io.emit('offerUpdate', {
             message: `Offer updated for car ${response.name}: ${response.offer?.discount || 'No description provided'}`,
             car: response.name,
             carImage: response.thumbnailImg
         });
     }
+    console.log("no offer found");
     return response;
 };
 exports.carPartialUpdate = carPartialUpdate;

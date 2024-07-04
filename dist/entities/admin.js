@@ -23,28 +23,22 @@ class adminEntity {
         if (!admin) {
             throw new appErrors_1.default('Admin not found', httpTypes_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        console.log("Admin : ", admin);
         return admin;
     }
     async updateAdmin(data) {
         try {
-            console.log("admin Data : ", data);
             if (Object.keys(data).length === 0) {
                 throw new appErrors_1.default('Provide something to update Admin', httpTypes_1.HttpStatus.NOT_IMPLEMENTED);
             }
-            console.log("updating");
             const admin = await this.model.findOne({ _id: data._id });
-            console.log("admin : ", admin);
             if (!admin) {
                 throw new appErrors_1.default('No admin found', httpTypes_1.HttpStatus.NOT_FOUND);
             }
             Object.assign(admin, data);
             const saveAdmin = await admin.save();
-            console.log(saveAdmin);
             if (!saveAdmin) {
                 throw new appErrors_1.default('admin update failed', httpTypes_1.HttpStatus.NOT_MODIFIED);
             }
-            console.log("saved admin : ", saveAdmin);
             return saveAdmin;
         }
         catch (error) {

@@ -47,7 +47,6 @@ class UserEntity {
     async blockUnblockUser(userId) {
         try {
             if (userId === undefined) {
-                console.log("user not found");
                 throw new appErrors_1.default('userId is Invalid', httpTypes_1.HttpStatus.NOT_FOUND);
             }
             const user = await this.model.findOne({ _id: userId });
@@ -91,20 +90,14 @@ class UserEntity {
     }
     async userUpdate(data) {
         try {
-            console.log("data : ", data);
             const user = await this.model.findById({ _id: data._id });
-            console.log("user found :", user);
-            console.log("updating user");
             if (!user) {
-                console.log('no User Found');
                 throw new appErrors_1.default('No user found', httpTypes_1.HttpStatus.NOT_FOUND);
             }
             if (Object.keys(data).length === 0) {
-                console.log("nothing to update");
                 throw new appErrors_1.default('No update data provided', httpTypes_1.HttpStatus.BAD_REQUEST);
             }
             Object.assign(user, data);
-            console.log("saving");
             await user.save();
             return user.toObject();
         }
@@ -127,9 +120,7 @@ class UserEntity {
     }
     async findUsersForConversation(id) {
         try {
-            console.log("id found : ", id);
             const users = await this.model.find({ _id: { $ne: id } }).exec();
-            console.log("users length", users.length);
             if (users == null) {
                 throw new appErrors_1.default('no users found', httpTypes_1.HttpStatus.NOT_FOUND);
             }

@@ -15,7 +15,6 @@ class carEntity {
         try {
             const carCreate = await this.model.create(carData);
             if (carCreate) {
-                console.log("car created");
                 return carCreate.toObject();
             }
             else {
@@ -28,23 +27,17 @@ class carEntity {
         }
     }
     async editCar(carData) {
-        console.log("reached car Enitity");
-        console.log("reached car Enitity");
         try {
             const { _id, deletedExteriorIndex, deletedInteriorIndex, interior, exterior, thumbnailImg, seats, comments, ...restData } = carData;
             const PictureUpdate = await this.model.findOne({ _id });
             let shouldUpdateMongo = false;
             if (deletedExteriorIndex && PictureUpdate) {
-                console.log("exterior after update:", PictureUpdate);
-                console.log("delted exterior :", deletedExteriorIndex);
                 if (exterior && exterior.length === 1) {
                     PictureUpdate.exterior[parseInt(deletedExteriorIndex)] = exterior[0];
                     shouldUpdateMongo = true;
                 }
             }
             if (deletedInteriorIndex && PictureUpdate) {
-                console.log("Interior before update:", PictureUpdate);
-                console.log("delyted Interior : ", deletedInteriorIndex);
                 if (interior && interior.length === 1) {
                     PictureUpdate.interior[parseInt(deletedInteriorIndex)] = interior[0];
                     shouldUpdateMongo = true;
@@ -73,7 +66,6 @@ class carEntity {
                 const dataSave = await this.model.updateOne({ _id }, { $set: restData });
                 if ((updatedDocument !== null || (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount > 0))) {
                     const carDetails = await this.model.findOne({ _id });
-                    console.log("car updated");
                     return { status: "success" };
                 }
                 else if (dataSave !== undefined && dataSave.matchedCount > 0 && dataSave.modifiedCount === 0 && updatedDocument === null) {
@@ -123,7 +115,6 @@ class carEntity {
     }
     async deleteCar(carId) {
         try {
-            console.log("carU=Id : ", carId);
             const carDelete = await this.model.deleteOne({ _id: carId });
             if (carDelete.deletedCount > 0) {
                 return { status: 'success', message: 'car deletd successfully' };
@@ -139,7 +130,6 @@ class carEntity {
     }
     async viewCarDetails(carId) {
         try {
-            console.log("carId for view details :", carId);
             const details = await this.model.findOne({ _id: carId });
             if (!details) {
                 return { message: "not found" };
@@ -223,7 +213,6 @@ class carEntity {
                 .limit(limit)
                 .populate('category')
                 .exec();
-            console.log("cars from enity : ", cars);
             const totalCount = await this.model.countDocuments();
             return {
                 cars: cars.map(car => car.toObject()),

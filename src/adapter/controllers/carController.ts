@@ -150,7 +150,7 @@ export const carController  = (
 
     const deletesCar = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            console.log("deleting car")
+            
             const carId = req?.header('X-Car-Id') as string
 
             const data : Partial<Booking> = {
@@ -164,10 +164,10 @@ export const carController  = (
             : booking?.status === "Confirmed"
             
             if(hasOngoingBooking){
-                console.log("car have a booking ongoing")
+                
                 throw new AppError(`Unable to delete the car. There is an ongoing booking associated with it.`, HttpStatus.CONFLICT);
             } else {
-                console.log("car dont have any booking")
+                
                 const carDelete = await deleteCar(carId, carService)
                 res.json({
                     status:carDelete?.status,
@@ -206,10 +206,7 @@ export const carController  = (
 
     const carUpdateBasedOnRole = expressAsyncHandler(
         async(req: Request, res: Response)=>{
-            const data = req.body
-
-            console.log("data recieved : ", data)
-            
+            const data = req.body        
             
             const updateCar = await carPartialUpdate(data, carService)
             

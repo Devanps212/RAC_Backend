@@ -29,12 +29,10 @@ class CouponEntity {
             if (existingDoc) {
                 throw new appErrors_1.default('Price is already used', httpTypes_1.HttpStatus.CONFLICT);
             }
-            console.log("Reached generateCoupon");
             const couponCode = await this.generateCouponCode(price);
             const discount = this.calculateDiscount(price);
             const priceReduced = price - discount.amount;
             const expiryDate = new Date(expiry);
-            console.log("Saving coupon...");
             const newCoupon = await this.model.create({
                 coupon: couponCode,
                 discountData: {

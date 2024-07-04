@@ -35,7 +35,6 @@ class partnerEntity {
     }
     async partnerCreate(userId, transactionId, purpose, amount) {
         try {
-            console.log("reached partner entity ");
             const newTransaction = {
                 transactionID: transactionId,
                 amount: amount,

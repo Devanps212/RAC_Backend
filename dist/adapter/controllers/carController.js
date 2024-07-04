@@ -95,7 +95,6 @@ const carController = (carInterface, carRepository, carModel, authService, inter
         }
     });
     const deletesCar = (0, express_async_handler_1.default)(async (req, res) => {
-        console.log("deleting car");
         const carId = req?.header('X-Car-Id');
         const data = {
             carId: carId
@@ -105,11 +104,9 @@ const carController = (carInterface, carRepository, carModel, authService, inter
             ? booking.some(bookings => bookings.status === "Confirmed")
             : booking?.status === "Confirmed";
         if (hasOngoingBooking) {
-            console.log("car have a booking ongoing");
             throw new appErrors_1.default(`Unable to delete the car. There is an ongoing booking associated with it.`, httpTypes_1.HttpStatus.CONFLICT);
         }
         else {
-            console.log("car dont have any booking");
             const carDelete = await (0, car_1.deleteCar)(carId, carService);
             res.json({
                 status: carDelete?.status,
@@ -136,7 +133,6 @@ const carController = (carInterface, carRepository, carModel, authService, inter
     });
     const carUpdateBasedOnRole = (0, express_async_handler_1.default)(async (req, res) => {
         const data = req.body;
-        console.log("data recieved : ", data);
         const updateCar = await (0, car_1.carPartialUpdate)(data, carService);
         res.json({
             data: updateCar,

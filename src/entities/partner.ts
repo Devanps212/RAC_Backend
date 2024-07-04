@@ -49,7 +49,7 @@ export class partnerEntity{
     public async partnerCreate(userId: string, transactionId: string, purpose: string, amount: number) : Promise<partnerDetailInterface | null>{
         try
         {
-            console.log("reached partner entity ")
+           
             const newTransaction = {
                 transactionID: transactionId,
                 amount:amount,

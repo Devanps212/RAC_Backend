@@ -16,17 +16,12 @@ export class BookingEnity{
     public async bookingCreation(data: SessionDataInterface, carDetails : carInterface) : Promise<Booking| null>{
         try
         {
-            console.log("reached booking entity")
             const addedById = carDetails.addedById
             const addedRole = carDetails.owner
-            console.log("whole data : ", data)
-            console.log("booking Detail :", data.transactionId)
-            console.log("booking Detail :", data.carId)
-            console.log("booking Detail :", data.bookingDetails)
+            
             let bookingFormat : Booking | null = null;
             const { pickupLocation, dropOffLocation, pickupTime, dropOffTime, startDate, endDate, amount, total } = data.bookingDetails;
-            console.log("checking condition")
-            console.log(pickupLocation, dropOffLocation, pickupTime, dropOffTime, startDate, endDate, amount)
+            
             if (pickupLocation !== undefined && 
                 dropOffLocation !== undefined && 
                 pickupTime !== undefined && 
@@ -49,13 +44,13 @@ export class BookingEnity{
                     ownerRole: addedRole,
                     issues:'',
                 };
-                console.log(bookingFormat)
+                
             }
 
             const bookingData = await this.model.create(bookingFormat)
         
             if(bookingData !== null){
-                console.log("Booked")
+                
                 return bookingData.toObject()
             }
             else{
@@ -105,7 +100,7 @@ export class BookingEnity{
 
     public async bookingFindingBasedOnRole(bookingData: Partial<Booking>): Promise<Booking | Booking[]>{
         try{
-            console.log("updating")
+            
             const bookingDetail = await this.model.find(bookingData).populate('carId')
             if (bookingDetail.length === 0) {
                 return []; 
@@ -122,7 +117,7 @@ export class BookingEnity{
 
     public async BookingUpdater(data: Partial<Booking>):Promise<Booking| {message: string}>{
         try{
-            console.log("reached booking updating")
+            
             if (!data._id) {
                 return { message: "No booking ID provided" };
             }
@@ -130,10 +125,10 @@ export class BookingEnity{
 
             const booking = await this.model.findById(bookingId)
             if(booking){
-                console.log("datas for update : ", data)
+                
                 if(Object.keys(data).length > 0){
                     Object.assign(booking, data)
-                    console.log("updating booking :", booking)
+                    
                     await booking.save()
                     return booking.toObject()
                 } else {
