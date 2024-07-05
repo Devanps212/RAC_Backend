@@ -286,7 +286,10 @@ export class carEntity{
 
     public async carFindBasedOnInterface(carData: Partial<carInterface>): Promise<carInterface[]>{
         try{
+            console.log("reached car entitiy")
+
             const cars = await this.model.find(carData);
+            console.log(cars)
             if (!cars || cars.length === 0) {
                 throw new AppError("No cars found", HttpStatus.NOT_FOUND);
             }
@@ -298,6 +301,7 @@ export class carEntity{
             }
 
         } catch(error:any){
+            console.error("error : ",error)
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

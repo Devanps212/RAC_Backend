@@ -225,7 +225,9 @@ class carEntity {
     }
     async carFindBasedOnInterface(carData) {
         try {
+            console.log("reached car entitiy");
             const cars = await this.model.find(carData);
+            console.log(cars);
             if (!cars || cars.length === 0) {
                 throw new appErrors_1.default("No cars found", httpTypes_1.HttpStatus.NOT_FOUND);
             }
@@ -237,6 +239,7 @@ class carEntity {
             }
         }
         catch (error) {
+            console.error("error : ", error);
             throw new appErrors_1.default(error.message, httpTypes_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
