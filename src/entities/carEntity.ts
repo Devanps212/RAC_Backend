@@ -203,6 +203,7 @@ export class carEntity{
 
     public async carUpdater(carId: string, dataUpdate: Partial<carInterface>): Promise<{message: string, carData:carInterface | null}>{
         try{
+            console.log("updating in entity")
             const car = await this.model.findById(carId)
 
             if (!car) {

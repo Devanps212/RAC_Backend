@@ -158,6 +158,7 @@ class carEntity {
     }
     async carUpdater(carId, dataUpdate) {
         try {
+            console.log("updating in entity");
             const car = await this.model.findById(carId);
             if (!car) {
                 throw new Error('Car not found');
