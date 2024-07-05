@@ -3,7 +3,6 @@ import { carModelType } from "../frameworks/database/mongodb/models/carModel";
 import { carInterface } from "../types/carInterface";
 import { HttpStatus } from "../types/httpTypes";
 import AppError from "../utils/appErrors";
-import { HttpStatusCode } from "axios";
 
 export class carEntity{
     private model : carModelType
@@ -284,6 +283,25 @@ export class carEntity{
             throw new Error(error.message);
         }
     }
+
+    public async carFindBasedOnInterface(carData: Partial<carInterface>): Promise<carInterface[]>{
+        try{
+            const cars = await this.model.find(carData);
+            if (!cars || cars.length === 0) {
+                throw new AppError("No cars found", HttpStatus.NOT_FOUND);
+            }
+    
+            if (Array.isArray(cars)) {
+                return cars.map(car => car.toObject());
+            } else {
+                return [cars];
+            }
+
+        } catch(error:any){
+            throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
+
 
 

@@ -223,5 +223,22 @@ class carEntity {
             throw new Error(error.message);
         }
     }
+    async carFindBasedOnInterface(carData) {
+        try {
+            const cars = await this.model.find(carData);
+            if (!cars || cars.length === 0) {
+                throw new appErrors_1.default("No cars found", httpTypes_1.HttpStatus.NOT_FOUND);
+            }
+            if (Array.isArray(cars)) {
+                return cars.map(car => car.toObject());
+            }
+            else {
+                return [cars];
+            }
+        }
+        catch (error) {
+            throw new appErrors_1.default(error.message, httpTypes_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 exports.carEntity = carEntity;

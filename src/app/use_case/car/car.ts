@@ -89,3 +89,8 @@ export const carPagination = async(page: number, limit:number, carRepoInterface 
     const response = await carRepoInterface.carPagination(page, limit)
     return response
 }
+
+export const carBasedOnInterfaces = async(data: Partial<carInterface>, carRepoInterface : ReturnType<carInterfaceType>)=>{
+    const response = await carRepoInterface.carBasedOnInterface(data)
+    return response
+}

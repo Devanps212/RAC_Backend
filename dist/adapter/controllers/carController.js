@@ -175,6 +175,14 @@ const carController = (carInterface, carRepository, carModel, authService, inter
             status: "success"
         });
     });
+    const carBasedOnInterface = (0, express_async_handler_1.default)(async (req, res) => {
+        const data = req.body;
+        const cars = await (0, car_1.carBasedOnInterfaces)(data, carService);
+        res.json({
+            message: 'success',
+            cars
+        });
+    });
     return {
         createCars,
         editsCar,
@@ -184,6 +192,7 @@ const carController = (carInterface, carRepository, carModel, authService, inter
         updateRating,
         findCarsBasedOnRole,
         carUpdateBasedOnRole,
+        carBasedOnInterface,
         carPaginations,
     };
 };

@@ -28,6 +28,7 @@ const carRoute = () => {
     router.patch('/partialUpdate', authenticationMidddleware_1.authentication, controller.carUpdateBasedOnRole);
     router.patch('/updateRating', authenticationMidddleware_1.authentication, controller.updateRating);
     router.get('/carPage', authenticationMidddleware_1.authentication, controller.carPaginations);
+    router.post('/basedOnInterface', authenticationMidddleware_1.authentication, controller.carBasedOnInterface);
     return router;
 };
 exports.carRoute = carRoute;

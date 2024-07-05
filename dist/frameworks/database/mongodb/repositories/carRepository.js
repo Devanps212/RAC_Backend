@@ -45,6 +45,10 @@ const carRepository = (model) => {
         const ExistCar = await CarEntity.carPagination(page, limit);
         return ExistCar;
     };
+    const carFindBasedOnInterfaces = async (data) => {
+        const response = await CarEntity.carFindBasedOnInterface(data);
+        return response;
+    };
     return {
         createCar,
         delteCar,
@@ -55,7 +59,8 @@ const carRepository = (model) => {
         carExist,
         carUpdate,
         carFindBasedOnRole,
-        carUpdateBasedOnRole
+        carUpdateBasedOnRole,
+        carFindBasedOnInterfaces
     };
 };
 exports.carRepository = carRepository;

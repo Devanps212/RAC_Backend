@@ -34,6 +34,7 @@ export const carRoute = ()=>{
     router.patch('/partialUpdate', authentication, controller.carUpdateBasedOnRole)
     router.patch('/updateRating', authentication, controller.updateRating)
     router.get('/carPage', authentication, controller.carPaginations)
+    router.post('/basedOnInterface', authentication, controller.carBasedOnInterface)
 
     return router
 }

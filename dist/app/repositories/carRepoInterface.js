@@ -33,6 +33,9 @@ const carRepoInterface = (repository) => {
     const carPagination = async (page, limit) => {
         return await repository.carPagination(page, limit);
     };
+    const carBasedOnInterface = async (data) => {
+        return await repository.carFindBasedOnInterfaces(data);
+    };
     return {
         createCar,
         deleteCar,
@@ -43,7 +46,8 @@ const carRepoInterface = (repository) => {
         updateCar,
         carPagination,
         carBasedOnrole,
-        carPartialUpdate
+        carPartialUpdate,
+        carBasedOnInterface
     };
 };
 exports.carRepoInterface = carRepoInterface;

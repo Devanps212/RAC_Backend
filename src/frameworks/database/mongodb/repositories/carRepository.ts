@@ -57,6 +57,13 @@ export const carRepository = (model: carModelType)=>{
         return ExistCar
     }
 
+    const carFindBasedOnInterfaces = async(data: Partial<carInterface>)=>{
+        const response = await CarEntity.carFindBasedOnInterface(data)
+        return response
+    }
+    
+
+
     return {
         createCar, 
         delteCar, 
@@ -67,7 +74,8 @@ export const carRepository = (model: carModelType)=>{
         carExist, 
         carUpdate, 
         carFindBasedOnRole, 
-        carUpdateBasedOnRole
+        carUpdateBasedOnRole,
+        carFindBasedOnInterfaces
     }
 }
 

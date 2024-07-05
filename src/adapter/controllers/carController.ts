@@ -2,7 +2,7 @@ import { carInterfaceType } from "../../app/repositories/carRepoInterface";
 import { CarRepoType } from "../../frameworks/database/mongodb/repositories/carRepository";
 import { carModelType } from "../../frameworks/database/mongodb/models/carModel";
 import { Request, Response } from "express";
-import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate, updateCar, carPagination } from "../../app/use_case/car/car";
+import { createCar, editCar, deleteCar, findCar, viewCarDetails, checkCar, carBasedOnRole, carPartialUpdate, updateCar, carPagination, carBasedOnInterfaces } from "../../app/use_case/car/car";
 import expressAsyncHandler from "express-async-handler";
 import { AuthService } from "../../frameworks/services/authServices";
 import { InterfaceAuthService } from "../../app/services/authServiceInterface";
@@ -266,6 +266,17 @@ export const carController  = (
         });
     });
 
+    const carBasedOnInterface = expressAsyncHandler(
+        async(req: Request, res: Response)=>{
+            const data = req.body
+
+            const cars = await carBasedOnInterfaces(data, carService)
+            res.json({
+                message:'success',
+                cars
+            })
+        }
+    )
     return{
         createCars, 
         editsCar, 
@@ -275,6 +286,7 @@ export const carController  = (
         updateRating,
         findCarsBasedOnRole, 
         carUpdateBasedOnRole,
+        carBasedOnInterface,
         carPaginations,
     }
 }

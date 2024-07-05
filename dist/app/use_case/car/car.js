@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.carPagination = exports.carPartialUpdate = exports.carBasedOnRole = exports.updateCar = exports.checkCar = exports.viewCarDetails = exports.findCar = exports.deleteCar = exports.editCar = exports.createCar = void 0;
+exports.carBasedOnInterfaces = exports.carPagination = exports.carPartialUpdate = exports.carBasedOnRole = exports.updateCar = exports.checkCar = exports.viewCarDetails = exports.findCar = exports.deleteCar = exports.editCar = exports.createCar = void 0;
 const __1 = require("../../..");
 const createCar = async (carData, carRepInterface, authInterface) => {
     console.log("Data received");
@@ -80,3 +80,8 @@ const carPagination = async (page, limit, carRepoInterface) => {
     return response;
 };
 exports.carPagination = carPagination;
+const carBasedOnInterfaces = async (data, carRepoInterface) => {
+    const response = await carRepoInterface.carBasedOnInterface(data);
+    return response;
+};
+exports.carBasedOnInterfaces = carBasedOnInterfaces;
