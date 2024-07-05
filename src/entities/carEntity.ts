@@ -301,7 +301,6 @@ export class carEntity{
             }
 
         } catch(error:any){
-            console.error("error : ",error)
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
