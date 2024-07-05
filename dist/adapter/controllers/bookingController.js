@@ -151,6 +151,7 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
     const bookingUpdater = (0, express_async_handler_1.default)(async (req, res) => {
         const { data, purpose } = req.body;
         const bookingDetail = data;
+        console.log("booking detail : ", bookingDetail);
         if (bookingDetail && bookingDetail._id) {
             const booking = await (0, booking_1.findBooking)(bookingDetail._id, bookingService);
             if (!booking || (booking && 'message' in booking)) {
@@ -175,6 +176,7 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
                 return;
             }
             const update = await (0, booking_1.BookingUpdater)(bookingDetail, bookingService);
+            console.log("updated booking :", update);
             if (bookingDetail.issues && bookingDetail.ownerRole === "Admin") {
                 __1.io.emit("adminReport", {
                     message: `Report Alert: A new report has been filed. Please check Manage bookings`

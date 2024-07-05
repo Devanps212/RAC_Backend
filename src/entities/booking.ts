@@ -141,6 +141,7 @@ export class BookingEnity{
                 return {message: "no bookings found"}
             }
         }catch(error: any){
+            console.error(error)
             throw new AppError(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

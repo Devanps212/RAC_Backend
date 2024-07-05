@@ -224,6 +224,7 @@ export const bookingController = (
         async (req: Request, res: Response) => {
             const { data, purpose } = req.body;
             const bookingDetail: Partial<Booking> = data;
+            console.log("booking detail : ", bookingDetail)
             
             if (bookingDetail && bookingDetail._id) {
                 const booking = await findBooking(bookingDetail._id, bookingService);
@@ -255,6 +256,7 @@ export const bookingController = (
                 }
     
                 const update = await BookingUpdater(bookingDetail, bookingService);
+                console.log("updated booking :", update)
                 if(bookingDetail.issues && bookingDetail.ownerRole === "Admin"){
                     io.emit("adminReport", {
                         message: `Report Alert: A new report has been filed. Please check Manage bookings`
