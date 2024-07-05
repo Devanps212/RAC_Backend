@@ -211,6 +211,8 @@ export const bookingController = (
         async(req: Request, res: Response)=>{
             const { bookingData } = req.body
             
+            console.log("booking data :", bookingData)
+
             const findBooking = await bookingBasedOnRole(bookingData, bookingService)
             res.json({
                 data: findBooking

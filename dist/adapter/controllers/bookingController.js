@@ -142,6 +142,7 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
     });
     const bookingFindingBasedOnRole = (0, express_async_handler_1.default)(async (req, res) => {
         const { bookingData } = req.body;
+        console.log("booking data :", bookingData);
         const findBooking = await (0, booking_1.bookingBasedOnRole)(bookingData, bookingService);
         res.json({
             data: findBooking
