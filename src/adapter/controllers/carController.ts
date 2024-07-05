@@ -243,8 +243,10 @@ export const carController  = (
                 });
             }
 
+            console.log("updating ")
             const update = await updateCar(car._id?.toString() ?? '', car, carService)
 
+            console.log("updated")
             res.json({
                 data: update,
                 message: 'success fully submitted review'

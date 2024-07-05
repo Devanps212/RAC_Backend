@@ -172,6 +172,7 @@ class carEntity {
             }
         }
         catch (error) {
+            console.error(error);
             throw new appErrors_1.default(error.message, httpTypes_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -159,7 +159,9 @@ const carController = (carInterface, carRepository, carModel, authService, inter
                 userRating: newRating,
             });
         }
+        console.log("updating ");
         const update = await (0, car_1.updateCar)(car._id?.toString() ?? '', car, carService);
+        console.log("updated");
         res.json({
             data: update,
             message: 'success fully submitted review'
