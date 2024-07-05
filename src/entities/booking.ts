@@ -101,12 +101,15 @@ export class BookingEnity{
     public async bookingFindingBasedOnRole(bookingData: Partial<Booking>): Promise<Booking | Booking[]>{
         try{
             
-            const bookingDetail = await this.model.find(bookingData).populate('carId')
+            const bookingDetail = await this.model.find(bookingData).populate('carId').exec();
+            
             if (bookingDetail.length === 0) {
                 return []; 
             } else if (bookingDetail.length === 1) {
+                console.log("booking details : ", bookingDetail)
                 return bookingDetail[0].toObject(); 
             } else {
+                console.log("booking details : ", bookingDetail)
                 return bookingDetail.map(booking => booking.toObject()); 
             }
         } catch(error:any){
