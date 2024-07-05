@@ -20,7 +20,7 @@ app.use(cors())
 
 export const io = new Server(server, {
     cors: {
-        origin: "https://easyrentacar.shop"
+        origin: ["https://easyrentacar.shop", "https://www.easyrentacar.shop"],
     }
 })
 

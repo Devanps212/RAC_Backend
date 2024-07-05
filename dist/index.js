@@ -24,7 +24,7 @@ console.log(process.env.TEST);
 app.use((0, cors_1.default)());
 exports.io = new socket_io_1.Server(server, {
     cors: {
-        origin: "https://easyrentacar.shop"
+        origin: ["https://easyrentacar.shop", "https://www.easyrentacar.shop"],
     }
 });
 (0, socket_1.default)(exports.io);
