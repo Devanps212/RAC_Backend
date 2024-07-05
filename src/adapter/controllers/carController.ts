@@ -269,6 +269,8 @@ export const carController  = (
     const carBasedOnInterface = expressAsyncHandler(
         async(req: Request, res: Response)=>{
             const data = req.body
+            console.log("req.body : ", req.body)
+            console.log("data :", data)
 
             const cars = await carBasedOnInterfaces(data, carService)
             res.json({

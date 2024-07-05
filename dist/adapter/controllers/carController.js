@@ -177,6 +177,8 @@ const carController = (carInterface, carRepository, carModel, authService, inter
     });
     const carBasedOnInterface = (0, express_async_handler_1.default)(async (req, res) => {
         const data = req.body;
+        console.log("req.body : ", req.body);
+        console.log("data :", data);
         const cars = await (0, car_1.carBasedOnInterfaces)(data, carService);
         res.json({
             message: 'success',
