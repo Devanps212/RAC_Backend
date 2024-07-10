@@ -88,6 +88,7 @@ const authController = (
           } 
           else if(email && password && purpose === '') 
           {
+            
             const sendOtp = await otpGenr(email, dbrepositoryUser, 'signup');
             const OTP = sendOtp.otp;
       

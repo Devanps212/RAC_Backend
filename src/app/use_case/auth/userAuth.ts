@@ -63,7 +63,7 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
 
         const { sendOtp } = otpAuth();
         if(purpose == 'signin'){
-            
+            console.log("signIn check")
             const checksUser = await userRepInterface.getUserByEmail(email)
             if(!checksUser)
             {
@@ -74,7 +74,7 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
             return sendOTP
         }
         else if(purpose =='signup'){
-            
+            console.log("signUp check")
             const checksUser = await userRepInterface.getUserByEmail(email)
             if(checksUser)
             {

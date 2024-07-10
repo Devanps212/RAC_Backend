@@ -49,6 +49,7 @@ const otpGenr = async (email, userRepInterface, purpose) => {
         console.log("reached usecase");
         const { sendOtp } = (0, otpServices_1.otpAuth)();
         if (purpose == 'signin') {
+            console.log("signIn check");
             const checksUser = await userRepInterface.getUserByEmail(email);
             if (!checksUser) {
                 throw new appErrors_1.default("User not found", httpTypes_1.HttpStatus.UNAUTHORIZED);
@@ -57,6 +58,7 @@ const otpGenr = async (email, userRepInterface, purpose) => {
             return sendOTP;
         }
         else if (purpose == 'signup') {
+            console.log("signUp check");
             const checksUser = await userRepInterface.getUserByEmail(email);
             if (checksUser) {
                 throw new appErrors_1.default("Email already used", httpTypes_1.HttpStatus.UNAUTHORIZED);
