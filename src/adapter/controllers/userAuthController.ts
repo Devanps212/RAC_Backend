@@ -10,6 +10,8 @@ import { signUp, loginUser, otpGenr, verifyOTP, signIn_UpWithGoogle, findUser, A
 import { googleAuthServices } from '../../frameworks/services/googleAuthServices'
 import { authGoogleInterface } from '../../app/services/googleAuthServicesInterface'
 import { locationFinder, passwordReset, updateUser } from '../../app/use_case/user/user'
+import AppError from '../../utils/appErrors'
+import { HttpStatus } from '../../types/httpTypes'
 
 
 const authController = (
@@ -66,6 +68,9 @@ const authController = (
           {
             const user = await loginUser(email, password, dbrepositoryUser, authService);
             const userId = user._id;
+            if(user.isGoogleUser){
+              throw new AppError('Google authenticated users cannot change their password.', HttpStatus.NOT_ACCEPTABLE);
+            }
       
             const sendOtp = await otpGenr(email, dbrepositoryUser, 'signin');
             const OTP = sendOtp.otp;

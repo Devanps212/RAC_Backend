@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userAuth_1 = require("../../app/use_case/auth/userAuth");
 const user_1 = require("../../app/use_case/user/user");
+const appErrors_1 = __importDefault(require("../../utils/appErrors"));
+const httpTypes_1 = require("../../types/httpTypes");
 const authController = (authServiceImpl, authServiceInterface, userRepository, userDbRepoImpl, userModel, googleServiceImpl, googleAuthInterface) => {
     const dbrepositoryUser = userRepository(userDbRepoImpl(userModel));
     const authService = authServiceInterface(authServiceImpl());
@@ -38,6 +40,9 @@ const authController = (authServiceImpl, authServiceInterface, userRepository, u
             if (email && password !== '') {
                 const user = await (0, userAuth_1.loginUser)(email, password, dbrepositoryUser, authService);
                 const userId = user._id;
+                if (user.isGoogleUser) {
+                    throw new appErrors_1.default('Google authenticated users cannot change their password.', httpTypes_1.HttpStatus.NOT_ACCEPTABLE);
+                }
                 const sendOtp = await (0, userAuth_1.otpGenr)(email, dbrepositoryUser, 'signin');
                 const OTP = sendOtp.otp;
                 res.json({
