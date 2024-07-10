@@ -22,23 +22,17 @@ const signUp = async (user, userRepository, authService) => {
 exports.signUp = signUp;
 const loginUser = async (email, password, userRepository, authService) => {
     const user = await userRepository.getUserByEmail(email);
-    console.log(user);
-    console.log("user password : ", user?.password, password);
     if (!user) {
-        console.log("no user found");
         throw new appErrors_1.default("User not found", httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
     if (!user.isActive) {
         throw new appErrors_1.default(`${user.name} is blocked`, httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
     if (user.isGoogleUser) {
-        console.log("google user found");
         throw new appErrors_1.default("this user is unauthorized", httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
     const passCheck = await authService.decryptPassword(password, user.password ?? "");
-    console.log("passCheck : ", passCheck);
     if (!passCheck) {
-        console.log("password error");
         throw new appErrors_1.default("Password is wrong", httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
     console.log(user);
@@ -48,31 +42,24 @@ exports.loginUser = loginUser;
 const otpGenr = async (email, userRepInterface, purpose) => {
     try {
         console.log("reached usecase");
-        console.log(purpose);
         const { sendOtp } = (0, otpServices_1.otpAuth)();
         if (purpose == 'signin') {
-            console.log("checking login");
             const checksUser = await userRepInterface.getUserByEmail(email);
             if (!checksUser) {
                 throw new appErrors_1.default("User not found", httpTypes_1.HttpStatus.UNAUTHORIZED);
             }
             const sendOTP = await sendOtp(email);
-            console.log("send : ", sendOTP);
             return sendOTP;
         }
         else if (purpose == 'signup') {
-            console.log("checking signUp");
             const checksUser = await userRepInterface.getUserByEmail(email);
             if (checksUser) {
-                console.log("is user exist ? no");
                 throw new appErrors_1.default("Email already used", httpTypes_1.HttpStatus.UNAUTHORIZED);
             }
             const sendOTP = await sendOtp(email);
-            console.log("send : ", sendOTP);
             return sendOTP;
         }
         else {
-            console.log("checking user in FPOTP =========");
             const checksUser = await userRepInterface.getUserByEmail(email);
             const OTP = await sendOtp(email);
             return OTP;

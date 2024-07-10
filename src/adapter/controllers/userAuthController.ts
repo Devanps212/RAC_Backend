@@ -63,16 +63,14 @@ const authController = (
         
         const { email, password, purpose }: { email: string; password: string, purpose: string } = req?.body;
       
+        console.log("checking user is google authenticated")
         try {
           if (email && password !== '') 
           {
+            console.log("checking")
             const user = await loginUser(email, password, dbrepositoryUser, authService);
             const userId = user._id;
             console.log(user.isGoogleUser)
-            if(user.isGoogleUser){
-              console.log("user is google user")
-              throw new AppError('Google authenticated users cannot change their password.', HttpStatus.NOT_ACCEPTABLE);
-            }
 
             console.log("user is not google user")
       

@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userAuth_1 = require("../../app/use_case/auth/userAuth");
 const user_1 = require("../../app/use_case/user/user");
-const appErrors_1 = __importDefault(require("../../utils/appErrors"));
-const httpTypes_1 = require("../../types/httpTypes");
 const authController = (authServiceImpl, authServiceInterface, userRepository, userDbRepoImpl, userModel, googleServiceImpl, googleAuthInterface) => {
     const dbrepositoryUser = userRepository(userDbRepoImpl(userModel));
     const authService = authServiceInterface(authServiceImpl());
@@ -36,15 +34,13 @@ const authController = (authServiceImpl, authServiceInterface, userRepository, u
     });
     const otpGenerate = (0, express_async_handler_1.default)(async (req, res) => {
         const { email, password, purpose } = req?.body;
+        console.log("checking user is google authenticated");
         try {
             if (email && password !== '') {
+                console.log("checking");
                 const user = await (0, userAuth_1.loginUser)(email, password, dbrepositoryUser, authService);
                 const userId = user._id;
                 console.log(user.isGoogleUser);
-                if (user.isGoogleUser) {
-                    console.log("user is google user");
-                    throw new appErrors_1.default('Google authenticated users cannot change their password.', httpTypes_1.HttpStatus.NOT_ACCEPTABLE);
-                }
                 console.log("user is not google user");
                 const sendOtp = await (0, userAuth_1.otpGenr)(email, dbrepositoryUser, 'signin');
                 const OTP = sendOtp.otp;
