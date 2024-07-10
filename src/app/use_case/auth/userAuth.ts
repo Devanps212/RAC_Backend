@@ -59,11 +59,10 @@ export const loginUser = async(email:string, password:string, userRepository: Re
 
 export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbInterface>, purpose : 'signup' | 'signin' | 'FPOTP')=>{
     try{
-        console.log("reached usecase")
 
         const { sendOtp } = otpAuth();
         if(purpose == 'signin'){
-            console.log("signIn check")
+            
             const checksUser = await userRepInterface.getUserByEmail(email)
             if(!checksUser)
             {
@@ -74,7 +73,7 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
             return sendOTP
         }
         else if(purpose =='signup'){
-            console.log("signUp check")
+            
             const checksUser = await userRepInterface.getUserByEmail(email)
             if(checksUser)
             {
@@ -85,6 +84,9 @@ export const otpGenr = async(email:string, userRepInterface: ReturnType<userDbIn
             return sendOTP
         } else {
             const checksUser = await userRepInterface.getUserByEmail(email)
+            if(checksUser?.isGoogleUser){
+                throw new AppError('Google authenticated users cannot change their password.', HttpStatus.NOT_ACCEPTABLE);
+            }
             const OTP = await sendOtp(email)
             return OTP
         }

@@ -46,10 +46,8 @@ const loginUser = async (email, password, userRepository, authService) => {
 exports.loginUser = loginUser;
 const otpGenr = async (email, userRepInterface, purpose) => {
     try {
-        console.log("reached usecase");
         const { sendOtp } = (0, otpServices_1.otpAuth)();
         if (purpose == 'signin') {
-            console.log("signIn check");
             const checksUser = await userRepInterface.getUserByEmail(email);
             if (!checksUser) {
                 throw new appErrors_1.default("User not found", httpTypes_1.HttpStatus.UNAUTHORIZED);
@@ -58,7 +56,6 @@ const otpGenr = async (email, userRepInterface, purpose) => {
             return sendOTP;
         }
         else if (purpose == 'signup') {
-            console.log("signUp check");
             const checksUser = await userRepInterface.getUserByEmail(email);
             if (checksUser) {
                 throw new appErrors_1.default("Email already used", httpTypes_1.HttpStatus.UNAUTHORIZED);
@@ -68,6 +65,9 @@ const otpGenr = async (email, userRepInterface, purpose) => {
         }
         else {
             const checksUser = await userRepInterface.getUserByEmail(email);
+            if (checksUser?.isGoogleUser) {
+                throw new appErrors_1.default('Google authenticated users cannot change their password.', httpTypes_1.HttpStatus.NOT_ACCEPTABLE);
+            }
             const OTP = await sendOtp(email);
             return OTP;
         }
