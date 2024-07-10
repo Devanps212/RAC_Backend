@@ -40,9 +40,12 @@ const authController = (authServiceImpl, authServiceInterface, userRepository, u
             if (email && password !== '') {
                 const user = await (0, userAuth_1.loginUser)(email, password, dbrepositoryUser, authService);
                 const userId = user._id;
+                console.log(user.isGoogleUser);
                 if (user.isGoogleUser) {
+                    console.log("user is google user");
                     throw new appErrors_1.default('Google authenticated users cannot change their password.', httpTypes_1.HttpStatus.NOT_ACCEPTABLE);
                 }
+                console.log("user is not google user");
                 const sendOtp = await (0, userAuth_1.otpGenr)(email, dbrepositoryUser, 'signin');
                 const OTP = sendOtp.otp;
                 res.json({
