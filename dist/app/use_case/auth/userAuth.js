@@ -22,15 +22,20 @@ const signUp = async (user, userRepository, authService) => {
 exports.signUp = signUp;
 const loginUser = async (email, password, userRepository, authService) => {
     const user = await userRepository.getUserByEmail(email);
+    console.log("user auth  :", user?.isGoogleUser);
     if (!user) {
+        console.log("not found");
         throw new appErrors_1.default("User not found", httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
     if (!user.isActive) {
+        console.log("blocked");
         throw new appErrors_1.default(`${user.name} is blocked`, httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
     if (user.isGoogleUser) {
+        console.log("google user");
         throw new appErrors_1.default("this user is unauthorized", httpTypes_1.HttpStatus.UNAUTHORIZED);
     }
+    console.log("email ok");
     const passCheck = await authService.decryptPassword(password, user.password ?? "");
     if (!passCheck) {
         throw new appErrors_1.default("Password is wrong", httpTypes_1.HttpStatus.UNAUTHORIZED);

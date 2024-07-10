@@ -26,19 +26,25 @@ export const signUp = async(user:createUserInterface, userRepository : ReturnTyp
 export const loginUser = async(email:string, password:string, userRepository: ReturnType<userDbInterface>, authService: ReturnType<InterfaceAuthService>)=>{
     const user = await userRepository.getUserByEmail(email)
     
+    console.log("user auth  :", user?.isGoogleUser)
+
     if(!user)
     {
+        console.log("not found")
         throw new AppError("User not found", HttpStatus.UNAUTHORIZED)
     }
     if(!user.isActive)
     {
+        console.log("blocked")
         throw new AppError(`${user.name} is blocked`, HttpStatus.UNAUTHORIZED)
     }
 
     if (user.isGoogleUser) 
     {
+        console.log("google user")
         throw new AppError("this user is unauthorized", HttpStatus.UNAUTHORIZED);
     }
+    console.log("email ok")
 
     const passCheck = await authService.decryptPassword(password, user.password ?? "")
 
