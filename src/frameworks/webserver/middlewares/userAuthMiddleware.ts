@@ -16,7 +16,7 @@ export const UserAuthentication = (req: Request, res: Response, next: NextFuncti
 
     const token = authHeader.substring(7);
 
-    
+    console.log("token found :", token)
     if(!token)
     {
         throw new AppError('User is not authorized', HttpStatus.UNAUTHORIZED);
@@ -25,7 +25,7 @@ export const UserAuthentication = (req: Request, res: Response, next: NextFuncti
     
 
     const verifyTokens = authService().verifyToken(token)
-    
+    console.log("token :", verifyTokens)
     
     if(!verifyTokens)
     {
@@ -36,7 +36,7 @@ export const UserAuthentication = (req: Request, res: Response, next: NextFuncti
 
     
     const {role}:any = authService().decodeToken(token)
-    console.log(role)
+    console.log("role :", role)
     if(role !=='user')
     {
         console.log("not user")
