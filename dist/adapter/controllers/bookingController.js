@@ -386,6 +386,15 @@ const bookingController = (bookingInterface, bookingDBRepository, bookingModel, 
             totalCount: bookingPage.totalCount
         });
     });
+    // const uniqueBooking = expressAsyncHandler(
+    //     async(req: Request, res: Response)=>{
+    //         const { bookingData, fullBookingDetail, carsAvailable } : {
+    //             bookingData: Partial<bookingDetail>,
+    //             fullBookingDetail: Booking,
+    //             carsAvailable: []carInterface
+    //           } = req.body
+    //     }
+    // )
     return {
         bookingUpdater,
         bookingFindingBasedOnRole,
