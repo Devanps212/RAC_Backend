@@ -174,6 +174,7 @@ const authController = (
       const findSingleUser = expressAsyncHandler(
         async(req: Request, res: Response)=>{
           const { data }  = req.query as { data : string}
+          console.log("data got : ", data)
           const findOneUser = await findUser(data, dbrepositoryUser)
           res.json({
             status: 'success',
